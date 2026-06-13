@@ -1,0 +1,524 @@
+{
+    "overview": {
+        "title": "Web Development Resources",
+        "description": "Master modern web development with React, Next.js, Node.js, and essential tools for building production-ready applications",
+        "totalComponents": 6,
+        "categories": [
+            "Frontend Frameworks",
+            "Backend Development",
+            "Full-Stack Tools",
+            "Build Tools"
+        ]
+    },
+    "resources": [
+        {
+            "slug": "react-18",
+            "name": "React 18+ Modern Development",
+            "category": "Frontend Frameworks",
+            "shortDesc": "Component-based UI library with hooks, concurrent features, and massive ecosystem",
+            "fullDescription": "React is the most popular JavaScript library for building user interfaces, developed by Meta (Facebook). React 18 introduces concurrent rendering, automatic batching, transitions, and Suspense improvements. With its component-based architecture, unidirectional data flow, and virtual DOM, React powers millions of websites including Facebook, Instagram, Netflix, and Airbnb. The ecosystem includes state management (Zustand, Redux), routing (React Router), and UI libraries (shadcn/ui, Chakra).",
+            "specifications": {
+                "Version": "React 18.3.1 (latest stable 2026)",
+                "License": "MIT (free and open-source)",
+                "Bundle Size": "~45KB (minified + gzipped)",
+                "Browser Support": "Modern browsers (IE 11 with polyfills)",
+                "Learning Curve": "Medium (concepts: components, hooks, state)",
+                "Documentation": "Excellent (official docs, tutorials, community)",
+                "Job Market": "Very High (most in-demand frontend skill)",
+                "Ecosystem": "Massive (100K+ packages on npm)"
+            },
+            "features": {
+                "Components": "Reusable UI building blocks",
+                "Hooks": "useState, useEffect, useContext, custom hooks",
+                "Concurrent Rendering": "Non-blocking UI updates",
+                "Suspense": "Declarative loading states",
+                "Server Components": "Render components on server (Next.js)",
+                "Automatic Batching": "Multiple state updates in one render",
+                "Transitions": "Keep UI responsive during heavy updates",
+                "JSX": "Write HTML-like syntax in JavaScript",
+                "Virtual DOM": "Efficient DOM updates",
+                "DevTools": "React DevTools browser extension"
+            },
+            "ecosystem": {
+                "Routing": "React Router, TanStack Router",
+                "State Management": "Zustand, Jotai, Redux Toolkit, Recoil",
+                "Forms": "React Hook Form, Formik",
+                "UI Libraries": "shadcn/ui, Chakra UI, Material UI, Ant Design",
+                "Animation": "Framer Motion, React Spring",
+                "Data Fetching": "TanStack Query, SWR, RTK Query",
+                "Testing": "React Testing Library, Vitest, Jest",
+                "Meta-Frameworks": "Next.js, Remix, Gatsby"
+            },
+            "bestFor": [
+                "Single Page Applications (SPAs)",
+                "Complex interactive UIs",
+                "Large-scale applications with component reusability",
+                "Projects requiring rich ecosystem and community",
+                "Teams familiar with JavaScript",
+                "Apps needing mobile version (React Native)",
+                "Progressive Web Apps (PWAs)",
+                "Dashboard and admin panels"
+            ],
+            "learningPath": {
+                "Beginner": "Learn JavaScript → React basics (components, props, state) → Hooks",
+                "Intermediate": "Context API → Custom hooks → React Router → Form handling",
+                "Advanced": "Performance optimization → Server Components → Concurrent features → Design patterns",
+                "Time": "~2-3 months to proficiency (with JavaScript knowledge)"
+            },
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Modern React Component with Hooks",
+                "code": "// Modern React with TypeScript and custom hooks\nimport { useState, useEffect } from 'react';\n\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\n// Custom hook for data fetching\nfunction useUsers() {\n  const [users, setUsers] = useState<User[]>([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n\n  useEffect(() => {\n    fetch('/api/users')\n      .then(res => res.json())\n      .then(data => {\n        setUsers(data);\n        setLoading(false);\n      })\n      .catch(err => {\n        setError(err.message);\n        setLoading(false);\n      });\n  }, []);\n\n  return { users, loading, error };\n}\n\n// Component using the custom hook\nexport function UserList() {\n  const { users, loading, error } = useUsers();\n\n  if (loading) return <div>Loading...</div>;\n  if (error) return <div>Error: {error}</div>;\n\n  return (\n    <ul className=\"space-y-2\">\n      {users.map(user => (\n        <li key={user.id} className=\"p-4 border rounded\">\n          <h3 className=\"font-bold\">{user.name}</h3>\n          <p className=\"text-gray-600\">{user.email}</p>\n        </li>\n      ))}\n    </ul>\n  );\n}"
+            },
+            "pricing": "Free and open-source (MIT license)",
+            "image": "/images/resources/react-logo.jpg",
+            "alternatives": [
+                "vue-js",
+                "svelte"
+            ],
+            "relatedResources": [
+                "nextjs-15",
+                "typescript"
+            ],
+            "tutorials": [
+                {
+                    "title": "Official React Documentation",
+                    "url": "https://react.dev/"
+                },
+                {
+                    "title": "React Tutorial for Beginners",
+                    "url": "https://react.dev/learn"
+                },
+                {
+                    "title": "React Patterns and Best Practices",
+                    "url": "https://www.patterns.dev/react"
+                }
+            ]
+        },
+        {
+            "slug": "nextjs-15",
+            "name": "Next.js 15 - React Framework",
+            "category": "Full-Stack Tools",
+            "shortDesc": "Production-ready React framework with App Router, Server Components, and edge rendering",
+            "fullDescription": "Next.js is the most popular React framework for building full-stack web applications. Created by Vercel, it provides routing, server-side rendering (SSR), static site generation (SSG), API routes, image optimization, and more out of the box. Next.js 15 introduces the App Router with React Server Components, streaming, and improved performance. Powers websites like TikTok, Twitch, Hulu, and Nike.",
+            "specifications": {
+                "Version": "Next.js 15.1.0 (latest 2026)",
+                "License": "MIT (free and open-source)",
+                "Based On": "React 18+",
+                "Runtime": "Node.js (server), Edge Runtime (optional)",
+                "Rendering": "SSR, SSG, ISR, Client-side, Edge",
+                "TypeScript": "First-class support (automatic setup)",
+                "CSS Support": "CSS Modules, Tailwind CSS, Sass, CSS-in-JS",
+                "Image Optimization": "Built-in (automatic WebP, responsive)",
+                "Bundle Size": "Optimized automatic code splitting"
+            },
+            "features": {
+                "App Router": "File-based routing with nested layouts",
+                "Server Components": "Render React components on server",
+                "Streaming": "Progressive HTML rendering",
+                "Server Actions": "Call server functions from client",
+                "API Routes": "Build APIs in same codebase",
+                "Middleware": "Run code before requests",
+                "Image Component": "Automatic image optimization",
+                "Font Optimization": "Automatic font loading",
+                "SEO": "Built-in metadata API",
+                "TypeScript": "Zero-config TypeScript support",
+                "Fast Refresh": "Instant feedback on edits",
+                "Edge Runtime": "Deploy to edge for ultra-low latency"
+            },
+            "appRouterConcepts": {
+                "Server Components": "Default in App Router, run on server, zero JS bundle",
+                "Client Components": "Use 'use client' for interactivity",
+                "Layouts": "Shared UI that doesn't re-render on navigation",
+                "Loading UI": "loading.tsx for instant loading states",
+                "Error Handling": "error.tsx for error boundaries",
+                "Parallel Routes": "Show multiple pages in same layout",
+                "Intercepting Routes": "Show route in modal (like Instagram)",
+                "Route Handlers": "API routes with GET, POST, etc."
+            },
+            "bestFor": [
+                "Full-stack React applications",
+                "SEO-critical websites (blogs, e-commerce, marketing)",
+                "Applications needing SSR or SSG",
+                "Projects requiring API routes in same codebase",
+                "High-performance web apps",
+                "Multi-page websites with shared layouts",
+                "Applications deployed on Vercel (optimal integration)",
+                "Startups and MVPs (rapid development)"
+            ],
+            "performanceFeatures": {
+                "Automatic Code Splitting": "Only load JS for current page",
+                "Image Optimization": "Serve optimal image sizes and formats",
+                "Font Optimization": "Eliminate layout shift from fonts",
+                "Script Optimization": "Load third-party scripts efficiently",
+                "Streaming": "Start rendering before all data loads",
+                "Partial Prerendering": "Static shell with dynamic content",
+                "Edge Caching": "Cache at 100+ edge locations"
+            },
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Next.js 15 App Router Example",
+                "code": "// app/page.tsx - Homepage (Server Component by default)\nimport { Suspense } from 'react';\nimport { UserList } from '@/components/UserList';\nimport { Skeleton } from '@/components/ui/skeleton';\n\n// Fetch data directly in Server Component\nasync function getUsers() {\n  const res = await fetch('https://api.example.com/users', {\n    next: { revalidate: 3600 } // ISR: revalidate every hour\n  });\n  return res.json();\n}\n\nexport default async function HomePage() {\n  const users = await getUsers();\n\n  return (\n    <main className=\"container mx-auto py-8\">\n      <h1 className=\"text-4xl font-bold mb-8\">Welcome to Next.js 15</h1>\n      \n      <Suspense fallback={<Skeleton />}>\n        <UserList users={users} />\n      </Suspense>\n    </main>\n  );\n}\n\n// app/api/hello/route.ts - API Route\nimport { NextResponse } from 'next/server';\n\nexport async function GET(request: Request) {\n  return NextResponse.json({ message: 'Hello from Next.js API!' });\n}\n\nexport async function POST(request: Request) {\n  const body = await request.json();\n  // Process data...\n  return NextResponse.json({ success: true, data: body });\n}\n\n// app/layout.tsx - Root Layout (shared across all pages)\nimport type { Metadata } from 'next';\nimport './globals.css';\n\nexport const metadata: Metadata = {\n  title: 'My Next.js App',\n  description: 'Built with Next.js 15',\n};\n\nexport default function RootLayout({\n  children,\n}: {\n  children: React.ReactNode;\n}) {\n  return (\n    <html lang=\"en\">\n      <body>{children}</body>\n    </html>\n  );\n}"
+            },
+            "pricing": "Free and open-source (MIT license)",
+            "image": "/images/resources/nextjs-logo.jpg",
+            "alternatives": [
+                "remix",
+                "gatsby"
+            ],
+            "relatedResources": [
+                "react-18",
+                "vercel"
+            ],
+            "tutorials": [
+                {
+                    "title": "Next.js Documentation",
+                    "url": "https://nextjs.org/docs"
+                },
+                {
+                    "title": "Learn Next.js",
+                    "url": "https://nextjs.org/learn"
+                },
+                {
+                    "title": "App Router Migration Guide",
+                    "url": "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration"
+                }
+            ]
+        },
+        {
+            "slug": "nodejs-runtime",
+            "name": "Node.js - JavaScript Runtime",
+            "category": "Backend Development",
+            "shortDesc": "Server-side JavaScript runtime built on Chrome's V8 engine for scalable network applications",
+            "fullDescription": "Node.js is a JavaScript runtime environment that executes JavaScript code outside of a web browser. Built on Chrome's V8 JavaScript engine, Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient. Perfect for building RESTful APIs, real-time applications, microservices, and CLI tools. Powers backend systems for Netflix, PayPal, LinkedIn, Uber, and NASA.",
+            "specifications": {
+                "Current Version": "Node.js 20 LTS, Node.js 22 (latest)",
+                "License": "MIT (free and open-source)",
+                "Runtime": "V8 JavaScript engine (by Google)",
+                "Package Manager": "npm (bundled), yarn, pnpm",
+                "Programming Model": "Event-driven, non-blocking I/O",
+                "Concurrency": "Single-threaded with event loop",
+                "Performance": "High throughput, low latency",
+                "Ecosystem": "2.5+ million packages on npm"
+            },
+            "features": {
+                "Non-blocking I/O": "Handle thousands of concurrent connections",
+                "Event Loop": "Efficient asynchronous operations",
+                "NPM": "World's largest package registry",
+                "ES Modules": "Modern JavaScript module system",
+                "TypeScript Support": "Use with ts-node or compile",
+                "Built-in Modules": "HTTP, File System, Crypto, etc.",
+                "Streams": "Efficient data handling",
+                "Worker Threads": "True parallelism when needed",
+                "Cluster Mode": "Scale across CPU cores",
+                "Native Addons": "Write C++ modules for performance"
+            },
+            "frameworks": {
+                "Express.js": "Minimalist web framework (most popular)",
+                "Fastify": "Fast and low overhead",
+                "Hono": "Ultra-fast edge-compatible framework",
+                "NestJS": "TypeScript framework with Angular-like structure",
+                "Koa": "Modern, lightweight by Express creators",
+                "Hapi": "Configuration-centric framework",
+                "AdonisJS": "Full-stack MVC framework"
+            },
+            "bestFor": [
+                "RESTful APIs and GraphQL servers",
+                "Real-time applications (chat, collaboration)",
+                "Microservices architecture",
+                "WebSocket servers",
+                "Server-side rendering (Next.js, Remix)",
+                "Command-line tools (CLI)",
+                "Build tools and task runners",
+                "IoT data collection and processing",
+                "Streaming applications",
+                "API gateways and proxies"
+            ],
+            "notGoodFor": [
+                "CPU-intensive operations (blocking event loop)",
+                "Heavy computation (use Python, Go, or Rust)",
+                "Image/video processing (use specialized tools)",
+                "Machine learning training (use Python)"
+            ],
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Express API with TypeScript",
+                "code": "// Modern Express API with TypeScript\nimport express, { Request, Response, NextFunction } from 'express';\nimport cors from 'cors';\nimport helmet from 'helmet';\n\nconst app = express();\nconst PORT = process.env.PORT || 3000;\n\n// Middleware\napp.use(helmet()); // Security headers\napp.use(cors()); // Enable CORS\napp.use(express.json()); // Parse JSON bodies\n\n// Request logging middleware\napp.use((req: Request, res: Response, next: NextFunction) => {\n  console.log(`${req.method} ${req.path}`);\n  next();\n});\n\n// Types\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\n// In-memory store (use database in production)\nconst users: User[] = [];\nlet nextId = 1;\n\n// Routes\napp.get('/api/users', (req: Request, res: Response) => {\n  res.json(users);\n});\n\napp.post('/api/users', (req: Request, res: Response) => {\n  const { name, email } = req.body;\n  \n  if (!name || !email) {\n    return res.status(400).json({ error: 'Name and email required' });\n  }\n  \n  const user: User = { id: nextId++, name, email };\n  users.push(user);\n  res.status(201).json(user);\n});\n\napp.get('/api/users/:id', (req: Request, res: Response) => {\n  const user = users.find(u => u.id === parseInt(req.params.id));\n  \n  if (!user) {\n    return res.status(404).json({ error: 'User not found' });\n  }\n  \n  res.json(user);\n});\n\n// Error handling middleware\napp.use((err: Error, req: Request, res: Response, next: NextFunction) => {\n  console.error(err.stack);\n  res.status(500).json({ error: 'Something went wrong!' });\n});\n\n// Start server\napp.listen(PORT, () => {\n  console.log(`Server running on http://localhost:${PORT}`);\n});"
+            },
+            "pricing": "Free and open-source (MIT license)",
+            "image": "/images/resources/nodejs-logo.jpg",
+            "alternatives": [
+                "deno",
+                "bun"
+            ],
+            "relatedResources": [
+                "express-framework",
+                "typescript"
+            ],
+            "tutorials": [
+                {
+                    "title": "Node.js Documentation",
+                    "url": "https://nodejs.org/docs/latest/api/"
+                },
+                {
+                    "title": "Node.js Best Practices",
+                    "url": "https://github.com/goldbergyoni/nodebestpractices"
+                },
+                {
+                    "title": "Express.js Guide",
+                    "url": "https://expressjs.com/en/guide/routing.html"
+                }
+            ]
+        },
+        {
+            "slug": "typescript",
+            "name": "TypeScript - JavaScript with Types",
+            "category": "Frontend Frameworks",
+            "shortDesc": "Strongly-typed superset of JavaScript that compiles to plain JavaScript for safer code",
+            "fullDescription": "TypeScript is a strongly-typed programming language that builds on JavaScript, developed by Microsoft. It adds optional static typing, interfaces, enums, generics, and advanced tooling to JavaScript. TypeScript catches errors at compile time before they reach production, improves code maintainability, and provides excellent IDE support with autocomplete and refactoring. Used by Airbnb, Slack, Google, Microsoft, and many Fortune 500 companies.",
+            "specifications": {
+                "Current Version": "TypeScript 5.5+",
+                "License": "Apache 2.0 (free and open-source)",
+                "Compiler": "tsc (TypeScript Compiler)",
+                "Transpilation": "Compiles to ES3, ES5, ES6+",
+                "File Extension": ".ts (code), .tsx (React), .d.ts (types)",
+                "Learning Curve": "Medium (requires JavaScript knowledge)",
+                "Adoption": "Very High (80%+ of new projects use TypeScript)",
+                "Tooling": "Excellent (VS Code, WebStorm, Sublime)"
+            },
+            "features": {
+                "Static Typing": "Catch errors before runtime",
+                "Type Inference": "Automatically infer types",
+                "Interfaces": "Define object shapes",
+                "Generics": "Reusable type-safe components",
+                "Enums": "Define named constants",
+                "Union Types": "Variable can be multiple types",
+                "Decorators": "Annotate and modify classes",
+                "JSX Support": "First-class React support",
+                "Module Resolution": "Advanced import/export",
+                "Incremental Adoption": "Add gradually to JS projects",
+                "Type Definitions": "DefinitelyTyped for JS libraries",
+                "Strict Mode": "Enforce stricter type checking"
+            },
+            "benefits": {
+                "Catch Bugs Early": "Errors at compile time, not runtime",
+                "Better IDE Support": "Autocomplete, refactoring, go-to-definition",
+                "Self-Documenting": "Types serve as documentation",
+                "Refactoring Confidence": "Rename/refactor safely",
+                "Team Collaboration": "Clear contracts between code",
+                "Scalability": "Maintain large codebases easier",
+                "JavaScript Superset": "All JS is valid TS (gradual adoption)",
+                "Growing Ecosystem": "Most libraries have types"
+            },
+            "bestFor": [
+                "Large-scale applications",
+                "Team projects (clear interfaces)",
+                "Projects with long lifespan",
+                "Enterprise applications",
+                "Libraries and frameworks (type safety for users)",
+                "Projects requiring refactoring",
+                "Applications with complex business logic",
+                "Any project valuing code quality"
+            ],
+            "notFor": [
+                "Very small scripts (overhead not worth it)",
+                "Quick prototypes (types slow you down initially)",
+                "Solo learning projects (vanilla JS might be simpler)",
+                "Projects with no build step"
+            ],
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "TypeScript Advanced Features",
+                "code": "// Type aliases and interfaces\ntype ID = string | number;\n\ninterface User {\n  id: ID;\n  name: string;\n  email: string;\n  role: 'admin' | 'user' | 'guest'; // Union type\n  createdAt: Date;\n}\n\n// Generics - reusable type-safe functions\nfunction getFirstItem<T>(arr: T[]): T | undefined {\n  return arr[0];\n}\n\nconst firstNumber = getFirstItem([1, 2, 3]); // Type: number | undefined\nconst firstName = getFirstItem(['Alice', 'Bob']); // Type: string | undefined\n\n// Utility types\ntype PartialUser = Partial<User>; // All properties optional\ntype UserWithoutEmail = Omit<User, 'email'>; // Remove email\ntype UserNameAndEmail = Pick<User, 'name' | 'email'>; // Only these props\ntype ReadonlyUser = Readonly<User>; // All properties readonly\n\n// Type guards\nfunction isAdmin(user: User): user is User & { role: 'admin' } {\n  return user.role === 'admin';\n}\n\n// Discriminated unions\ntype ApiResponse<T> = \n  | { status: 'success'; data: T }\n  | { status: 'error'; error: string }\n  | { status: 'loading' };\n\nfunction handleResponse<T>(response: ApiResponse<T>) {\n  switch (response.status) {\n    case 'success':\n      console.log(response.data); // TypeScript knows .data exists\n      break;\n    case 'error':\n      console.error(response.error); // TypeScript knows .error exists\n      break;\n    case 'loading':\n      console.log('Loading...'); // No data or error property\n      break;\n  }\n}\n\n// Async/await with types\nasync function fetchUser(id: ID): Promise<User> {\n  const response = await fetch(`/api/users/${id}`);\n  if (!response.ok) {\n    throw new Error('Failed to fetch user');\n  }\n  return await response.json();\n}\n\n// React component with TypeScript\ninterface ButtonProps {\n  children: React.ReactNode;\n  onClick: () => void;\n  variant?: 'primary' | 'secondary';\n  disabled?: boolean;\n}\n\nexport function Button({ \n  children, \n  onClick, \n  variant = 'primary',\n  disabled = false \n}: ButtonProps) {\n  return (\n    <button \n      onClick={onClick} \n      disabled={disabled}\n      className={`btn btn-${variant}`}\n    >\n      {children}\n    </button>\n  );\n}"
+            },
+            "pricing": "Free and open-source (Apache 2.0)",
+            "image": "/images/resources/typescript-logo.jpg",
+            "alternatives": [
+                "flow",
+                "javascript"
+            ],
+            "relatedResources": [
+                "react-18",
+                "nodejs-runtime"
+            ],
+            "tutorials": [
+                {
+                    "title": "TypeScript Documentation",
+                    "url": "https://www.typescriptlang.org/docs/"
+                },
+                {
+                    "title": "TypeScript Handbook",
+                    "url": "https://www.typescriptlang.org/docs/handbook/intro.html"
+                },
+                {
+                    "title": "TypeScript Deep Dive",
+                    "url": "https://basarat.gitbook.io/typescript/"
+                }
+            ]
+        },
+        {
+            "slug": "tailwind-css",
+            "name": "Tailwind CSS - Utility-First Framework",
+            "category": "Frontend Frameworks",
+            "shortDesc": "Utility-first CSS framework for rapidly building custom user interfaces without leaving HTML",
+            "fullDescription": "Tailwind CSS is a utility-first CSS framework that provides low-level utility classes to build custom designs without writing CSS. Instead of predefined components, Tailwind gives you building blocks (margin, padding, colors, flexbox, etc.) that you compose directly in your markup. Highly customizable via tailwind.config.js, with features like dark mode, responsive design, and automatic purging of unused styles. Used by GitHub, NASA, Shopify, and Laravel.",
+            "specifications": {
+                "Current Version": "Tailwind CSS 3.4+",
+                "License": "MIT (free and open-source)",
+                "File Size": "~10KB (production after purge)",
+                "Build Tool": "PostCSS (automatic with frameworks)",
+                "Browser Support": "All modern browsers",
+                "JIT Mode": "Just-In-Time compilation (default)",
+                "Dark Mode": "Built-in (class or media query)",
+                "Plugins": "Official and community plugins available"
+            },
+            "features": {
+                "Utility-First": "Compose designs with utility classes",
+                "Responsive Design": "Mobile-first breakpoints (sm, md, lg, xl, 2xl)",
+                "Dark Mode": "class:dark or @media prefers-color-scheme",
+                "Hover/Focus States": "hover:, focus:, active: variants",
+                "Custom Colors": "Define brand colors in config",
+                "JIT Compiler": "Generate styles on-demand (faster builds)",
+                "PurgeCSS": "Remove unused styles (tiny production bundle)",
+                "Component Extraction": "@apply directive for reusable styles",
+                "Plugins": "Forms, typography, aspect-ratio, etc.",
+                "IDE Support": "IntelliSense for VS Code"
+            },
+            "pros": [
+                "Rapid prototyping and development",
+                "No naming conventions needed (no BEM, SMACSS)",
+                "Consistent design system out of the box",
+                "Small production bundle size",
+                "Easy responsive design",
+                "No context switching (HTML ↔ CSS)",
+                "Highly customizable",
+                "Great documentation and community"
+            ],
+            "cons": [
+                "HTML can look cluttered with many classes",
+                "Learning curve for utility class names",
+                "Requires build step (PostCSS)",
+                "Can be verbose for complex components",
+                "Deviation from traditional CSS thinking"
+            ],
+            "bestFor": [
+                "Rapid prototyping and MVPs",
+                "Component-based frameworks (React, Vue)",
+                "Teams wanting consistent design",
+                "Projects prioritizing development speed",
+                "Applications needing small CSS bundles",
+                "Landing pages and marketing sites",
+                "Admin dashboards",
+                "Startups and agencies (fast iteration)"
+            ],
+            "codeSnippet": {
+                "language": "html",
+                "title": "Tailwind CSS Examples",
+                "code": "<!-- Responsive card with dark mode support -->\n<div class=\"max-w-sm mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden\">\n  <img class=\"w-full h-48 object-cover\" src=\"/image.jpg\" alt=\"Card image\">\n  \n  <div class=\"p-6\">\n    <h2 class=\"text-2xl font-bold text-gray-900 dark:text-white mb-2\">\n      Card Title\n    </h2>\n    <p class=\"text-gray-600 dark:text-gray-300 mb-4\">\n      This is a responsive card component with dark mode support.\n    </p>\n    \n    <button class=\"w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2\">\n      Learn More\n    </button>\n  </div>\n</div>\n\n<!-- Responsive grid layout -->\n<div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6\">\n  <!-- Grid items -->\n  <div class=\"bg-white p-4 rounded-lg shadow\">Item 1</div>\n  <div class=\"bg-white p-4 rounded-lg shadow\">Item 2</div>\n  <div class=\"bg-white p-4 rounded-lg shadow\">Item 3</div>\n</div>\n\n<!-- Flexbox centering -->\n<div class=\"flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-500 to-pink-500\">\n  <div class=\"text-center\">\n    <h1 class=\"text-5xl font-bold text-white mb-4\">Welcome</h1>\n    <p class=\"text-xl text-white/80\">Build amazing things</p>\n  </div>\n</div>\n\n<!-- Component extraction with @apply -->\n<style>\n  .btn-primary {\n    @apply px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200;\n  }\n</style>"
+            },
+            "pricing": "Free and open-source (MIT)",
+            "image": "/images/resources/tailwind-logo.jpg",
+            "alternatives": [
+                "bootstrap",
+                "chakra-ui"
+            ],
+            "relatedResources": [
+                "react-18",
+                "nextjs-15"
+            ],
+            "tutorials": [
+                {
+                    "title": "Tailwind CSS Documentation",
+                    "url": "https://tailwindcss.com/docs"
+                },
+                {
+                    "title": "Tailwind UI Components",
+                    "url": "https://tailwindui.com/components"
+                },
+                {
+                    "title": "Tailwind Labs YouTube",
+                    "url": "https://www.youtube.com/tailwindlabs"
+                }
+            ]
+        },
+        {
+            "slug": "vite-build-tool",
+            "name": "Vite - Next Generation Build Tool",
+            "category": "Build Tools",
+            "shortDesc": "Lightning-fast build tool with instant HMR and optimized production builds",
+            "fullDescription": "Vite (French for 'fast') is a modern build tool that provides blazing fast development experience through native ES modules and Hot Module Replacement (HMR). Created by Evan You (Vue.js creator), Vite serves source files over native ESM during development, resulting in instant server start regardless of app size. Production builds use Rollup for highly optimized bundles. Supports React, Vue, Svelte, and vanilla JavaScript.",
+            "specifications": {
+                "Current Version": "Vite 5.x",
+                "License": "MIT (free and open-source)",
+                "Dev Server": "Native ESM + esbuild",
+                "Production": "Rollup (optimized bundles)",
+                "Hot Module Replacement": "Instant (<50ms)",
+                "Server Start": "Cold start < 1 second",
+                "Frameworks": "React, Vue, Svelte, Vanilla JS, Preact, Lit",
+                "TypeScript": "Built-in support (no config needed)",
+                "CSS": "Supports CSS, PostCSS, Sass, Less, Stylus"
+            },
+            "features": {
+                "Instant Server Start": "No bundling needed in dev",
+                "Lightning HMR": "Updates reflect instantly",
+                "Optimized Build": "Rollup-based production builds",
+                "Plugin System": "Rich ecosystem of plugins",
+                "TypeScript": "Zero-config TypeScript support",
+                "JSX/TSX": "React support out of the box",
+                "CSS Modules": "Scoped CSS support",
+                "Asset Handling": "Import images, fonts as modules",
+                "Code Splitting": "Automatic dynamic imports",
+                "Environment Variables": ".env file support",
+                "Preview Server": "Preview production build locally",
+                "SSR Support": "Server-side rendering capabilities"
+            },
+            "vsWebpack": {
+                "Dev Server Start": "Vite: <1s | Webpack: 10-60s (large projects)",
+                "HMR Speed": "Vite: Instant | Webpack: Slow (rebuilds)",
+                "Bundle Size": "Comparable (both use minification)",
+                "Configuration": "Vite: Minimal | Webpack: Complex",
+                "Learning Curve": "Vite: Easy | Webpack: Steep",
+                "Ecosystem": "Vite: Growing | Webpack: Mature"
+            },
+            "bestFor": [
+                "New projects (greenfield development)",
+                "Projects prioritizing DX (Developer Experience)",
+                "React, Vue, or Svelte applications",
+                "Small to medium-sized applications",
+                "Prototypes and MVPs (fast iteration)",
+                "Teams wanting modern tooling",
+                "Projects with TypeScript",
+                "Developers tired of slow webpack builds"
+            ],
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Vite Project Setup",
+                "code": "// Create a new Vite project\n// npm create vite@latest my-app -- --template react-ts\n\n// vite.config.ts - Configuration file\nimport { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\nimport path from 'path';\n\nexport default defineConfig({\n  plugins: [react()],\n  \n  // Path aliases\n  resolve: {\n    alias: {\n      '@': path.resolve(__dirname, './src'),\n      '@components': path.resolve(__dirname, './src/components'),\n    },\n  },\n  \n  // Development server\n  server: {\n    port: 3000,\n    open: true, // Open browser automatically\n    proxy: {\n      '/api': {\n        target: 'http://localhost:8080',\n        changeOrigin: true,\n      },\n    },\n  },\n  \n  // Build options\n  build: {\n    outDir: 'dist',\n    sourcemap: true,\n    rollupOptions: {\n      output: {\n        manualChunks: {\n          vendor: ['react', 'react-dom'],\n        },\n      },\n    },\n  },\n  \n  // Environment variables\n  define: {\n    __APP_VERSION__: JSON.stringify('1.0.0'),\n  },\n});\n\n// package.json scripts\n{\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"tsc && vite build\",\n    \"preview\": \"vite preview\"\n  }\n}\n\n// Import assets in components\nimport logo from './assets/logo.svg';\nimport './App.css';\n\nexport function App() {\n  return <img src={logo} alt=\"Logo\" />;\n}"
+            },
+            "pricing": "Free and open-source (MIT)",
+            "image": "/images/resources/vite-logo.jpg",
+            "alternatives": [
+                "webpack",
+                "parcel"
+            ],
+            "relatedResources": [
+                "react-18",
+                "typescript"
+            ],
+            "tutorials": [
+                {
+                    "title": "Vite Documentation",
+                    "url": "https://vitejs.dev/guide/"
+                },
+                {
+                    "title": "Why Vite",
+                    "url": "https://vitejs.dev/guide/why.html"
+                },
+                {
+                    "title": "Vite Plugin List",
+                    "url": "https://github.com/vitejs/awesome-vite"
+                }
+            ]
+        }
+    ]
+}

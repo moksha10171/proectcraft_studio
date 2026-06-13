@@ -1,0 +1,469 @@
+{
+    "overview": {
+        "title": "AI-Powered Development Resources",
+        "description": "Master AI tools, prompt engineering, and automation to build software faster with ChatGPT, GitHub Copilot, Claude, and more",
+        "totalComponents": 6,
+        "categories": [
+            "AI Coding Assistants"
+        ]
+    },
+    "resources": [
+        {
+            "slug": "github-copilot",
+            "name": "GitHub Copilot",
+            "category": "AI Coding Assistants",
+            "shortDesc": "AI pair programmer that suggests code and entire functions in real-time",
+            "fullDescription": "GitHub Copilot is an AI-powered code completion tool that uses OpenAI's Codex model to suggest code and entire functions in real-time. It integrates directly into your IDE (VS Code, JetBrains, Neovim) and can understand context from your codebase to provide relevant suggestions. Trained on billions of lines of public code, it supports dozens of languages and frameworks.",
+            "specifications": {
+                "Pricing": "$10/month (Individual), $19/user/month (Business)",
+                "Free Tier": "Free for verified students and open-source maintainers",
+                "Supported IDEs": "VS Code, JetBrains, Neovim, Visual Studio",
+                "Languages": "Python, JavaScript, TypeScript, Ruby, Go, C++, C#, and 50+ more",
+                "Model": "OpenAI Codex (GPT-3.5 based)",
+                "Context Window": "~8K tokens",
+                "Latency": "<100ms for suggestions",
+                "Offline Mode": "No (requires internet connection)"
+            },
+            "features": {
+                "Code Completion": "Multi-line code suggestions as you type",
+                "Function Generation": "Write entire functions from comments",
+                "Test Generation": "Auto-generate unit tests",
+                "Code Explanation": "Understand complex code snippets",
+                "Documentation": "Generate docstrings and comments",
+                "Refactoring": "Suggest code improvements",
+                "Chat Interface": "Copilot Chat for Q&A (requires subscription)",
+                "CLI Integration": "gh copilot suggest/explain commands"
+            },
+            "useCases": [
+                "Boilerplate code generation (CRUD operations, configs)",
+                "Writing repetitive code patterns faster",
+                "Learning new frameworks and APIs",
+                "Converting code between languages",
+                "Generating test cases automatically",
+                "Exploring API documentation through suggestions"
+            ],
+            "bestPractices": [
+                "Write descriptive comments before code blocks for better suggestions",
+                "Review all AI-generated code before accepting",
+                "Use Tab to accept, Alt+] to cycle through alternatives",
+                "Test edge cases - AI may miss error handling",
+                "Combine with code review tools for security",
+                "Train yourself to recognize hallucinations (fake APIs/methods)"
+            ],
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Example: Function from Comment",
+                "code": "// Function to fetch user profile from API with error handling and retry logic\n// Returns user object or throws error after 3 retries\n\n// Copilot will suggest:\nasync function fetchUserProfile(userId: string): Promise<User> {\n  const maxRetries = 3;\n  let attempt = 0;\n  \n  while (attempt < maxRetries) {\n    try {\n      const response = await fetch(`/api/users/${userId}`);\n      if (!response.ok) throw new Error('Failed to fetch user');\n      return await response.json();\n    } catch (error) {\n      attempt++;\n      if (attempt === maxRetries) throw error;\n      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));\n    }\n  }\n}"
+            },
+            "pricing": "$10/month Individual, $19/user/month Business",
+            "image": "/images/resources/github-copilot.jpg",
+            "alternatives": [
+                "tabnine",
+                "codeium",
+                "cursor-ide"
+            ],
+            "relatedResources": [
+                "chatgpt-code-generation",
+                "prompt-engineering-basics"
+            ],
+            "tutorials": [
+                {
+                    "title": "GitHub Copilot Documentation",
+                    "url": "https://docs.github.com/en/copilot"
+                },
+                {
+                    "title": "Copilot Best Practices",
+                    "url": "https://github.blog/2023-06-20-how-to-write-better-prompts-for-github-copilot/"
+                }
+            ]
+        },
+        {
+            "slug": "chatgpt-code-generation",
+            "name": "ChatGPT for Code Generation",
+            "category": "AI Coding Assistants",
+            "shortDesc": "Conversational AI for code generation, debugging, and learning with GPT-4 Turbo",
+            "fullDescription": "ChatGPT (GPT-4 Turbo and GPT-4o) is a powerful conversational AI that excels at code generation, debugging, refactoring, and explaining complex concepts. Unlike in-IDE assistants, it provides a chat interface where you can iteratively refine code, ask follow-up questions, and explore different approaches. With the API, you can integrate it into your own tools and workflows.",
+            "specifications": {
+                "Pricing (Plus)": "$20/month for unlimited GPT-4o, limited GPT-4 Turbo",
+                "Pricing (API)": "$2.50/1M input tokens, $10/1M output tokens (GPT-4o)",
+                "Free Tier": "GPT-3.5 Turbo (limited availability)",
+                "Context Window": "128K tokens (GPT-4 Turbo), 128K tokens (GPT-4o)",
+                "Max Output": "~16K tokens (varies by model)",
+                "Rate Limits (Free)": "Message caps, slower response",
+                "Rate Limits (Plus)": "80 messages per 3 hours (GPT-4), 40 messages per 3 hours (GPT-4 Turbo)",
+                "Features": "Code interpreter, file uploads, web browsing, DALL-E integration"
+            },
+            "features": {
+                "Code Generation": "Generate complete applications from descriptions",
+                "Debugging": "Paste error messages for detailed explanations",
+                "Code Review": "Get feedback on code quality and best practices",
+                "Refactoring": "Suggest improvements and optimizations",
+                "Documentation": "Generate README files, API docs, comments",
+                "Learning": "Explain concepts, algorithms, and design patterns",
+                "Code Conversion": "Translate between programming languages",
+                "Architecture Design": "Plan system architecture and database schemas"
+            },
+            "useCases": [
+                "Prototyping full-stack applications quickly",
+                "Debugging complex error messages and stack traces",
+                "Learning new frameworks with guided tutorials",
+                "Code reviews and security audits",
+                "Writing technical documentation",
+                "Generating SQL queries from natural language",
+                "Converting legacy code to modern frameworks",
+                "Creating regex patterns and validation logic"
+            ],
+            "bestPractices": [
+                "Provide context: language, framework, requirements",
+                "Ask for explanations along with code",
+                "Request multiple approaches for comparison",
+                "Verify AI-generated code with tests",
+                "Use Code Interpreter for data analysis and debugging",
+                "Break complex requests into smaller steps",
+                "Specify versions (e.g., 'React 18 with TypeScript')",
+                "Always review security implications"
+            ],
+            "promptTemplates": {
+                "Code Generation": "Create a [component/function] in [language] that [does X]. Use [specific libraries/patterns]. Include error handling and TypeScript types.",
+                "Debugging": "I'm getting this error: [error message]. Here's my code: [code]. What's wrong and how do I fix it?",
+                "Refactoring": "Refactor this code to be more [readable/performant/maintainable]: [code]. Explain the improvements.",
+                "Architecture": "Design a [type] system with [requirements]. Include database schema, API endpoints, and tech stack recommendations."
+            },
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Example Prompt & Response",
+                "code": "// PROMPT:\n// \"Create a React custom hook for debouncing API calls with TypeScript.\n// Include loading states, error handling, and AbortController for cleanup.\"\n\n// CHATGPT RESPONSE:\nimport { useState, useEffect, useCallback } from 'react';\n\ninterface UseDebounceApiOptions<T> {\n  delay?: number;\n  onSuccess?: (data: T) => void;\n  onError?: (error: Error) => void;\n}\n\nexport function useDebounceApi<T>(\n  apiCall: (signal: AbortSignal) => Promise<T>,\n  dependencies: any[],\n  options: UseDebounceApiOptions<T> = {}\n) {\n  const { delay = 500, onSuccess, onError } = options;\n  const [data, setData] = useState<T | null>(null);\n  const [loading, setLoading] = useState(false);\n  const [error, setError] = useState<Error | null>(null);\n\n  useEffect(() => {\n    const controller = new AbortController();\n    const timeoutId = setTimeout(async () => {\n      try {\n        setLoading(true);\n        setError(null);\n        const result = await apiCall(controller.signal);\n        setData(result);\n        onSuccess?.(result);\n      } catch (err) {\n        if (err.name !== 'AbortError') {\n          const error = err as Error;\n          setError(error);\n          onError?.(error);\n        }\n      } finally {\n        setLoading(false);\n      }\n    }, delay);\n\n    return () => {\n      clearTimeout(timeoutId);\n      controller.abort();\n    };\n  }, dependencies);\n\n  return { data, loading, error };\n}"
+            },
+            "pricing": "$20/month Plus, API pay-per-token",
+            "image": "/images/resources/chatgpt-logo.jpg",
+            "alternatives": [
+                "claude-ai",
+                "google-gemini"
+            ],
+            "relatedResources": [
+                "prompt-engineering-basics",
+                "github-copilot"
+            ],
+            "tutorials": [
+                {
+                    "title": "OpenAI API Documentation",
+                    "url": "https://platform.openai.com/docs"
+                },
+                {
+                    "title": "ChatGPT Prompt Engineering Guide",
+                    "url": "https://platform.openai.com/docs/guides/prompt-engineering"
+                }
+            ]
+        },
+        {
+            "slug": "claude-ai",
+            "name": "Claude AI by Anthropic",
+            "category": "AI Coding Assistants",
+            "shortDesc": "Advanced AI assistant with 200K context window for analyzing entire codebases",
+            "fullDescription": "Claude (Claude 3 Opus, Sonnet, Haiku) by Anthropic is a powerful AI assistant optimized for long-form content, code analysis, and technical writing. With a massive 200K token context window, Claude can analyze entire codebases, review multiple files at once, and maintain context across long conversations. Known for being more cautious and accurate than GPT-4 in code generation.",
+            "specifications": {
+                "Pricing (Pro)": "$20/month for Claude 3 Opus and Sonnet",
+                "Pricing (API)": "$15/1M input, $75/1M output (Opus), $3/$15 (Sonnet), $0.25/$1.25 (Haiku)",
+                "Free Tier": "Claude 3 Sonnet with usage limits",
+                "Context Window": "200K tokens (all models)",
+                "Max Output": "~4K tokens",
+                "Rate Limits (Free)": "Lower priority, message caps",
+                "Rate Limits (Pro)": "Priority access, 5x more usage",
+                "Models": "Claude 3 Opus (most capable), Sonnet (balanced), Haiku (fastest)"
+            },
+            "features": {
+                "Large Context": "Analyze entire codebases (200K tokens ≈ 150K words)",
+                "Code Generation": "Thoughtful, well-structured code with fewer errors",
+                "Debugging": "Deep analysis of complex bugs",
+                "Refactoring": "Comprehensive code improvements",
+                "Documentation": "Technical writing and API documentation",
+                "Code Review": "Detailed code review with security focus",
+                "Multi-file Analysis": "Work across multiple files simultaneously",
+                "PDF Support": "Analyze architecture documents and specs"
+            },
+            "useCases": [
+                "Analyzing entire repositories (upload multiple files)",
+                "Migrating large codebases to new frameworks",
+                "code reviews and security audits",
+                "Writing detailed technical documentation",
+                "Debugging complex multi-file issues",
+                "Understanding legacy codebases",
+                "Architecture planning with long context",
+                "Generating test suites for large modules"
+            ],
+            "bestPractices": [
+                "Upload all relevant files for maximum context",
+                "Ask Claude to think step-by-step for complex problems",
+                "Request security and performance considerations",
+                "Use for refactoring large functions (better than GPT-4)",
+                "Leverage 200K context for cross-file analysis",
+                "Ask for trade-offs between different approaches",
+                "Use Haiku for fast, simple queries to save costs",
+                "Use Opus for critical, complex code generation"
+            ],
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Example: Multi-file Refactoring Request",
+                "code": "// PROMPT:\n// \"I've uploaded 5 files from my Express API. Refactor to use dependency\n// injection, add proper error handling middleware, and convert to TypeScript.\n// Maintain backward compatibility and suggest migration strategy.\"\n\n// Claude will analyze all files, identify patterns, and provide:\n// 1. Refactored code for each file\n// 2. New architecture diagram\n// 3. Migration steps\n// 4. Breaking changes list\n// 5. Testing strategy\n\n// Example of Claude's thorough response:\n// File: src/server.ts\nimport express from 'express';\nimport { Container } from 'inversify';\nimport { errorHandler } from './middleware/errorHandler';\nimport { UserService } from './services/UserService';\nimport { TYPES } from './types';\n\nconst app = express();\nconst container = new Container();\n\n// Dependency injection setup\ncontainer.bind<UserService>(TYPES.UserService).to(UserService);\n\n// Routes with injected dependencies\napp.get('/users', async (req, res, next) => {\n  try {\n    const userService = container.get<UserService>(TYPES.UserService);\n    const users = await userService.findAll();\n    res.json(users);\n  } catch (error) {\n    next(error); // Pass to error middleware\n  }\n});\n\n// Global error handler (must be last)\napp.use(errorHandler);\n\nexport default app;"
+            },
+            "pricing": "$20/month Pro, API $3-$75/1M tokens",
+            "image": "/images/resources/claude-ai.jpg",
+            "alternatives": [
+                "chatgpt-code-generation",
+                "google-gemini"
+            ],
+            "relatedResources": [
+                "prompt-engineering-advanced",
+                "code-analysis-tools"
+            ],
+            "tutorials": [
+                {
+                    "title": "Claude API Documentation",
+                    "url": "https://docs.anthropic.com/claude/docs"
+                },
+                {
+                    "title": "Prompt Engineering with Claude",
+                    "url": "https://docs.anthropic.com/claude/docs/prompt-engineering"
+                }
+            ]
+        },
+        {
+            "slug": "cursor-ide",
+            "name": "Cursor - AI-Native Code Editor",
+            "category": "AI Coding Assistants",
+            "shortDesc": "AI-first code editor built on VS Code with inline editing and codebase chat",
+            "fullDescription": "Cursor is an AI-native code editor (fork of VS Code) that integrates AI deeply into the development workflow. Unlike plugins, AI is built into every aspect: inline editing, codebase-wide Q&A, multi-file edits, and automatic bug fixes. Supports GPT-4, Claude, and custom models. Features 'Cmd+K' for AI commands anywhere in your code and 'Cmd+L' for chatting about your entire codebase.",
+            "specifications": {
+                "Pricing": "$20/month (includes GPT-4 and Claude), Free tier with GPT-3.5",
+                "Platform": "macOS, Windows, Linux",
+                "Based On": "VS Code (maintains extension compatibility)",
+                "Models": "GPT-4, GPT-4 Turbo, Claude 3 Opus/Sonnet, custom models",
+                "Context": "Entire codebase indexed for AI queries",
+                "Offline Mode": "Editor works offline, AI requires internet",
+                "Extensions": "Compatible with VS Code extensions",
+                "Privacy": "SOC 2 certified, code never used for training"
+            },
+            "features": {
+                "Cmd+K": "Inline AI editing - select code and ask for changes",
+                "Cmd+L": "Chat with your codebase - ask questions about any file",
+                "Multi-file Edit": "Apply changes across multiple files at once",
+                "Auto-debug": "AI analyzes errors and suggests fixes",
+                "Codebase Indexing": "AI understands your entire project context",
+                "Diff View": "Review AI suggestions before accepting",
+                "Model Selection": "Switch between GPT-4, Claude, or custom models",
+                "Privacy Mode": "Disable AI for sensitive codebases",
+                "Terminal AI": "AI assistance in integrated terminal",
+                "Git Integration": "AI-powered commit messages"
+            },
+            "useCases": [
+                "Refactoring large sections of code inline",
+                "Understanding unfamiliar codebases quickly",
+                "Applying consistent changes across many files",
+                "Debugging with AI that sees your entire project",
+                "Generating boilerplate with project-specific context",
+                "Code reviews with AI that knows your codebase",
+                "Learning new frameworks faster",
+                "Migrating deprecated APIs project-wide"
+            ],
+            "bestPractices": [
+                "Use Cmd+K for quick inline edits, Cmd+L for discussions",
+                "Index your codebase for better AI understanding",
+                "Review multi-file edits in diff view before accepting",
+                "Use '@' to reference specific files in chat",
+                "Switch to Claude for complex refactoring (better than GPT-4)",
+                "Use 'Apply to multiple files' for project-wide changes",
+                "Disable AI in .cursorignore for sensitive files",
+                "Use Fast mode (GPT-3.5) for simple queries to save credits"
+            ],
+            "keyboardShortcuts": {
+                "Cmd/Ctrl+K": "Open inline AI editor",
+                "Cmd/Ctrl+L": "Open AI chat sidebar",
+                "Cmd/Ctrl+Shift+L": "Open chat with current file context",
+                "Tab": "Accept AI suggestion",
+                "Cmd/Ctrl+Enter": "Submit AI request",
+                "Esc": "Dismiss AI suggestion"
+            },
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Example: Inline Edit with Cmd+K",
+                "code": "// Select this function and press Cmd+K, then type:\n// \"Add error handling, retry logic, and TypeScript types\"\n\nfunction fetchData(url) {\n  return fetch(url).then(res => res.json());\n}\n\n// Cursor AI will transform it to:\ninterface FetchOptions {\n  retries?: number;\n  timeout?: number;\n}\n\nasync function fetchData<T>(\n  url: string,\n  options: FetchOptions = {}\n): Promise<T> {\n  const { retries = 3, timeout = 5000 } = options;\n  let lastError: Error;\n\n  for (let i = 0; i < retries; i++) {\n    try {\n      const controller = new AbortController();\n      const timeoutId = setTimeout(() => controller.abort(), timeout);\n      \n      const response = await fetch(url, { signal: controller.signal });\n      clearTimeout(timeoutId);\n      \n      if (!response.ok) {\n        throw new Error(`HTTP error! status: ${response.status}`);\n      }\n      \n      return await response.json();\n    } catch (error) {\n      lastError = error as Error;\n      if (i < retries - 1) {\n        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));\n      }\n    }\n  }\n  \n  throw new Error(`Failed after ${retries} retries: ${lastError.message}`);\n}"
+            },
+            "pricing": "$20/month Pro, Free with GPT-3.5",
+            "image": "/images/resources/cursor-ide.jpg",
+            "alternatives": [
+                "github-copilot",
+                "continue-dev"
+            ],
+            "relatedResources": [
+                "chatgpt-code-generation",
+                "claude-ai"
+            ],
+            "tutorials": [
+                {
+                    "title": "Cursor Documentation",
+                    "url": "https://cursor.sh/docs"
+                },
+                {
+                    "title": "Cursor Getting Started",
+                    "url": "https://cursor.sh/blog/getting-started"
+                }
+            ]
+        },
+        {
+            "slug": "tabnine",
+            "name": "Tabnine AI Code Completion",
+            "category": "AI Coding Assistants",
+            "shortDesc": "Privacy-focused AI code assistant with on-premise deployment options",
+            "fullDescription": "Tabnine is an AI code completion tool that prioritizes privacy and security. Unlike cloud-only solutions, Tabnine offers on-premise deployment and can be trained on your private codebase. Supports all major IDEs and programming languages. Features both whole-line and full-function completions. Offers a generous free tier and is popular with enterprises due to GDPR/SOC 2 compliance.",
+            "specifications": {
+                "Pricing": "Free (basic), $12/month (Pro), Custom (Enterprise)",
+                "Free Tier": "Short code completions, limited AI model",
+                "Privacy": "On-premise deployment available, never trains on your code",
+                "Supported IDEs": "VS Code, IntelliJ, PyCharm, Android Studio, 15+ more",
+                "Languages": "80+ programming languages",
+                "Models": "Proprietary models + GPT integration (Pro)",
+                "Deployment": "Cloud, On-premise, or Hybrid",
+                "Compliance": "SOC 2, GDPR compliant"
+            },
+            "features": {
+                "Code Completion": "Whole-line and full-function suggestions",
+                "Private Model": "Train on your organization's codebase (Enterprise)",
+                "Multi-language": "Support for 80+ languages",
+                "Team Learning": "Learns from your team's code patterns",
+                "Chat": "AI chat for code generation and Q&A (Pro)",
+                "Security": "No code leaves your environment (On-premise)",
+                "Customization": "Adjust completion frequency and style",
+                "Analytics": "Team usage metrics (Enterprise)"
+            },
+            "useCases": [
+                "Enterprise environments requiring on-premise AI",
+                "Teams with strict data privacy requirements",
+                "Organizations subject to GDPR/HIPAA/SOC 2",
+                "Training AI on proprietary codebase patterns",
+                "Multi-language projects (better language coverage)",
+                "Developers wanting a free Copilot alternative",
+                "Air-gapped development environments",
+                "Custom model fine-tuning for specific domains"
+            ],
+            "bestPractices": [
+                "Use Team plan to share learned patterns across team",
+                "Configure completion delay to reduce noise",
+                "Enable semantic completion for better context",
+                "Use Enterprise plan for sensitive codebases",
+                "Combine with pre-commit hooks for code quality",
+                "Train private model on your coding standards",
+                "Disable for pair programming sessions",
+                "Review suggestions for security vulnerabilities"
+            ],
+            "vsGithubCopilot": {
+                "Privacy": "Tabnine: On-premise option | Copilot: Cloud only",
+                "Free Tier": "Tabnine: Available | Copilot: Students/OSS only",
+                "Price": "Tabnine: $12/mo | Copilot: $10/mo",
+                "Training": "Tabnine: Can train on your code | Copilot: Generic training",
+                "Context": "Tabnine: Focused | Copilot: Broader",
+                "Enterprise": "Tabnine: Strong compliance | Copilot: Business tier available"
+            },
+            "codeSnippet": {
+                "language": "python",
+                "title": "Example: Tabnine Completion",
+                "code": "# Type comment and Tabnine suggests implementation\n# \"function to validate email address using regex\"\n\nimport re\n\ndef validate_email(email: str) -> bool:\n    \"\"\"Validate email address using regex pattern.\"\"\"\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return bool(re.match(pattern, email))\n\n# Tabnine learns your patterns and suggests similar functions:\n# \"function to validate phone number\"\ndef validate_phone(phone: str) -> bool:\n    \"\"\"Validate phone number using regex pattern.\"\"\"\n    pattern = r'^\\+?1?\\d{9,15}$'\n    return bool(re.match(pattern, phone))"
+            },
+            "pricing": "Free, $12/month Pro, Custom Enterprise",
+            "image": "/images/resources/tabnine-logo.jpg",
+            "alternatives": [
+                "github-copilot",
+                "codeium"
+            ],
+            "relatedResources": [
+                "codeium",
+                "cursor-ide"
+            ],
+            "tutorials": [
+                {
+                    "title": "Tabnine Documentation",
+                    "url": "https://docs.tabnine.com/"
+                },
+                {
+                    "title": "Enterprise Deployment Guide",
+                    "url": "https://www.tabnine.com/install/enterprise"
+                }
+            ]
+        },
+        {
+            "slug": "codeium",
+            "name": "Codeium - Free AI Code Acceleration",
+            "category": "AI Coding Assistants",
+            "shortDesc": "Forever-free AI code completion and chat for individuals with unlimited usage",
+            "fullDescription": "Codeium is a free AI-powered code acceleration toolkit offering autocomplete, chat, and search capabilities. Built by Exafunction, it's completely free for individual developers with no usage limits. Supports 70+ languages and integrates with 40+ IDEs. Features include multi-line completions, natural language to code, in-editor AI chat, and codebase-aware suggestions. A great free alternative to GitHub Copilot.",
+            "specifications": {
+                "Pricing": "FREE forever for individuals, $12/month Teams, Custom Enterprise",
+                "Free Tier": "Unlimited usage, all features (for individuals)",
+                "Supported IDEs": "VS Code, JetBrains, Vim/Neovim, Jupyter, 40+ more",
+                "Languages": "70+ programming languages",
+                "Context Window": "Uses codebase context for suggestions",
+                "Latency": "~50-100ms",
+                "Offline Mode": "No (requires connection)",
+                "Privacy": "Code encrypted in transit, not used for training"
+            },
+            "features": {
+                "Autocomplete": "Multi-line code suggestions as you type",
+                "Chat": "In-editor AI chat (like ChatGPT in your IDE)",
+                "Search": "Natural language codebase search",
+                "Refactor": "AI-powered code refactoring",
+                "Explain": "Get explanations for code snippets",
+                "Generate": "Generate functions from comments",
+                "Docstring": "Auto-generate documentation",
+                "Unlimited": "No token limits or usage caps (individual plan)"
+            },
+            "useCases": [
+                "Students learning to code (better than paid alternatives)",
+                "Open-source developers on a budget",
+                "Indie developers and freelancers",
+                "Teams wanting to try AI coding before committing",
+                "Multi-IDE workflows (better IDE coverage)",
+                "Jupyter Notebook development (rare feature)",
+                "Vim/Neovim users wanting AI (great integration)",
+                "Anyone wanting free unlimited AI assistance"
+            ],
+            "bestPractices": [
+                "Use Chat for complex questions, Autocomplete for speed",
+                "Reference files with @filename in Chat",
+                "Leverage codebase context - it learns your patterns",
+                "Use Command K for quick inline edits",
+                "Enable 'Diff View' to review suggestions",
+                "Customize suggestion frequency in settings",
+                "Use for learning - it's free and unlimited",
+                "Combine with Cursor for best free setup"
+            ],
+            "whyFree": {
+                "explanation": "Codeium is free for individuals to drive adoption and compete with GitHub Copilot. They monetize through Teams and Enterprise plans with additional features (analytics, admin controls, on-premise deployment). Their strategy focuses on freemium growth.",
+                "limitations": "Individual plan has all core features - no artificial limits. Teams plan adds collaboration features, usage analytics, and priority support. Enterprise adds on-premise deployment and custom models."
+            },
+            "codeSnippet": {
+                "language": "javascript",
+                "title": "Example: Codeium Autocomplete",
+                "code": "// Type a comment and Codeium suggests implementation\n// \"fetch user data with error handling and loading state\"\n\nconst [user, setUser] = useState(null);\nconst [loading, setLoading] = useState(false);\nconst [error, setError] = useState(null);\n\nuseEffect(() => {\n  const fetchUser = async () => {\n    setLoading(true);\n    setError(null);\n    try {\n      const response = await fetch('/api/user');\n      if (!response.ok) throw new Error('Failed to fetch user');\n      const data = await response.json();\n      setUser(data);\n    } catch (err) {\n      setError(err.message);\n    } finally {\n      setLoading(false);\n    }\n  };\n  fetchUser();\n}, []);\n\n// Codeium Chat: \"Add retry logic with exponential backoff\"\n// It will refactor the code with retry mechanism"
+            },
+            "pricing": "FREE forever (individual), $12/month Teams",
+            "image": "/images/resources/codeium-logo.jpg",
+            "alternatives": [
+                "github-copilot",
+                "tabnine"
+            ],
+            "relatedResources": [
+                "cursor-ide",
+                "github-copilot"
+            ],
+            "tutorials": [
+                {
+                    "title": "Codeium Documentation",
+                    "url": "https://codeium.com/docs"
+                },
+                {
+                    "title": "Getting Started Guide",
+                    "url": "https://codeium.com/blog/getting-started-with-codeium"
+                }
+            ]
+        }
+    ]
+}

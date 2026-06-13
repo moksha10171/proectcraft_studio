@@ -1,0 +1,481 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Material Design 3 Expressive Theme - Consistent Teal/Cyan palette */
+:root {
+  --background: oklch(0.985 0.002 180);
+  --foreground: oklch(0.15 0.015 180);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.015 180);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.015 180);
+  --primary: oklch(0.48 0.14 180);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.94 0.025 180);
+  --secondary-foreground: oklch(0.25 0.04 180);
+  --muted: oklch(0.96 0.008 180);
+  --muted-foreground: oklch(0.48 0.015 180);
+  --accent: oklch(0.94 0.025 180);
+  --accent-foreground: oklch(0.25 0.04 180);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.9 0.015 180);
+  --input: oklch(0.9 0.015 180);
+  --ring: oklch(0.48 0.14 180);
+  --radius: 0.875rem;
+  --chart-1: oklch(0.48 0.14 180);
+  --chart-2: oklch(0.55 0.12 150);
+  --chart-3: oklch(0.52 0.1 210);
+  --chart-4: oklch(0.58 0.12 120);
+  --chart-5: oklch(0.5 0.14 240);
+  --sidebar: oklch(0.98 0.003 180);
+  --sidebar-foreground: oklch(0.15 0.015 180);
+  --sidebar-primary: oklch(0.48 0.14 180);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0.025 180);
+  --sidebar-accent-foreground: oklch(0.25 0.04 180);
+  --sidebar-border: oklch(0.9 0.015 180);
+  --sidebar-ring: oklch(0.48 0.14 180);
+  /* Added surface variants for Material Design 3 */
+  --surface-container: oklch(0.96 0.008 180);
+  --surface-container-high: oklch(0.94 0.012 180);
+  --surface-container-low: oklch(0.98 0.004 180);
+  --on-surface: oklch(0.15 0.015 180);
+  --on-surface-variant: oklch(0.45 0.02 180);
+  --outline: oklch(0.78 0.02 180);
+  --outline-variant: oklch(0.88 0.015 180);
+}
+
+.dark {
+  --background: oklch(0.12 0.015 180);
+  --foreground: oklch(0.94 0.008 180);
+  --card: oklch(0.16 0.018 180);
+  --card-foreground: oklch(0.94 0.008 180);
+  --popover: oklch(0.16 0.018 180);
+  --popover-foreground: oklch(0.94 0.008 180);
+  --primary: oklch(0.72 0.14 180);
+  --primary-foreground: oklch(0.12 0.015 180);
+  --secondary: oklch(0.22 0.025 180);
+  --secondary-foreground: oklch(0.94 0.008 180);
+  --muted: oklch(0.2 0.015 180);
+  --muted-foreground: oklch(0.65 0.015 180);
+  --accent: oklch(0.22 0.025 180);
+  --accent-foreground: oklch(0.94 0.008 180);
+  --destructive: oklch(0.62 0.24 25);
+  --destructive-foreground: oklch(0.12 0.015 180);
+  --border: oklch(0.26 0.02 180);
+  --input: oklch(0.26 0.02 180);
+  --ring: oklch(0.72 0.14 180);
+  --chart-1: oklch(0.72 0.14 180);
+  --chart-2: oklch(0.68 0.12 150);
+  --chart-3: oklch(0.65 0.1 210);
+  --chart-4: oklch(0.7 0.12 120);
+  --chart-5: oklch(0.62 0.14 240);
+  --sidebar: oklch(0.14 0.018 180);
+  --sidebar-foreground: oklch(0.94 0.008 180);
+  --sidebar-primary: oklch(0.72 0.14 180);
+  --sidebar-primary-foreground: oklch(0.12 0.015 180);
+  --sidebar-accent: oklch(0.22 0.025 180);
+  --sidebar-accent-foreground: oklch(0.94 0.008 180);
+  --sidebar-border: oklch(0.26 0.02 180);
+  --sidebar-ring: oklch(0.72 0.14 180);
+  --surface-container: oklch(0.18 0.018 180);
+  --surface-container-high: oklch(0.22 0.02 180);
+  --surface-container-low: oklch(0.14 0.015 180);
+  --on-surface: oklch(0.94 0.008 180);
+  --on-surface-variant: oklch(0.75 0.015 180);
+  --outline: oklch(0.45 0.02 180);
+  --outline-variant: oklch(0.32 0.018 180);
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    /* Better text rendering */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Better focus states for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}
+
+/* Custom scrollbar with Material Design feel */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--muted-foreground);
+    opacity: 0.5;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--foreground);
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  /* Safe area padding for mobile devices */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  /* Material Design 3 state layers */
+  .state-layer {
+    position: relative;
+  }
+  .state-layer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+  .state-layer:hover::before {
+    opacity: 0.08;
+  }
+  .state-layer:focus-visible::before {
+    opacity: 0.12;
+  }
+  .state-layer:active::before {
+    opacity: 0.12;
+  }
+
+  /* Skeleton loading animation */
+  .skeleton-pulse {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes skeleton-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* ========================================
+   CROSS-BROWSER COMPATIBILITY & MOBILE UX
+   ======================================== */
+
+/* Cross-browser compatibility */
+@supports not (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-pb {
+    padding-bottom: 0;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border: oklch(0.4 0.02 180);
+    --outline: oklch(0.3 0.02 180);
+  }
+  .dark {
+    --border: oklch(0.7 0.02 180);
+    --outline: oklch(0.8 0.02 180);
+  }
+}
+
+/* ========================================
+   MOBILE & TOUCH OPTIMIZATIONS
+   ======================================== */
+
+/* Touch-friendly tap targets (minimum 44x44px for iOS) */
+@layer utilities {
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text selection on buttons/interactive elements */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* Touch action optimization */
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Smooth momentum scrolling for iOS */
+  .scroll-smooth-ios {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Remove tap highlight on mobile */
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Active state for touch devices */
+  .touch-active:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS & UTILITIES
+   ======================================== */
+
+@layer utilities {
+  /* Responsive text utilities */
+  .text-responsive {
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+  }
+  .text-responsive-lg {
+    font-size: clamp(1rem, 3vw, 1.125rem);
+  }
+  .text-responsive-xl {
+    font-size: clamp(1.125rem, 3.5vw, 1.25rem);
+  }
+  .text-responsive-2xl {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+  }
+
+  /* Fluid spacing */
+  .space-fluid {
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+  .space-fluid-sm {
+    padding: clamp(0.5rem, 2vw, 1rem);
+  }
+  .space-fluid-lg {
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  /* Container queries support */
+  @supports (container-type: inline-size) {
+    .container-aware {
+      container-type: inline-size;
+    }
+  }
+}
+
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+
+/* GPU acceleration for animations */
+@layer utilities {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .gpu-accelerated-scroll {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Content visibility for performance */
+@supports (content-visibility: auto) {
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+  }
+}
+
+/* ========================================
+   BROWSER-SPECIFIC FIXES
+   ======================================== */
+
+/* Safari-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Fix for iOS Safari bottom bar */
+  .ios-full-height {
+    min-height: -webkit-fill-available;
+  }
+
+  /* Fix for iOS input zoom */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    font-size: max(16px, 1rem);
+  }
+}
+
+/* Firefox-specific fixes */
+@-moz-document url-prefix() {
+  /* Firefox scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) transparent;
+  }
+}
+
+/* Edge/IE-specific fixes (if needed) */
+@supports (-ms-ime-align: auto) {
+  .edge-fix {
+    /* Edge-specific styles */
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ======================================== */
+
+/* Better focus indicators */
+@layer base {
+  /* Keyboard navigation focus */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Skip link visibility */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+    z-index: 100;
+  }
+
+  .skip-link:focus {
+    top: 0;
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  /* Hide non-essential elements */
+  .no-print,
+  header,
+  footer,
+  nav,
+  .bottom-navigation {
+    display: none !important;
+  }
+
+  /* Optimize for print */
+  * {
+    background: white !important;
+    color: black !important;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  /* Page breaks */
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+
+  img {
+    page-break-inside: avoid;
+  }
+}

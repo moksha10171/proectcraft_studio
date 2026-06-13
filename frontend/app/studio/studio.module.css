@@ -1,0 +1,174 @@
+/* Visualizer panel — isolate paint for smoother simulation */
+.studioContainer :global(.visualizer-panel) {
+    contain: layout style paint;
+    will-change: auto;
+}
+
+.studioContainer :global(.visualizer-panel[data-running="true"]) {
+    will-change: contents;
+}
+
+/* Root container for studio page */
+.studioContainer {
+    /* Container sizing - width not set via Tailwind */
+    width: 100vw;
+    /* Note: background, color, overflow, height are set via Tailwind in JSX */
+}
+
+/* Custom Scrollbars - Scoped to studio container */
+.studioContainer :global(.custom-scrollbar)::-webkit-scrollbar,
+.studioContainer ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.studioContainer :global(.custom-scrollbar)::-webkit-scrollbar-track,
+.studioContainer ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+}
+
+.studioContainer :global(.custom-scrollbar)::-webkit-scrollbar-thumb,
+.studioContainer ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+}
+
+.studioContainer :global(.custom-scrollbar)::-webkit-scrollbar-thumb:hover,
+.studioContainer ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Hide scrollbar but keep functionality */
+.studioContainer :global(.no-scrollbar)::-webkit-scrollbar {
+    display: none;
+}
+
+.studioContainer :global(.no-scrollbar) {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Grid Pattern Utility */
+.studioContainer :global(.grid-pattern) {
+    background-image:
+        linear-gradient(hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Code Font */
+.studioContainer :global(.code-font) {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+/* PrismJS Theme Overrides for Dark Mode - Scoped */
+.studioContainer pre[class*="language-"],
+.studioContainer code[class*="language-"] {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+    font-size: 13px;
+    line-height: 1.6;
+    background: transparent !important;
+}
+
+.studioContainer .token.comment,
+.studioContainer .token.block-comment,
+.studioContainer .token.prolog,
+.studioContainer .token.doctype,
+.studioContainer .token.cdata {
+    color: #6a9955;
+}
+
+.studioContainer .token.punctuation {
+    color: #d4d4d4;
+}
+
+.studioContainer .token.property,
+.studioContainer .token.tag,
+.studioContainer .token.boolean,
+.studioContainer .token.number,
+.studioContainer .token.function-name,
+.studioContainer .token.constant,
+.studioContainer .token.symbol {
+    color: #b5cea8;
+}
+
+.studioContainer .token.selector,
+.studioContainer .token.attr-name,
+.studioContainer .token.string,
+.studioContainer .token.char,
+.studioContainer .token.builtin {
+    color: #ce9178;
+}
+
+.studioContainer .token.operator,
+.studioContainer .token.entity,
+.studioContainer .token.url,
+.studioContainer .language-css .token.string,
+.studioContainer .style .token.string {
+    color: #d4d4d4;
+}
+
+.studioContainer .token.atrule,
+.studioContainer .token.attr-value,
+.studioContainer .token.keyword {
+    color: #569cd6;
+}
+
+.studioContainer .token.function {
+    color: #dcdcaa;
+}
+
+.studioContainer .token.class-name {
+    color: #4ec9b0;
+}
+
+.studioContainer .token.regex,
+.studioContainer .token.important,
+.studioContainer .token.variable {
+    color: #d16969;
+}
+
+/* Text input styles - Scoped */
+.studioContainer input[type="text"],
+.studioContainer textarea {
+    outline: none;
+}
+
+.studioContainer input[type="text"]:focus,
+.studioContainer textarea:focus {
+    box-shadow: 0 0 0 1px hsl(var(--ring));
+}
+
+/* Button focus states - Scoped */
+.studioContainer button:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+}
+
+/* Mesh Pattern for Components */
+.studioContainer :global(.mesh-pattern) {
+    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.3) 1px, transparent 1px);
+    background-size: 2px 2px;
+}
+
+/* Animation for matrix rain effect */
+@keyframes matrixRain {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(100%);
+    }
+}
+
+.studioContainer :global(.animate-matrix-rain) {
+    animation: matrixRain 2s linear infinite;
+}
+
+/* Selection color - Scoped */
+.studioContainer ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: inherit;
+}

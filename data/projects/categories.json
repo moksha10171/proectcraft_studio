@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "name": "Web Development",
+    "slug": "web-development",
+    "description": "Full-stack web applications, SPAs, and modern frontend projects",
+    "icon": "fas fa-globe",
+    "projectCount": 0
+  },
+  {
+    "id": 2,
+    "name": "Mobile Development",
+    "slug": "mobile-development",
+    "description": "Android, iOS, and cross-platform mobile apps",
+    "icon": "fas fa-mobile-alt",
+    "projectCount": 0
+  },
+  {
+    "id": 3,
+    "name": "Arduino & IoT",
+    "slug": "arduino",
+    "description": "Microcontroller projects, sensors, and embedded systems",
+    "icon": "fas fa-microchip",
+    "projectCount": 0
+  },
+  {
+    "id": 4,
+    "name": "Raspberry Pi",
+    "slug": "raspberry-pi",
+    "description": "Single-board computer projects and home automation",
+    "icon": "fas fa-server",
+    "projectCount": 0
+  },
+  {
+    "id": 5,
+    "name": "Machine Learning",
+    "slug": "machine-learning",
+    "description": "AI models, data pipelines, and ML applications",
+    "icon": "fas fa-brain",
+    "projectCount": 0
+  },
+  {
+    "id": 6,
+    "name": "Cybersecurity",
+    "slug": "cybersecurity",
+    "description": "Security tools, penetration testing, and network analysis",
+    "icon": "fas fa-shield-alt",
+    "projectCount": 0
+  },
+  {
+    "id": 7,
+    "name": "Data Science",
+    "slug": "data-science",
+    "description": "Data analysis, visualization, and statistical modeling",
+    "icon": "fas fa-database",
+    "projectCount": 0
+  },
+  {
+    "id": 8,
+    "name": "Game Development",
+    "slug": "game-development",
+    "description": "2D/3D games, game engines, and interactive experiences",
+    "icon": "fas fa-gamepad",
+    "projectCount": 0
+  }
+]

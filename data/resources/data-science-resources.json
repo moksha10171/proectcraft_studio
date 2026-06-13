@@ -1,0 +1,645 @@
+{
+    "overview": {
+        "title": "Data Science Tools & Libraries",
+        "description": "Essential tools and libraries for data analysis, visualization, statistical computing, and data manipulation in Python, R, and interactive environments",
+        "totalComponents": 8,
+        "categories": [
+            "Data Manipulation",
+            "Data Visualization",
+            "Statistical Computing",
+            "Interactive Computing",
+            "Business Intelligence",
+            "Big Data Processing"
+        ]
+    },
+    "resources": [
+        {
+            "slug": "pandas",
+            "name": "Pandas - Data Manipulation",
+            "category": "Data Manipulation",
+            "shortDesc": "Powerful Python library for data manipulation and analysis, providing data structures and operations for working with structured data",
+            "fullDescription": "Pandas is a fast, powerful, flexible and easy to use open-source data analysis and manipulation tool, built on top of the Python programming language. It provides data structures and operations for manipulating numerical tables and time series. Pandas is widely used in data science, machine learning, and financial analysis.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "BSD-3-Clause",
+                "Languages": "Python",
+                "Dependencies": "NumPy, python-dateutil, pytz",
+                "Data Structures": "Series (1D), DataFrame (2D), Panel (3D)",
+                "File Formats": "CSV, Excel, JSON, SQL, HDF5, Parquet, etc.",
+                "Performance": "Vectorized operations with NumPy",
+                "Memory Usage": "Efficient memory usage with categorical data",
+                "Integration": "Seamless integration with scikit-learn, matplotlib, etc."
+            },
+            "features": {
+                "DataFrame": "2D labeled data structure with columns",
+                "Series": "1D labeled array",
+                "Data Cleaning": "Handle missing data, duplicates, outliers",
+                "Data Transformation": "Merge, join, pivot, melt operations",
+                "Time Series": "Date/time handling and resampling",
+                "Group Operations": "GroupBy operations for aggregation",
+                "IO Tools": "Read/write data from various formats",
+                "Indexing": "Powerful indexing and selection methods",
+                "Reshaping": "Pivot tables and data restructuring"
+            },
+            "useCases": [
+                "Data cleaning and preprocessing",
+                "Exploratory data analysis",
+                "Data transformation and feature engineering",
+                "Time series analysis",
+                "Financial data analysis",
+                "Business analytics",
+                "Machine learning data preparation",
+                "ETL operations"
+            ],
+            "bestPractices": [
+                "Use vectorized operations instead of loops",
+                "Set appropriate data types to save memory",
+                "Use categorical data for repeated strings",
+                "Handle missing data appropriately",
+                "Use method chaining for readable code",
+                "Avoid modifying original DataFrames",
+                "Use appropriate indexing methods",
+                "Profile memory usage with large datasets"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Pandas Data Analysis Example",
+                "code": "import pandas as pd\nimport numpy as np\n\n# Create sample data\ndata = {\n    'Name': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],\n    'Age': [25, 30, 35, 28, 32],\n    'Salary': [50000, 60000, 75000, 55000, 80000],\n    'Department': ['Engineering', 'Sales', 'Engineering', 'Marketing', 'Engineering']\n}\n\ndf = pd.DataFrame(data)\nprint('Original DataFrame:')\nprint(df)\nprint('\\n' + '='*50 + '\\n')\n\n# Data filtering\nengineering = df[df['Department'] == 'Engineering']\nprint('Employees in Engineering:')\nprint(engineering)\nprint('\\n' + '='*50 + '\\n')\n\n# Data aggregation\nprint('Average salary by department:')\ndept_avg = df.groupby('Department')['Salary'].mean()\nprint(dept_avg)\nprint('\\n' + '='*50 + '\\n')\n\n# Data transformation\ndf['Experience_Level'] = pd.cut(df['Age'], \n                                bins=[0, 30, 40, 100], \n                                labels=['Junior', 'Mid', 'Senior'])\nprint('With experience levels:')\nprint(df[['Name', 'Age', 'Experience_Level']])"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/pandas.jpg",
+            "alternatives": [
+                "dask",
+                "polars",
+                "modin"
+            ],
+            "relatedResources": [
+                "numpy",
+                "matplotlib"
+            ],
+            "tutorials": [
+                {
+                    "title": "Pandas Documentation",
+                    "url": "https://pandas.pydata.org/docs/"
+                },
+                {
+                    "title": "Pandas Tutorials",
+                    "url": "https://pandas.pydata.org/docs/getting_started/index.html"
+                },
+                {
+                    "title": "Kaggle Pandas Course",
+                    "url": "https://www.kaggle.com/learn/pandas"
+                }
+            ]
+        },
+        {
+            "slug": "numpy",
+            "name": "NumPy - Numerical Computing",
+            "category": "Data Manipulation",
+            "shortDesc": "Fundamental package for scientific computing with Python, providing powerful N-dimensional array objects and mathematical functions",
+            "fullDescription": "NumPy is the fundamental package for scientific computing with Python. It provides a high-performance multidimensional array object, and tools for working with these arrays. It's the core library for scientific computing in Python and the foundation for libraries like Pandas, SciPy, and scikit-learn.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "BSD-3-Clause",
+                "Languages": "Python, C (core)",
+                "Array Types": "ndarray (N-dimensional)",
+                "Data Types": "int8, int16, int32, int64, float16, float32, float64, complex",
+                "Performance": "Vectorized operations in C",
+                "Memory Layout": "Contiguous arrays for efficiency",
+                "Broadcasting": "Automatic array broadcasting",
+                "Integration": "Foundation for SciPy, Pandas, scikit-learn"
+            },
+            "features": {
+                "N-Dimensional Arrays": "Powerful ndarray object",
+                "Mathematical Functions": "Trigonometric, exponential, logarithmic",
+                "Linear Algebra": "Matrix operations, eigenvalues, SVD",
+                "Random Numbers": "Random number generation",
+                "Fourier Transforms": "FFT algorithms",
+                "Broadcasting": "Automatic array operations",
+                "Indexing": "Advanced indexing and slicing",
+                "Memory Mapping": "Efficient large array handling"
+            },
+            "useCases": [
+                "Scientific computing",
+                "Data analysis",
+                "Machine learning",
+                "Image processing",
+                "Signal processing",
+                "Statistical analysis",
+                "Matrix computations",
+                "Numerical simulations"
+            ],
+            "bestPractices": [
+                "Use vectorized operations instead of loops",
+                "Choose appropriate data types",
+                "Use broadcasting for efficiency",
+                "Avoid copying arrays when possible",
+                "Use views instead of copies for slicing",
+                "Set random seeds for reproducibility",
+                "Use numpy functions over Python loops",
+                "Profile memory usage with large arrays"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "NumPy Scientific Computing Example",
+                "code": "import numpy as np\n\n# Creating arrays\nprint('1. Array Creation:')\na = np.array([1, 2, 3, 4, 5])\nprint(f'1D array: {a}, shape: {a.shape}')\n\nb = np.array([[1, 2, 3], [4, 5, 6]])\nprint(f'2D array: {b}, shape: {b.shape}')\n\n# Array operations\nprint('\\n2. Array Operations:')\nx = np.array([1, 2, 3])\ny = np.array([4, 5, 6])\nprint(f'Addition: {x + y}')\nprint(f'Element-wise multiply: {x * y}')\nprint(f'Dot product: {np.dot(x, y)}')\n\n# Broadcasting\nprint('\\n3. Broadcasting:')\na = np.array([[1, 2, 3], [4, 5, 6]])\nb = np.array([10, 20, 30])\nprint(f'Array a shape: {a.shape}, b shape: {b.shape}')\nprint(f'Broadcasting result: {a + b}')\n\n# Linear algebra\nprint('\\n4. Linear Algebra:')\nA = np.array([[1, 2], [3, 4]])\nprint(f'Matrix: {A}')\nprint(f'Determinant: {np.linalg.det(A):.2f}')\nprint(f'Inverse: {np.linalg.inv(A)}')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/numpy.jpg",
+            "alternatives": [
+                "jax",
+                "cupy",
+                "dask"
+            ],
+            "relatedResources": [
+                "pandas",
+                "scipy"
+            ],
+            "tutorials": [
+                {
+                    "title": "NumPy Documentation",
+                    "url": "https://numpy.org/doc/"
+                },
+                {
+                    "title": "NumPy Tutorials",
+                    "url": "https://numpy.org/doc/stable/user/quickstart.html"
+                },
+                {
+                    "title": "NumPy for Data Science",
+                    "url": "https://www.datacamp.com/tutorial/numpy-tutorial-data-science"
+                }
+            ]
+        },
+        {
+            "slug": "matplotlib",
+            "name": "Matplotlib - Data Visualization",
+            "category": "Data Visualization",
+            "shortDesc": "Comprehensive library for creating static, animated, and interactive visualizations in Python",
+            "fullDescription": "Matplotlib is a comprehensive library for creating static, animated, and interactive visualizations in Python. It provides an object-oriented API for embedding plots into applications and is the foundation for many other visualization libraries. Matplotlib produces publication-quality figures in a variety of formats and interactive environments.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "BSD-style",
+                "Languages": "Python",
+                "Backends": "Agg, Cairo, GTK, Qt, Tk, WebAgg, etc.",
+                "Output Formats": "PNG, PDF, SVG, EPS, PGF, WebP",
+                "Plot Types": "Line, bar, scatter, histogram, box, violin, etc.",
+                "3D Support": "3D plotting with mplot3d",
+                "Animation": "Animation framework",
+                "Integration": "Seaborn, pandas, Jupyter notebooks"
+            },
+            "features": {
+                "Publication Quality": "High-quality output for papers",
+                "Multiple Formats": "Export to various file formats",
+                "Interactive Plots": "Zoom, pan, save functionality",
+                "Subplots": "Complex multi-panel figures",
+                "Customization": "Full control over appearance",
+                "Color Management": "Advanced color handling",
+                "Text Rendering": "LaTeX mathematical expressions",
+                "Animation Support": "Animated plots and videos",
+                "Style Sheets": "Pre-defined and custom styles"
+            },
+            "useCases": [
+                "Data exploration and analysis",
+                "Scientific publications",
+                "Presentations and reports",
+                "Web applications",
+                "Educational materials",
+                "Financial charting",
+                "Statistical graphics",
+                "Machine learning visualizations"
+            ],
+            "bestPractices": [
+                "Use plt.style for consistent appearance",
+                "Set figure size appropriately",
+                "Use subplots for multiple plots",
+                "Add proper labels and legends",
+                "Choose appropriate color schemes",
+                "Use tight_layout() to prevent overlap",
+                "Save figures with high DPI",
+                "Use vector formats for publications"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Matplotlib Visualization Examples",
+                "code": "import matplotlib.pyplot as plt\nimport numpy as np\n\n# Set style\nplt.style.use('seaborn-v0_8')\n\n# Create sample data\nx = np.linspace(0, 10, 100)\ny1 = np.sin(x)\ny2 = np.cos(x)\ndata = np.random.normal(50, 15, 1000)\ncategories = ['A', 'B', 'C', 'D', 'E']\nvalues = [23, 45, 56, 78, 32]\n\n# Line plot\nplt.figure(figsize=(10, 6))\nplt.plot(x, y1, label='sin(x)', color='blue', linewidth=2)\nplt.plot(x, y2, label='cos(x)', color='red', linewidth=2, linestyle='--')\nplt.title('Line Plot Example')\nplt.xlabel('x')\nplt.ylabel('y')\nplt.legend()\nplt.grid(True, alpha=0.3)\nplt.savefig('line_plot.png', dpi=300, bbox_inches='tight')\nplt.show()\n\n# Bar chart\nplt.figure(figsize=(8, 5))\nbars = plt.bar(categories, values, color='skyblue')\nplt.title('Bar Chart Example')\nplt.ylabel('Values')\nfor bar, value in zip(bars, values):\n    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1, \n             str(value), ha='center', va='bottom')\nplt.savefig('bar_chart.png', dpi=300, bbox_inches='tight')\nplt.show()\n\n# Histogram\nplt.figure(figsize=(8, 5))\nplt.hist(data, bins=30, alpha=0.7, color='steelblue', edgecolor='black')\nplt.title('Histogram Example')\nplt.xlabel('Value')\nplt.ylabel('Frequency')\nplt.savefig('histogram.png', dpi=300, bbox_inches='tight')\nplt.show()"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/matplotlib.jpg",
+            "alternatives": [
+                "seaborn",
+                "plotly",
+                "bokeh"
+            ],
+            "relatedResources": [
+                "seaborn",
+                "pandas"
+            ],
+            "tutorials": [
+                {
+                    "title": "Matplotlib Documentation",
+                    "url": "https://matplotlib.org/stable/users/index.html"
+                },
+                {
+                    "title": "Matplotlib Tutorials",
+                    "url": "https://matplotlib.org/stable/tutorials/index.html"
+                },
+                {
+                    "title": "Python Data Science Handbook",
+                    "url": "https://jakevdp.github.io/PythonDataScienceHandbook/04.00-introduction-to-matplotlib.html"
+                }
+            ]
+        },
+        {
+            "slug": "seaborn",
+            "name": "Seaborn - Statistical Data Visualization",
+            "category": "Data Visualization",
+            "shortDesc": "Statistical data visualization library based on matplotlib, providing a high-level interface for attractive statistical graphics",
+            "fullDescription": "Seaborn is a Python data visualization library based on matplotlib. It provides a high-level interface for drawing attractive and informative statistical graphics. Seaborn helps you explore and understand your data with beautiful visualizations that make it easy to identify patterns and relationships.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "BSD-3-Clause",
+                "Languages": "Python",
+                "Dependencies": "matplotlib, numpy, pandas, scipy",
+                "Plot Types": "Relational, categorical, distribution, regression plots",
+                "Themes": "Built-in themes and color palettes",
+                "Integration": "Works seamlessly with pandas DataFrames",
+                "Statistical Functions": "Built-in statistical computations"
+            },
+            "features": {
+                "Statistical Plots": "Box plots, violin plots, swarm plots",
+                "Distribution Plots": "Histograms, KDE plots, rug plots",
+                "Relational Plots": "Scatter plots, line plots with regression",
+                "Categorical Plots": "Bar plots, count plots, point plots",
+                "Matrix Plots": "Heatmaps, clustermaps",
+                "Regression Plots": "Linear regression, residual plots",
+                "Multi-plot Grids": "FacetGrid, PairGrid, JointGrid",
+                "Color Palettes": "Built-in and custom color schemes"
+            },
+            "useCases": [
+                "Statistical data visualization",
+                "Exploratory data analysis",
+                "Data relationships exploration",
+                "Publication-quality plots",
+                "Statistical model visualization",
+                "Categorical data analysis",
+                "Distribution analysis",
+                "Correlation visualization"
+            ],
+            "bestPractices": [
+                "Use appropriate plot types for data types",
+                "Set figure size for readability",
+                "Choose meaningful color palettes",
+                "Add informative titles and labels",
+                "Use statistical plots for insights",
+                "Combine multiple views when needed",
+                "Save plots in vector formats",
+                "Use themes for consistency"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Seaborn Statistical Visualization",
+                "code": "import seaborn as sns\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport numpy as np\n\n# Set style\nsns.set_style('whitegrid')\n\n# Load sample data\ntips = sns.load_dataset('tips')\nprint('Sample data:')\nprint(tips.head())\nprint('\\n' + '='*50 + '\\n')\n\n# Distribution plot\nplt.figure(figsize=(8, 6))\nsns.histplot(data=tips, x='total_bill', kde=True, color='skyblue')\nplt.title('Distribution of Total Bill Amounts')\nplt.savefig('distribution_plot.png', dpi=300, bbox_inches='tight')\nplt.show()\n\n# Scatter plot with regression\nplt.figure(figsize=(8, 6))\nsns.regplot(data=tips, x='total_bill', y='tip', \n           scatter_kws={'alpha':0.6}, line_kws={'color': 'red'})\nplt.title('Total Bill vs Tip Amount')\nplt.savefig('scatter_regression.png', dpi=300, bbox_inches='tight')\nplt.show()\n\n# Box plot\nplt.figure(figsize=(8, 6))\nsns.boxplot(data=tips, x='day', y='total_bill', palette='Set3')\nplt.title('Total Bill Distribution by Day')\nplt.savefig('box_plot.png', dpi=300, bbox_inches='tight')\nplt.show()\n\n# Heatmap for correlations\nplt.figure(figsize=(8, 6))\nnumeric_cols = ['total_bill', 'tip', 'size']\ncorr_matrix = tips[numeric_cols].corr()\nsns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)\nplt.title('Correlation Matrix')\nplt.savefig('correlation_heatmap.png', dpi=300, bbox_inches='tight')\nplt.show()"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/seaborn.jpg",
+            "alternatives": [
+                "matplotlib",
+                "plotly",
+                "bokeh"
+            ],
+            "relatedResources": [
+                "matplotlib",
+                "pandas"
+            ],
+            "tutorials": [
+                {
+                    "title": "Seaborn Documentation",
+                    "url": "https://seaborn.pydata.org/"
+                },
+                {
+                    "title": "Seaborn Tutorials",
+                    "url": "https://seaborn.pydata.org/tutorial.html"
+                },
+                {
+                    "title": "Seaborn Example Gallery",
+                    "url": "https://seaborn.pydata.org/examples/index.html"
+                }
+            ]
+        },
+        {
+            "slug": "jupyter",
+            "name": "Jupyter Notebook - Interactive Computing",
+            "category": "Interactive Computing",
+            "shortDesc": "Web-based interactive computing environment for creating and sharing documents with live code, equations, and visualizations",
+            "fullDescription": "Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text. It's widely used for data analysis, machine learning, scientific computing, and educational purposes. Jupyter supports over 40 programming languages including Python, R, Julia, and Scala.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "BSD-3-Clause",
+                "Languages": "Python, R, Julia, Scala, and 40+ others",
+                "File Format": "JSON-based .ipynb files",
+                "Kernels": "Language-specific execution engines",
+                "Extensions": "Rich ecosystem of extensions",
+                "Collaboration": "Real-time collaboration support",
+                "Deployment": "Local, cloud, or server deployment",
+                "Integration": "GitHub, Google Colab, AWS SageMaker"
+            },
+            "features": {
+                "Interactive Code": "Execute code in cells with immediate output",
+                "Rich Text": "Markdown support with LaTeX equations",
+                "Data Visualization": "Inline plots and charts",
+                "Code Sharing": "Easy sharing of reproducible research",
+                "Version Control": "Git integration for notebooks",
+                "Extensions": "Magic commands, widgets, themes",
+                "Export Options": "HTML, PDF, Python scripts",
+                "Collaboration": "Multi-user editing capabilities",
+                "Cloud Hosting": "JupyterHub for team deployments"
+            },
+            "useCases": [
+                "Data analysis and exploration",
+                "Machine learning experimentation",
+                "Scientific research and publishing",
+                "Education and teaching",
+                "Prototyping and development",
+                "Documentation with executable code",
+                "Presentations and tutorials",
+                "Collaborative data science"
+            ],
+            "bestPractices": [
+                "Organize notebooks with clear structure",
+                "Use markdown cells for documentation",
+                "Keep cells focused on single tasks",
+                "Use meaningful variable names",
+                "Add comments to complex code",
+                "Use version control for notebooks",
+                "Clean output before sharing",
+                "Use relative imports and paths"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Jupyter Notebook Data Analysis",
+                "code": "# This is a Jupyter notebook cell\n\n# Cell 1: Import libraries\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nprint('Libraries imported successfully!')\n\n# Cell 2: Load and explore data\ndf = pd.read_csv('sample_data.csv')  # In real scenario\nprint('Data loaded:')\nprint(df.head())\nprint(f'\\nData shape: {df.shape}')\nprint(f'Columns: {list(df.columns)}')\n\n# Cell 3: Data visualization\nplt.figure(figsize=(10, 6))\nsns.scatterplot(data=df, x='feature1', y='feature2', hue='category')\nplt.title('Data Visualization in Jupyter')\nplt.savefig('jupyter_plot.png', dpi=150)\nplt.show()\n\n# Cell 4: Interactive elements\nfrom ipywidgets import interact, widgets\n\n@interact\n\ndef plot_histogram(bins=(5, 50, 5)):\n    plt.figure(figsize=(8, 5))\n    plt.hist(df['numeric_column'], bins=bins, alpha=0.7, color='skyblue')\n    plt.title(f'Histogram with {bins} bins')\n    plt.xlabel('Value')\n    plt.ylabel('Frequency')\n    plt.show()\n\nprint('Interactive histogram created!')\n\n# Cell 5: Markdown documentation\n\"\"\"\n## Analysis Summary\n\nThis notebook demonstrates:\n1. Data loading and exploration\n2. Statistical analysis\n3. Data visualization\n4. Interactive elements\n\n### Key Findings:\n- Dataset contains X records\n- Main insights from the analysis\n- Recommendations for next steps\n\"\"\""
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/jupyter.jpg",
+            "alternatives": [
+                "google-colab",
+                "vscode-notebooks",
+                "r-markdown"
+            ],
+            "relatedResources": [
+                "pandas",
+                "matplotlib"
+            ],
+            "tutorials": [
+                {
+                    "title": "Jupyter Documentation",
+                    "url": "https://jupyter.org/documentation"
+                },
+                {
+                    "title": "Jupyter Notebook Tutorial",
+                    "url": "https://jupyter-notebook.readthedocs.io/en/stable/examples/Notebook/examples_index.html"
+                },
+                {
+                    "title": "Real Python Jupyter Guide",
+                    "url": "https://realpython.com/jupyter-notebook-introduction/"
+                }
+            ]
+        },
+        {
+            "slug": "r-programming",
+            "name": "R Programming Language - Statistical Computing",
+            "category": "Statistical Computing",
+            "shortDesc": "Programming language and environment for statistical computing and graphics, widely used in data science and research",
+            "fullDescription": "R is a programming language and free software environment for statistical computing and graphics. It is widely used among statisticians and data miners for developing statistical software and data analysis. R provides a wide variety of statistical and graphical techniques, and is highly extensible through packages.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "GPL-2.0/GPL-3.0",
+                "Languages": "R (domain-specific)",
+                "Package System": "CRAN (15,000+ packages)",
+                "IDE": "RStudio (recommended)",
+                "Graphics": "Base graphics, ggplot2, lattice",
+                "Data Types": "Vectors, matrices, data frames, lists",
+                "Performance": "Vectorized operations",
+                "Integration": "Python, SQL, C++, Java"
+            },
+            "features": {
+                "Statistical Analysis": "Comprehensive statistical functions",
+                "Data Visualization": "Publication-quality graphics",
+                "Machine Learning": "Caret, randomForest, xgboost packages",
+                "Time Series": "Forecasting and analysis tools",
+                "Spatial Analysis": "Geographic data processing",
+                "Reporting": "R Markdown, knitr for reproducible research",
+                "Package Ecosystem": "15,000+ packages on CRAN",
+                "Interactive Console": "Command-line interface",
+                "Scripting": "Batch processing and automation"
+            },
+            "useCases": [
+                "Statistical data analysis",
+                "Academic research",
+                "Data mining and machine learning",
+                "Financial modeling",
+                "Biostatistics and bioinformatics",
+                "Social science research",
+                "Environmental data analysis",
+                "Quality control and Six Sigma"
+            ],
+            "bestPractices": [
+                "Use RStudio for development",
+                "Follow tidyverse principles",
+                "Write reproducible code",
+                "Use version control (Git)",
+                "Document functions and analysis",
+                "Use appropriate data structures",
+                "Profile and optimize performance",
+                "Use packages for complex tasks"
+            ],
+            "codeSnippet": {
+                "language": "r",
+                "title": "R Statistical Analysis Example",
+                "code": "# Load required libraries\nlibrary(tidyverse)\nlibrary(ggplot2)\n\n# Create sample data\nset.seed(123)\ndata <- data.frame(\n  group = rep(c('A', 'B', 'C'), each = 50),\n  value = c(\n    rnorm(50, mean = 10, sd = 2),\n    rnorm(50, mean = 12, sd = 2),\n    rnorm(50, mean = 8, sd = 2)\n  )\n)\n\n# Basic data exploration\nhead(data)\nsummary(data)\nstr(data)\n\n# Statistical tests\nt_test <- t.test(value ~ group, data = data[data$group %in% c('A', 'B'),])\nprint(t_test)\n\nanova_result <- aov(value ~ group, data = data)\nprint(summary(anova_result))\n\n# Data visualization\n# Histogram\nggplot(data, aes(x = value, fill = group)) +\n  geom_histogram(alpha = 0.7, position = 'identity', bins = 20) +\n  labs(title = 'Distribution by Group',\n       x = 'Value',\n       y = 'Count') +\n  theme_minimal()\n\nggsave('histogram.png', width = 8, height = 6, dpi = 300)\n\n# Box plot\nggplot(data, aes(x = group, y = value, fill = group)) +\n  geom_boxplot(alpha = 0.7) +\n  labs(title = 'Box Plot by Group',\n       x = 'Group',\n       y = 'Value') +\n  theme_minimal()\n\nggsave('boxplot.png', width = 8, height = 6, dpi = 300)\n\n# Scatter plot with regression\nset.seed(456)\ndata2 <- data.frame(\n  x = rnorm(100, 50, 10),\n  y = 2 * rnorm(100, 50, 10) + rnorm(100, 0, 5)\n)\n\nggplot(data2, aes(x = x, y = y)) +\n  geom_point(alpha = 0.6, color = 'blue') +\n  geom_smooth(method = 'lm', color = 'red', se = TRUE) +\n  labs(title = 'Scatter Plot with Regression Line',\n       x = 'X Variable',\n       y = 'Y Variable') +\n  theme_minimal()\n\nggsave('scatter_regression.png', width = 8, height = 6, dpi = 300)\n\n# Linear regression model\nmodel <- lm(y ~ x, data = data2)\nprint(summary(model))\n\n# Save results\nwrite.csv(data, 'analysis_data.csv', row.names = FALSE)\nsaveRDS(model, 'linear_model.rds')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/r-programming.jpg",
+            "alternatives": [
+                "python",
+                "julia",
+                "sas"
+            ],
+            "relatedResources": [
+                "rstudio",
+                "ggplot2"
+            ],
+            "tutorials": [
+                {
+                    "title": "R Documentation",
+                    "url": "https://www.r-project.org/"
+                },
+                {
+                    "title": "R for Data Science",
+                    "url": "https://r4ds.had.co.nz/"
+                },
+                {
+                    "title": "CRAN Task Views",
+                    "url": "https://cran.r-project.org/web/views/"
+                }
+            ]
+        },
+        {
+            "slug": "tableau",
+            "name": "Tableau - Business Intelligence & Analytics",
+            "category": "Business Intelligence",
+            "shortDesc": "Leading business intelligence and data visualization platform for creating interactive dashboards and reports",
+            "fullDescription": "Tableau is a leading business intelligence and data visualization platform that helps people see and understand data. It allows users to connect to various data sources, create interactive dashboards, and share insights across organizations. Tableau is known for its ease of use and powerful visualization capabilities.",
+            "specifications": {
+                "Pricing": "Tableau Public (Free), Creator ($70/user/month), Viewer ($15/user/month)",
+                "Deployment": "Desktop, Server, Online, Cloud",
+                "Data Connectors": "70+ native connectors",
+                "File Formats": "Excel, CSV, JSON, databases, cloud services",
+                "Visualization Types": "Charts, maps, dashboards, stories",
+                "Sharing": "Tableau Public, Tableau Server, Tableau Online",
+                "Collaboration": "Real-time collaboration features",
+                "Mobile": "iOS and Android apps",
+                "Integration": "REST API, JavaScript API"
+            },
+            "features": {
+                "Drag-and-Drop": "Intuitive interface for building visualizations",
+                "Live Connections": "Real-time data connections",
+                "Advanced Analytics": "Statistical functions, forecasting, clustering",
+                "Geographic Mapping": "Built-in geographic data and mapping",
+                "Dashboards": "Interactive multi-sheet dashboards",
+                "Stories": "Data-driven storytelling capabilities",
+                "Calculated Fields": "Custom calculations and formulas",
+                "Parameters": "Dynamic parameter controls",
+                "Filters": "Global and worksheet-specific filters"
+            },
+            "useCases": [
+                "Business intelligence and reporting",
+                "Executive dashboards",
+                "Sales and marketing analytics",
+                "Financial reporting",
+                "Operations monitoring",
+                "Customer analytics",
+                "Supply chain visualization",
+                "Healthcare analytics"
+            ],
+            "bestPractices": [
+                "Connect to clean, well-structured data",
+                "Use data extracts for better performance",
+                "Create reusable calculated fields",
+                "Design mobile-first dashboards",
+                "Use consistent color schemes",
+                "Add tooltips and annotations",
+                "Test with real data before publishing",
+                "Document data sources and calculations"
+            ],
+            "codeSnippet": {
+                "language": "sql",
+                "title": "Tableau Data Connection Example",
+                "code": "-- Sample SQL queries that work well with Tableau\n\n-- 1. Basic data extraction\nSELECT \n    order_date,\n    customer_region,\n    product_category,\n    SUM(sales_amount) as total_sales,\n    COUNT(DISTINCT customer_id) as unique_customers,\n    AVG(sales_amount) as avg_order_value\nFROM sales_orders \nWHERE order_date >= '2023-01-01'\nGROUP BY order_date, customer_region, product_category\nORDER BY order_date, total_sales DESC;\n\n-- 2. Time series analysis\nSELECT \n    DATE_TRUNC('month', order_date) as month,\n    product_category,\n    SUM(sales_amount) as monthly_sales,\n    LAG(SUM(sales_amount)) OVER (\n        PARTITION BY product_category \n        ORDER BY DATE_TRUNC('month', order_date)\n    ) as prev_month_sales,\n    CASE \n        WHEN LAG(SUM(sales_amount)) OVER (\n            PARTITION BY product_category \n            ORDER BY DATE_TRUNC('month', order_date)\n        ) IS NOT NULL \n        THEN (SUM(sales_amount) - LAG(SUM(sales_amount)) OVER (\n            PARTITION BY product_category \n            ORDER BY DATE_TRUNC('month', order_date)\n        )) / LAG(SUM(sales_amount)) OVER (\n            PARTITION BY product_category \n            ORDER BY DATE_TRUNC('month', order_date)\n        ) * 100 \n        ELSE NULL \n    END as growth_rate\nFROM sales_orders \nGROUP BY DATE_TRUNC('month', order_date), product_category\nORDER BY month, product_category;\n\n-- 3. Customer segmentation\nSELECT \n    customer_id,\n    customer_name,\n    total_orders,\n    total_spent,\n    avg_order_value,\n    last_order_date,\n    CASE \n        WHEN total_spent >= 10000 THEN 'High Value'\n        WHEN total_spent >= 5000 THEN 'Medium Value'\n        WHEN total_spent >= 1000 THEN 'Low Value'\n        ELSE 'New Customer'\n    END as customer_segment\nFROM (\n    SELECT \n        customer_id,\n        customer_name,\n        COUNT(order_id) as total_orders,\n        SUM(order_total) as total_spent,\n        AVG(order_total) as avg_order_value,\n        MAX(order_date) as last_order_date\n    FROM customers c\n    JOIN orders o ON c.customer_id = o.customer_id\n    GROUP BY customer_id, customer_name\n) customer_summary\nORDER BY total_spent DESC;"
+            },
+            "pricing": "Free Public version, $70/user/month Creator",
+            "image": "/images/resources/tableau.jpg",
+            "alternatives": [
+                "power-bi",
+                "looker",
+                "qlik-sense"
+            ],
+            "relatedResources": [
+                "power-bi",
+                "excel"
+            ],
+            "tutorials": [
+                {
+                    "title": "Tableau Documentation",
+                    "url": "https://help.tableau.com/"
+                },
+                {
+                    "title": "Tableau eLearning",
+                    "url": "https://elearning.tableau.com/"
+                },
+                {
+                    "title": "Tableau Public Gallery",
+                    "url": "https://public.tableau.com/app/discover"
+                }
+            ]
+        },
+        {
+            "slug": "apache-spark",
+            "name": "Apache Spark - Big Data Processing",
+            "category": "Big Data Processing",
+            "shortDesc": "Unified analytics engine for large-scale data processing, supporting batch processing, streaming, machine learning, and graph processing",
+            "fullDescription": "Apache Spark is a unified analytics engine for large-scale data processing. It provides high-level APIs in Java, Scala, Python and R, and an optimized engine that supports general execution graphs. Spark supports batch processing, streaming analytics, machine learning, and graph processing with consistent APIs.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "Apache 2.0",
+                "Languages": "Scala, Java, Python, R, SQL",
+                "Deployment": "Standalone, YARN, Kubernetes, Mesos",
+                "Storage": "HDFS, S3, Cassandra, HBase, JDBC",
+                "Components": "Spark Core, Spark SQL, Spark Streaming, MLlib, GraphX",
+                "Performance": "In-memory processing, DAG execution",
+                "Scalability": "Horizontal scaling across clusters",
+                "Integration": "Hadoop ecosystem, cloud platforms"
+            },
+            "features": {
+                "Spark SQL": "SQL and DataFrame APIs for structured data",
+                "Spark Streaming": "Real-time stream processing",
+                "MLlib": "Machine learning algorithms",
+                "GraphX": "Graph processing and analytics",
+                "RDDs": "Resilient Distributed Datasets",
+                "DataFrames": "High-level abstraction for structured data",
+                "Catalyst Optimizer": "Query optimization engine",
+                "Tungsten Engine": "Memory management and execution"
+            },
+            "useCases": [
+                "Big data analytics",
+                "Real-time stream processing",
+                "Machine learning at scale",
+                "ETL pipelines",
+                "Graph analysis",
+                "Interactive data exploration",
+                "Batch processing",
+                "Data warehousing"
+            ],
+            "bestPractices": [
+                "Use DataFrames over RDDs for better performance",
+                "Cache frequently used datasets",
+                "Partition data appropriately",
+                "Use broadcast joins for small datasets",
+                "Monitor job performance with Spark UI",
+                "Use appropriate serialization formats",
+                "Configure memory and cores properly",
+                "Use Delta Lake for ACID transactions"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Apache Spark Data Processing Example",
+                "code": "from pyspark.sql import SparkSession\nfrom pyspark.sql.functions import col, avg, count, sum, window\nimport pyspark.sql.functions as F\n\n# Initialize Spark session\nspark = SparkSession.builder \\\n    .appName('DataScienceExample') \\\n    .config('spark.sql.adaptive.enabled', 'true') \\\n    .config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \\\n    .getOrCreate()\n\nprint('Spark version:', spark.version)\nprint('='*50)\n\n# Create sample data\ndata = [\n    ('Alice', 25, 'Engineering', 75000, '2023-01-15'),\n    ('Bob', 30, 'Sales', 60000, '2023-02-20'),\n    ('Charlie', 35, 'Engineering', 80000, '2023-01-10'),\n    ('Diana', 28, 'Marketing', 55000, '2023-03-05'),\n    ('Eve', 32, 'Engineering', 90000, '2023-02-28')\n]\n\ncolumns = ['name', 'age', 'department', 'salary', 'hire_date']\ndf = spark.createDataFrame(data, columns)\n\ndf.show()\ndf.printSchema()\nprint('\\n' + '='*50 + '\\n')\n\n# DataFrame operations\n# Filtering and aggregation\nengineering_df = df.filter(col('department') == 'Engineering')\nprint('Engineering employees:')\nengineering_df.show()\n\n# Group by and aggregate\ndepartment_stats = df.groupBy('department').agg(\n    count('name').alias('employee_count'),\n    avg('salary').alias('avg_salary'),\n    avg('age').alias('avg_age')\n)\nprint('\\nDepartment statistics:')\ndepartment_stats.show()\n\n# Adding new columns\ndf_with_experience = df.withColumn(\n    'hire_year', F.year(F.to_date('hire_date'))\n).withColumn(\n    'experience_years', 2024 - col('hire_year')\n).withColumn(\n    'salary_category', \n    F.when(col('salary') >= 80000, 'Senior')\n     .when(col('salary') >= 60000, 'Mid')\n     .otherwise('Junior')\n)\n\nprint('\\nDataFrame with new columns:')\ndf_with_experience.select('name', 'salary', 'salary_category', 'experience_years').show()\nprint('\\n' + '='*50 + '\\n')\n\n# SQL queries\ndf.createOrReplaceTempView('employees')\n\nsql_results = spark.sql('''\n    SELECT \n        department,\n        COUNT(*) as employee_count,\n        ROUND(AVG(salary), 2) as avg_salary,\n        ROUND(AVG(age), 1) as avg_age,\n        MAX(salary) as max_salary\n    FROM employees \n    GROUP BY department\n    ORDER BY avg_salary DESC\n''')\n\nprint('SQL query results:')\nsql_results.show()\nprint('\\n' + '='*50 + '\\n')\n\n# Machine Learning with MLlib\nfrom pyspark.ml.feature import VectorAssembler, StringIndexer\nfrom pyspark.ml.classification import LogisticRegression\nfrom pyspark.ml.evaluation import BinaryClassificationEvaluator\nfrom pyspark.ml import Pipeline\n\n# Create sample classification data\nml_data = [\n    (25, 75000, 'Engineering', 1),\n    (30, 60000, 'Sales', 0),\n    (35, 80000, 'Engineering', 1),\n    (28, 55000, 'Marketing', 0),\n    (32, 90000, 'Engineering', 1),\n    (26, 65000, 'Sales', 0),\n    (40, 95000, 'Engineering', 1),\n    (29, 58000, 'Marketing', 0)\n]\n\nml_columns = ['age', 'salary', 'department', 'high_performer']\nml_df = spark.createDataFrame(ml_data, ml_columns)\n\n# Prepare features\nindexer = StringIndexer(inputCol='department', outputCol='dept_index')\nassembler = VectorAssembler(\n    inputCols=['age', 'salary', 'dept_index'], \n    outputCol='features'\n)\n\n# Create and train model\nlr = LogisticRegression(labelCol='high_performer', featuresCol='features')\npipeline = Pipeline(stages=[indexer, assembler, lr])\n\nmodel = pipeline.fit(ml_df)\n\n# Make predictions\npredictions = model.transform(ml_df)\nprint('\\nMachine Learning predictions:')\npredictions.select('age', 'salary', 'department', 'high_performer', 'prediction', 'probability').show()\n\n# Stop Spark session\nspark.stop()\nprint('\\nSpark session stopped.')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/apache-spark.jpg",
+            "alternatives": [
+                "hadoop",
+                "flink",
+                "dask"
+            ],
+            "relatedResources": [
+                "hadoop",
+                "kafka"
+            ],
+            "tutorials": [
+                {
+                    "title": "Apache Spark Documentation",
+                    "url": "https://spark.apache.org/docs/latest/"
+                },
+                {
+                    "title": "Spark Programming Guide",
+                    "url": "https://spark.apache.org/docs/latest/programming-guide.html"
+                },
+                {
+                    "title": "Spark Examples",
+                    "url": "https://spark.apache.org/examples.html"
+                }
+            ]
+        }
+    ]
+}

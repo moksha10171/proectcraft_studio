@@ -1,0 +1,565 @@
+{
+    "overview": {
+        "title": "Machine Learning Frameworks & Tools",
+        "description": "Master deep learning, computer vision, NLP, and traditional ML with industry-leading frameworks and libraries for building intelligent systems",
+        "totalComponents": 8,
+        "categories": [
+            "Deep Learning Frameworks",
+            "Traditional ML Libraries",
+            "NLP & Transformers",
+            "MLOps & Production"
+        ]
+    },
+    "resources": [
+        {
+            "slug": "tensorflow",
+            "name": "TensorFlow - Deep Learning Framework",
+            "category": "Deep Learning Frameworks",
+            "shortDesc": "Open-source machine learning framework for building and training neural networks with production deployment capabilities",
+            "fullDescription": "TensorFlow is an end-to-end open-source platform for machine learning. It provides comprehensive tools for building, training, and deploying machine learning models. From research to production, TensorFlow offers flexibility and scalability for everything from simple linear regression to complex deep neural networks.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "Apache 2.0",
+                "Languages": "Python, C++, Java, JavaScript, Swift",
+                "Platforms": "Linux, macOS, Windows, Android, iOS, Raspberry Pi",
+                "Hardware": "CPU, GPU, TPU support",
+                "APIs": "Keras API, Estimator API, tf.data, tf.feature_column",
+                "Deployment": "TensorFlow Serving, TensorFlow Lite, TensorFlow.js",
+                "Ecosystem": "200+ pre-built models in TensorFlow Hub"
+            },
+            "features": {
+                "Keras Integration": "High-level neural networks API",
+                "Eager Execution": "Imperative programming paradigm",
+                "AutoGraph": "Automatic graph construction",
+                "Distributed Training": "Multi-GPU and multi-machine training",
+                "TensorBoard": "Visualization and debugging",
+                "TF Hub": "Reusable pre-trained models",
+                "Model Optimization": "Quantization and pruning tools",
+                "Production Serving": "REST/gRPC APIs for inference"
+            },
+            "useCases": [
+                "Computer vision applications",
+                "Natural language processing",
+                "Time series forecasting",
+                "Reinforcement learning",
+                "Generative models",
+                "Recommendation systems",
+                "Speech recognition",
+                "Medical imaging analysis"
+            ],
+            "bestPractices": [
+                "Use tf.data for efficient data pipelines",
+                "Enable mixed precision for faster training",
+                "Use TensorBoard for monitoring",
+                "Save checkpoints regularly",
+                "Use pre-trained models from TF Hub",
+                "Profile performance with tf.profiler",
+                "Use distributed strategies for scaling",
+                "Validate models thoroughly before deployment"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "TensorFlow Neural Network Example",
+                "code": "import tensorflow as tf\nfrom tensorflow import keras\nimport numpy as np\n\n# Load and prepare data\n(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()\nx_train = x_train.astype('float32') / 255.0\nx_test = x_test.astype('float32') / 255.0\n\n# Build the model\nmodel = keras.Sequential([\n    keras.layers.Flatten(input_shape=(28, 28)),\n    keras.layers.Dense(128, activation='relu'),\n    keras.layers.Dropout(0.2),\n    keras.layers.Dense(10, activation='softmax')\n])\n\n# Compile the model\nmodel.compile(\n    optimizer='adam',\n    loss='sparse_categorical_crossentropy',\n    metrics=['accuracy']\n)\n\n# Train the model\nmodel.fit(x_train, y_train, epochs=5, validation_split=0.2)\n\n# Evaluate the model\ntest_loss, test_acc = model.evaluate(x_test, y_test)\nprint(f'Test accuracy: {test_acc:.4f}')\n\n# Save the model\nmodel.save('mnist_model.h5')\n\n# Load and use for prediction\nloaded_model = keras.models.load_model('mnist_model.h5')\npredictions = loaded_model.predict(x_test[:5])\nprint(f'Predictions: {np.argmax(predictions, axis=1)}')\nprint(f'Actual: {y_test[:5]}')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/tensorflow.jpg",
+            "alternatives": [
+                "pytorch",
+                "jax",
+                "mxnet"
+            ],
+            "relatedResources": [
+                "pytorch",
+                "keras"
+            ],
+            "tutorials": [
+                {
+                    "title": "TensorFlow Documentation",
+                    "url": "https://www.tensorflow.org/learn"
+                },
+                {
+                    "title": "TensorFlow Tutorials",
+                    "url": "https://www.tensorflow.org/tutorials"
+                },
+                {
+                    "title": "TensorFlow Hub",
+                    "url": "https://tfhub.dev/"
+                }
+            ]
+        },
+        {
+            "slug": "pytorch",
+            "name": "PyTorch - Deep Learning Framework",
+            "category": "Deep Learning Frameworks",
+            "shortDesc": "Dynamic neural networks library with GPU acceleration and automatic differentiation for research and production",
+            "fullDescription": "PyTorch is an open-source machine learning framework based on the Torch library. It provides two high-level features: tensor computation with strong GPU acceleration and deep neural networks built on a tape-based autodiff system. PyTorch is widely used in research and production for its flexibility and ease of use.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "BSD-3-Clause",
+                "Languages": "Python, C++, Java",
+                "Platforms": "Linux, macOS, Windows",
+                "Hardware": "CPU, GPU, MPS (Apple Silicon) support",
+                "Backend": "ATen tensor library",
+                "APIs": "torch.nn, torch.optim, torch.utils.data",
+                "Deployment": "TorchServe, ONNX export",
+                "Ecosystem": "TorchVision, TorchText, TorchAudio"
+            },
+            "features": {
+                "Dynamic Graphs": "Define-by-run computation graphs",
+                "Autograd": "Automatic differentiation",
+                "NN Modules": "Pre-built neural network layers",
+                "Optimizers": "Adam, SGD, RMSprop, etc.",
+                "Data Loading": "Efficient data pipelines",
+                "GPU Support": "CUDA and MPS acceleration",
+                "Distributed Training": "Multi-GPU and multi-node",
+                "JIT Compiler": "TorchScript for production",
+                "ONNX Export": "Interoperability with other frameworks"
+            },
+            "useCases": [
+                "Research prototyping",
+                "Computer vision",
+                "Natural language processing",
+                "Reinforcement learning",
+                "Generative models",
+                "Time series analysis",
+                "Graph neural networks",
+                "Scientific computing"
+            ],
+            "bestPractices": [
+                "Use torch.no_grad() for inference",
+                "Pin memory for faster GPU transfers",
+                "Use DataLoader with num_workers",
+                "Enable cuDNN benchmarking",
+                "Use gradient clipping to prevent exploding gradients",
+                "Save model state_dict, not the model itself",
+                "Use torch.jit.trace for production deployment",
+                "Profile with torch.profiler"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "PyTorch Neural Network Example",
+                "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torch.utils.data import DataLoader, TensorDataset\nimport numpy as np\n\n# Set device\ndevice = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\nprint(f'Using device: {device}')\n\n# Create dummy data\nX = torch.randn(1000, 10)\ny = torch.randint(0, 2, (1000,))\n\ndataset = TensorDataset(X, y)\ndataloader = DataLoader(dataset, batch_size=32, shuffle=True)\n\n# Define the model\nclass SimpleNN(nn.Module):\n    def __init__(self):\n        super(SimpleNN, self).__init__()\n        self.fc1 = nn.Linear(10, 64)\n        self.fc2 = nn.Linear(64, 32)\n        self.fc3 = nn.Linear(32, 2)\n        self.dropout = nn.Dropout(0.2)\n    \n    def forward(self, x):\n        x = torch.relu(self.fc1(x))\n        x = self.dropout(x)\n        x = torch.relu(self.fc2(x))\n        x = self.dropout(x)\n        x = self.fc3(x)\n        return x\n\nmodel = SimpleNN().to(device)\n\n# Define loss and optimizer\ncriterion = nn.CrossEntropyLoss()\noptimizer = optim.Adam(model.parameters(), lr=0.001)\n\n# Training loop\nnum_epochs = 10\nfor epoch in range(num_epochs):\n    model.train()\n    total_loss = 0\n    \n    for batch_X, batch_y in dataloader:\n        batch_X, batch_y = batch_X.to(device), batch_y.to(device)\n        \n        optimizer.zero_grad()\n        outputs = model(batch_X)\n        loss = criterion(outputs, batch_y)\n        loss.backward()\n        optimizer.step()\n        \n        total_loss += loss.item()\n    \n    print(f'Epoch {epoch+1}/{num_epochs}, Loss: {total_loss/len(dataloader):.4f}')\n\n# Save the model\ntorch.save(model.state_dict(), 'model.pth')\n\n# Load and evaluate\nmodel.load_state_dict(torch.load('model.pth'))\nmodel.eval()\n\nwith torch.no_grad():\n    test_X = torch.randn(10, 10).to(device)\n    predictions = model(test_X)\n    predicted_classes = torch.argmax(predictions, dim=1)\n    print(f'Predictions: {predicted_classes.cpu().numpy()}')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/pytorch.jpg",
+            "alternatives": [
+                "tensorflow",
+                "jax",
+                "mxnet"
+            ],
+            "relatedResources": [
+                "tensorflow",
+                "scikit-learn"
+            ],
+            "tutorials": [
+                {
+                    "title": "PyTorch Documentation",
+                    "url": "https://pytorch.org/docs/"
+                },
+                {
+                    "title": "PyTorch Tutorials",
+                    "url": "https://pytorch.org/tutorials/"
+                },
+                {
+                    "title": "PyTorch Hub",
+                    "url": "https://pytorch.org/hub/"
+                }
+            ]
+        },
+        {
+            "slug": "scikit-learn",
+            "name": "Scikit-learn - Traditional ML Library",
+            "category": "Traditional ML Libraries",
+            "shortDesc": "Simple and efficient tools for predictive data analysis with Python, built on NumPy, SciPy, and matplotlib",
+            "fullDescription": "Scikit-learn is a free software machine learning library for the Python programming language. It features various classification, regression and clustering algorithms including support vector machines, random forests, gradient boosting, k-means and DBSCAN. It's designed to interoperate with the Python numerical and scientific libraries NumPy and SciPy.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "BSD-3-Clause",
+                "Languages": "Python",
+                "Dependencies": "NumPy, SciPy, joblib",
+                "Algorithms": "Classification, Regression, Clustering, Dimensionality reduction",
+                "Preprocessing": "Feature extraction, normalization, imputation",
+                "Model Selection": "Cross-validation, hyperparameter tuning",
+                "Metrics": "Accuracy, precision, recall, F1-score, ROC AUC",
+                "Integration": "Pipeline API, feature unions"
+            },
+            "features": {
+                "Classification": "SVM, Random Forest, KNN, Naive Bayes, etc.",
+                "Regression": "Linear, Ridge, Lasso, Decision Trees",
+                "Clustering": "K-means, DBSCAN, Hierarchical clustering",
+                "Preprocessing": "Scaling, encoding, imputation",
+                "Model Selection": "Grid search, cross-validation",
+                "Dimensionality Reduction": "PCA, t-SNE, LDA",
+                "Ensemble Methods": "Bagging, boosting, stacking",
+                "Feature Selection": "Univariate selection, recursive elimination"
+            },
+            "useCases": [
+                "Predictive modeling",
+                "Data classification",
+                "Customer segmentation",
+                "Anomaly detection",
+                "Recommendation systems",
+                "Feature engineering",
+                "Model validation",
+                "A/B testing analysis"
+            ],
+            "bestPractices": [
+                "Always split data into train/test sets",
+                "Use cross-validation for model evaluation",
+                "Scale features for distance-based algorithms",
+                "Handle missing values appropriately",
+                "Use pipelines for preprocessing + modeling",
+                "Tune hyperparameters with grid/random search",
+                "Validate assumptions (linearity, etc.)",
+                "Compare multiple algorithms"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Scikit-learn Classification Example",
+                "code": "import numpy as np\nimport pandas as pd\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import classification_report, confusion_matrix\nimport matplotlib.pyplot as plt\n\n# Load sample data (Iris dataset)\nfrom sklearn.datasets import load_iris\niris = load_iris()\nX, y = iris.data, iris.target\nfeature_names = iris.feature_names\ntarget_names = iris.target_names\n\n# Split the data\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=42, stratify=y\n)\n\n# Scale the features\nscaler = StandardScaler()\nX_train_scaled = scaler.fit_transform(X_train)\nX_test_scaled = scaler.transform(X_test)\n\n# Train a Random Forest classifier\nclf = RandomForestClassifier(\n    n_estimators=100,\n    max_depth=3,\n    random_state=42\n)\n\n# Cross-validation\ncv_scores = cross_val_score(clf, X_train_scaled, y_train, cv=5)\nprint(f'Cross-validation scores: {cv_scores}')\nprint(f'Mean CV score: {cv_scores.mean():.3f} (+/- {cv_scores.std() * 2:.3f})')\n\n# Train on full training set\nclf.fit(X_train_scaled, y_train)\n\n# Make predictions\ny_pred = clf.predict(X_test_scaled)\n\n# Evaluate the model\nprint('\\nClassification Report:')\nprint(classification_report(y_test, y_pred, target_names=target_names))\n\nprint('\\nConfusion Matrix:')\nprint(confusion_matrix(y_test, y_pred))\n\n# Feature importance\nfeature_importance = pd.DataFrame({\n    'feature': feature_names,\n    'importance': clf.feature_importances_\n}).sort_values('importance', ascending=False)\n\nprint('\\nFeature Importance:')\nprint(feature_importance)\n\n# Plot feature importance\nplt.figure(figsize=(8, 6))\nplt.barh(feature_importance['feature'], feature_importance['importance'])\nplt.xlabel('Importance')\nplt.title('Feature Importance - Random Forest')\nplt.gca().invert_yaxis()\nplt.tight_layout()\nplt.savefig('feature_importance.png', dpi=150, bbox_inches='tight')\nplt.show()\n\n# Save the model\nimport joblib\njoblib.dump(clf, 'iris_classifier.pkl')\njoblib.dump(scaler, 'scaler.pkl')\n\n# Load and use the model\nloaded_clf = joblib.load('iris_classifier.pkl')\nloaded_scaler = joblib.load('scaler.pkl')\n\n# Make prediction on new data\nnew_sample = np.array([[5.1, 3.5, 1.4, 0.2]])  # Example iris measurement\nnew_sample_scaled = loaded_scaler.transform(new_sample)\nprediction = loaded_clf.predict(new_sample_scaled)\nprediction_proba = loaded_clf.predict_proba(new_sample_scaled)\n\nprint(f'\\nPrediction for new sample: {target_names[prediction[0]]}')\nprint(f'Prediction probabilities: {prediction_proba[0]}')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/scikit-learn.jpg",
+            "alternatives": [
+                "xgboost",
+                "lightgbm",
+                "catboost"
+            ],
+            "relatedResources": [
+                "pandas",
+                "numpy"
+            ],
+            "tutorials": [
+                {
+                    "title": "Scikit-learn Documentation",
+                    "url": "https://scikit-learn.org/stable/user_guide.html"
+                },
+                {
+                    "title": "Scikit-learn Tutorials",
+                    "url": "https://scikit-learn.org/stable/tutorial/index.html"
+                },
+                {
+                    "title": "Machine Learning with Scikit-learn",
+                    "url": "https://www.datacamp.com/tutorial/machine-learning-python"
+                }
+            ]
+        },
+        {
+            "slug": "keras",
+            "name": "Keras - Deep Learning API",
+            "category": "Deep Learning Frameworks",
+            "shortDesc": "High-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano",
+            "fullDescription": "Keras is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano. It was developed with a focus on enabling fast experimentation. Being able to go from idea to result with the least possible delay is key to doing good research.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "MIT",
+                "Languages": "Python",
+                "Backends": "TensorFlow, JAX, PyTorch",
+                "APIs": "Sequential, Functional, Subclassing",
+                "Layers": "200+ pre-built layers",
+                "Optimizers": "Adam, SGD, RMSprop, AdamW",
+                "Losses": "Cross-entropy, MSE, Huber, custom",
+                "Metrics": "Accuracy, Precision, Recall, AUC",
+                "Callbacks": "Early stopping, checkpoints, learning rate scheduling"
+            },
+            "features": {
+                "Sequential API": "Linear stack of layers",
+                "Functional API": "Complex architectures with shared layers",
+                "Subclassing API": "Custom layers and models",
+                "Pre-trained Models": "VGG, ResNet, MobileNet, etc.",
+                "Data Augmentation": "Image preprocessing layers",
+                "Regularization": "Dropout, batch normalization",
+                "Transfer Learning": "Fine-tuning pre-trained models",
+                "Model Saving": "HDF5, SavedModel, ONNX"
+            },
+            "useCases": [
+                "Computer vision (CNNs)",
+                "Natural language processing",
+                "Time series forecasting",
+                "Generative adversarial networks",
+                "Autoencoders",
+                "Reinforcement learning",
+                "Multi-modal learning",
+                "Edge deployment"
+            ],
+            "bestPractices": [
+                "Start with Sequential API for simple models",
+                "Use Functional API for complex architectures",
+                "Always use validation data",
+                "Implement early stopping",
+                "Use data augmentation for images",
+                "Monitor training with callbacks",
+                "Use pre-trained models when possible",
+                "Profile model performance"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Keras Neural Network Example",
+                "code": "import tensorflow as tf\nfrom tensorflow import keras\nfrom tensorflow.keras import layers\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# Load and preprocess data\n(x_train, y_train), (x_test, y_test) = keras.datasets.cifar10.load_data()\n\n# Normalize pixel values\nx_train = x_train.astype('float32') / 255.0\nx_test = x_test.astype('float32') / 255.0\n\n# Convert labels to one-hot encoding\ny_train = keras.utils.to_categorical(y_train, 10)\ny_test = keras.utils.to_categorical(y_test, 10)\n\nclass_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',\n               'dog', 'frog', 'horse', 'ship', 'truck']\n\n# Data augmentation\ndata_augmentation = keras.Sequential([\n    layers.RandomFlip('horizontal'),\n    layers.RandomRotation(0.1),\n    layers.RandomZoom(0.1),\n])\n\n# Build the model\ndef create_model():\n    model = keras.Sequential([\n        # Input layer\n        layers.Input(shape=(32, 32, 3)),\n        \n        # Data augmentation (applied during training)\n        data_augmentation,\n        \n        # Convolutional layers\n        layers.Conv2D(32, (3, 3), activation='relu', padding='same'),\n        layers.BatchNormalization(),\n        layers.Conv2D(32, (3, 3), activation='relu', padding='same'),\n        layers.BatchNormalization(),\n        layers.MaxPooling2D((2, 2)),\n        layers.Dropout(0.25),\n        \n        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),\n        layers.BatchNormalization(),\n        layers.Conv2D(64, (3, 3), activation='relu', padding='same'),\n        layers.BatchNormalization(),\n        layers.MaxPooling2D((2, 2)),\n        layers.Dropout(0.25),\n        \n        # Dense layers\n        layers.Flatten(),\n        layers.Dense(512, activation='relu'),\n        layers.BatchNormalization(),\n        layers.Dropout(0.5),\n        layers.Dense(10, activation='softmax')\n    ])\n    \n    return model\n\nmodel = create_model()\n\n# Compile the model\nmodel.compile(\n    optimizer=keras.optimizers.Adam(learning_rate=0.001),\n    loss='categorical_crossentropy',\n    metrics=['accuracy']\n)\n\n# Print model summary\nmodel.summary()\n\n# Callbacks\nearly_stopping = keras.callbacks.EarlyStopping(\n    monitor='val_accuracy',\n    patience=10,\n    restore_best_weights=True\n)\n\nreduce_lr = keras.callbacks.ReduceLROnPlateau(\n    monitor='val_accuracy',\n    factor=0.5,\n    patience=5,\n    min_lr=1e-6\n)\n\ncheckpoint = keras.callbacks.ModelCheckpoint(\n    'best_model.keras',\n    monitor='val_accuracy',\n    save_best_only=True\n)\n\n# Train the model\nhistory = model.fit(\n    x_train, y_train,\n    batch_size=64,\n    epochs=50,\n    validation_split=0.2,\n    callbacks=[early_stopping, reduce_lr, checkpoint],\n    verbose=1\n)\n\n# Evaluate the model\ntest_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)\nprint(f'\\nTest accuracy: {test_acc:.4f}')\n\n# Plot training history\nplt.figure(figsize=(12, 4))\n\nplt.subplot(1, 2, 1)\nplt.plot(history.history['accuracy'], label='Training Accuracy')\nplt.plot(history.history['val_accuracy'], label='Validation Accuracy')\nplt.title('Model Accuracy')\nplt.xlabel('Epoch')\nplt.ylabel('Accuracy')\nplt.legend()\n\nplt.subplot(1, 2, 2)\nplt.plot(history.history['loss'], label='Training Loss')\nplt.plot(history.history['val_loss'], label='Validation Loss')\nplt.title('Model Loss')\nplt.xlabel('Epoch')\nplt.ylabel('Loss')\nplt.legend()\n\nplt.tight_layout()\nplt.savefig('training_history.png', dpi=300, bbox_inches='tight')\nplt.show()\n\n# Make predictions\npredictions = model.predict(x_test[:10])\npredicted_classes = np.argmax(predictions, axis=1)\ntrue_classes = np.argmax(y_test[:10], axis=1)\n\nprint('\\nPredictions on first 10 test images:')\nfor i, (pred, true) in enumerate(zip(predicted_classes, true_classes)):\n    print(f'Image {i+1}: Predicted {class_names[pred]}, Actual {class_names[true]}')\n\n# Save the model\nmodel.save('cifar10_model.keras')\nprint('\\nModel saved as cifar10_model.keras')\n\n# Convert to TensorFlow Lite for mobile deployment\nconverter = tf.lite.TFLiteConverter.from_keras_model(model)\ntflite_model = converter.convert()\n\nwith open('model.tflite', 'wb') as f:\n    f.write(tflite_model)\n\nprint('Model converted to TensorFlow Lite format')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/keras.jpg",
+            "alternatives": [
+                "tensorflow",
+                "pytorch",
+                "fastai"
+            ],
+            "relatedResources": [
+                "tensorflow",
+                "pytorch"
+            ],
+            "tutorials": [
+                {
+                    "title": "Keras Documentation",
+                    "url": "https://keras.io/"
+                },
+                {
+                    "title": "Keras Tutorials",
+                    "url": "https://keras.io/examples/"
+                },
+                {
+                    "title": "Keras Guides",
+                    "url": "https://keras.io/guides/"
+                }
+            ]
+        },
+        {
+            "slug": "jax",
+            "name": "JAX - High-Performance ML",
+            "category": "Deep Learning Frameworks",
+            "shortDesc": "Composable transformations of Python+NumPy programs for high-performance machine learning research",
+            "fullDescription": "JAX is a Python library for high-performance machine learning research. It provides composable transformations of Python+NumPy programs, including differentiation, vectorization, and just-in-time compilation. JAX is designed to be fast, scalable, and easy to use for machine learning and scientific computing.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "Apache 2.0",
+                "Languages": "Python",
+                "Backend": "XLA (Accelerated Linear Algebra)",
+                "Hardware": "CPU, GPU, TPU support",
+                "Transformations": "grad, jit, vmap, pmap",
+                "Ecosystem": "Flax, Haiku, Optax, JAXopt",
+                "Performance": "JIT compilation for speed",
+                "Scalability": "Single device to multi-host clusters"
+            },
+            "features": {
+                "Automatic Differentiation": "grad() for computing gradients",
+                "JIT Compilation": "jit() for performance optimization",
+                "Vectorization": "vmap() for batch processing",
+                "Parallelization": "pmap() for multi-device training",
+                "Random Number Generation": "RNG with proper seeding",
+                "Neural Networks": "Flax library for NN building",
+                "Optimization": "Optax library for optimizers",
+                "Scientific Computing": "NumPy-compatible API"
+            },
+            "useCases": [
+                "Research prototyping",
+                "High-performance computing",
+                "Reinforcement learning",
+                "Bayesian inference",
+                "Scientific simulations",
+                "Neural architecture search",
+                "Meta-learning",
+                "Physics-informed ML"
+            ],
+            "bestPractices": [
+                "Use jit() for performance-critical functions",
+                "Avoid Python control flow in jitted functions",
+                "Use vmap for batching operations",
+                "Properly seed random number generators",
+                "Use pmap for distributed training",
+                "Profile performance with jax.profiler",
+                "Use Flax for neural network architectures",
+                "Keep functions pure and deterministic"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "JAX Neural Network Example",
+                "code": "import jax\nimport jax.numpy as jnp\nfrom jax import grad, jit, vmap, random\nfrom flax import linen as nn\nimport optax\n\n# Set random seed\nkey = random.PRNGKey(42)\n\n# Define a simple neural network using Flax\nclass SimpleMLP(nn.Module):\n    @nn.compact\n    def __call__(self, x):\n        x = nn.Dense(128)(x)\n        x = nn.relu(x)\n        x = nn.Dropout(rate=0.2, deterministic=False)(x)\n        x = nn.Dense(64)(x)\n        x = nn.relu(x)\n        x = nn.Dropout(rate=0.2, deterministic=False)(x)\n        x = nn.Dense(10)(x)\n        return x\n\n# Initialize the model\nmodel = SimpleMLP()\n\n# Create dummy data\nbatch_size = 32\ninput_dim = 784  # 28x28 images\nnum_classes = 10\n\n# Generate random data (MNIST-like)\nkey, subkey1, subkey2 = random.split(key, 3)\nx_train = random.normal(subkey1, (1000, input_dim))\ny_train = random.randint(subkey2, (1000,), 0, num_classes)\n\n# Create data loader-like function\ndef create_batches(x, y, batch_size):\n    dataset_size = x.shape[0]\n    indices = jnp.arange(dataset_size)\n    \n    def get_batch(batch_idx):\n        start_idx = batch_idx * batch_size\n        end_idx = min(start_idx + batch_size, dataset_size)\n        batch_indices = indices[start_idx:end_idx]\n        return x[batch_indices], y[batch_indices]\n    \n    return get_batch, dataset_size // batch_size\n\nget_batch, num_batches = create_batches(x_train, y_train, batch_size)\n\n# Initialize parameters\nkey, init_key = random.split(key)\ninit_batch = jnp.ones((1, input_dim))\nvariables = model.init(init_key, init_batch)\nparams = variables['params']\n\ndropout_rngs = {}\n\n# Define loss function\ndef loss_fn(params, batch_x, batch_y, rng_key):\n    logits = model.apply({'params': params}, batch_x, \n                         rngs={'dropout': rng_key})\n    one_hot = jax.nn.one_hot(batch_y, num_classes)\n    loss = optax.softmax_cross_entropy(logits, one_hot).mean()\n    return loss\n\n# Define accuracy function\ndef accuracy_fn(params, batch_x, batch_y, rng_key):\n    logits = model.apply({'params': params}, batch_x,\n                         rngs={'dropout': rng_key})\n    predictions = jnp.argmax(logits, axis=-1)\n    return jnp.mean(predictions == batch_y)\n\n# Create optimizer\nlearning_rate = 0.001\noptimizer = optax.adam(learning_rate)\nopt_state = optimizer.init(params)\n\n# Training step\n@jit\ndef train_step(params, opt_state, batch_x, batch_y, rng_key):\n    loss_grad_fn = grad(loss_fn)\n    grads = loss_grad_fn(params, batch_x, batch_y, rng_key)\n    updates, opt_state = optimizer.update(grads, opt_state)\n    params = optax.apply_updates(params, updates)\n    return params, opt_state\n\n# Training loop\nnum_epochs = 10\nkey, rng_key = random.split(key)\n\nfor epoch in range(num_epochs):\n    epoch_loss = 0.0\n    epoch_accuracy = 0.0\n    \n    for batch_idx in range(num_batches):\n        batch_x, batch_y = get_batch(batch_idx)\n        \n        # Create dropout key for this batch\n        rng_key, dropout_key = random.split(rng_key)\n        \n        # Training step\n        params, opt_state = train_step(params, opt_state, batch_x, batch_y, dropout_key)\n        \n        # Calculate metrics (without dropout for evaluation)\n        eval_key = random.split(dropout_key)[0]\n        loss = loss_fn(params, batch_x, batch_y, eval_key)\n        accuracy = accuracy_fn(params, batch_x, batch_y, eval_key)\n        \n        epoch_loss += loss\n        epoch_accuracy += accuracy\n    \n    avg_loss = epoch_loss / num_batches\n    avg_accuracy = epoch_accuracy / num_batches\n    \n    print(f'Epoch {epoch + 1}/{num_epochs}')\n    print(f'  Loss: {avg_loss:.4f}')\n    print(f'  Accuracy: {avg_accuracy:.4f}')\n    print()\n\n# Test on a few examples\ntest_examples = x_train[:5]\ntest_labels = y_train[:5]\n\n# Make predictions (deterministic, no dropout)\ntest_logits = model.apply({'params': params}, test_examples)\ntest_predictions = jnp.argmax(test_logits, axis=-1)\n\nprint('Test Predictions:')\nfor i, (pred, true) in enumerate(zip(test_predictions, test_labels)):\n    print(f'  Example {i+1}: Predicted {pred}, Actual {true}')\n\n# Save parameters\nimport pickle\nwith open('jax_model_params.pkl', 'wb') as f:\n    pickle.dump(params, f)\n\nprint('\\nModel parameters saved to jax_model_params.pkl')\n\n# Demonstrate JAX transformations\n\n# Original function\ndef simple_function(x):\n    return jnp.sum(x ** 2)\n\n# Gradient\ngrad_fn = grad(simple_function)\nx = jnp.array([1.0, 2.0, 3.0])\nprint(f'\\nOriginal function value: {simple_function(x)}')\nprint(f'Gradient: {grad_fn(x)}')\n\n# JIT compilation\njit_fn = jit(simple_function)\nprint(f'JIT compiled result: {jit_fn(x)}')\n\n# Vectorization (apply function to each element of batch)\nbatch_x = jnp.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])\nvmap_fn = vmap(simple_function)\nprint(f'Vectorized results: {vmap_fn(batch_x)}')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/jax.jpg",
+            "alternatives": [
+                "tensorflow",
+                "pytorch",
+                "numpy"
+            ],
+            "relatedResources": [
+                "tensorflow",
+                "pytorch"
+            ],
+            "tutorials": [
+                {
+                    "title": "JAX Documentation",
+                    "url": "https://jax.readthedocs.io/"
+                },
+                {
+                    "title": "JAX Tutorials",
+                    "url": "https://jax.readthedocs.io/en/latest/tutorials/index.html"
+                },
+                {
+                    "title": "Flax Documentation",
+                    "url": "https://flax.readthedocs.io/"
+                }
+            ]
+        },
+        {
+            "slug": "hugging-face",
+            "name": "Hugging Face - NLP & Transformers",
+            "category": "NLP & Transformers",
+            "shortDesc": "The AI community building the future, providing open-source NLP models, datasets, and tools for transformers",
+            "fullDescription": "Hugging Face is the AI community building the future. They provide open-source NLP models, datasets, and tools for transformers. The platform offers thousands of pre-trained models for tasks like text classification, question answering, translation, and more. It's become the central hub for NLP research and applications.",
+            "specifications": {
+                "Pricing": "Free tier available, Paid plans for enterprise",
+                "Models": "200,000+ pre-trained models",
+                "Datasets": "50,000+ datasets",
+                "Languages": "Python, JavaScript, Rust",
+                "APIs": "Inference API, Auto Classes",
+                "Spaces": "Free hosting for ML demos",
+                "Pricing (Free)": "500 inference hours/month",
+                "Pricing (Pro)": "$9/month for 5000 hours",
+                "Pricing (Enterprise)": "Custom pricing"
+            },
+            "features": {
+                "Transformers Library": "PyTorch/TensorFlow/JAX models",
+                "Model Hub": "Download/upload pre-trained models",
+                "Datasets Library": "Access 50,000+ datasets",
+                "Tokenizers": "Fast tokenization for all models",
+                "Accelerate": "Distributed training library",
+                "Spaces": "Host ML demos and apps",
+                "Inference API": "REST API for model inference",
+                "Auto Classes": "Automatic model loading"
+            },
+            "useCases": [
+                "Text classification",
+                "Named entity recognition",
+                "Question answering",
+                "Text generation",
+                "Translation",
+                "Summarization",
+                "Sentiment analysis",
+                "Language modeling",
+                "Speech recognition",
+                "Computer vision"
+            ],
+            "bestPractices": [
+                "Use pipeline() for quick inference",
+                "Choose appropriate model size vs accuracy",
+                "Fine-tune on domain-specific data",
+                "Use model cards for understanding",
+                "Cache downloaded models",
+                "Use quantization for deployment",
+                "Monitor API usage and costs",
+                "Contribute back to the community"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Hugging Face Transformers Example",
+                "code": "from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification\nimport torch\n\n# 1. Quick sentiment analysis with pipeline\nsentiment_pipeline = pipeline('sentiment-analysis')\n\ntexts = [\n    \"I love this product! It's amazing.\",\n    \"This is terrible. I hate it.\",\n    \"It's okay, nothing special.\"\n]\n\nresults = sentiment_pipeline(texts)\nfor text, result in zip(texts, results):\n    print(f\"Text: {text}\")\n    print(f\"Sentiment: {result['label']} ({result['score']:.3f})\")\n    print()\n\n# 2. Text classification with specific model\nmodel_name = 'microsoft/DialoGPT-medium'\ntokenizer = AutoTokenizer.from_pretrained(model_name)\nmodel = AutoModelForSequenceClassification.from_pretrained(model_name)\n\n# Prepare input\ninput_text = \"Hello, how are you doing today?\"\ninputs = tokenizer(input_text, return_tensors='pt', padding=True, truncation=True)\n\n# Make prediction\nwith torch.no_grad():\n    outputs = model(**inputs)\n    predictions = torch.softmax(outputs.logits, dim=1)\n    predicted_class = torch.argmax(predictions, dim=1).item()\n\nprint(f\"Input: {input_text}\")\nprint(f\"Predicted class: {predicted_class}\")\nprint(f\"Confidence: {predictions[0][predicted_class]:.3f}\")\nprint()\n\n# 3. Text generation\ngenerator = pipeline('text-generation', model='gpt2')\n\ngenerated = generator(\n    \"The future of artificial intelligence\",\n    max_length=50,\n    num_return_sequences=2,\n    temperature=0.8\n)\n\nfor i, text in enumerate(generated):\n    print(f\"Generated {i+1}: {text['generated_text']}\")\n    print()\n\n# 4. Translation\ntranslator = pipeline('translation_en_to_fr')\n\nenglish_texts = [\n    \"Hello world\",\n    \"Machine learning is fascinating\",\n    \"Natural language processing enables computers to understand human language\"\n]\n\ntranslations = translator(english_texts)\nprint(\"English to French translations:\")\nfor english, translation in zip(english_texts, translations):\n    print(f\"EN: {english}\")\n    print(f\"FR: {translation['translation_text']}\")\n    print()\n\n# 5. Question answering\nqa_pipeline = pipeline('question-answering')\n\ncontext = \"\"\"\nHugging Face is a company that develops tools for building applications using machine learning.\nIt's based in New York City and was founded in 2016. The company provides the Transformers library,\nwhich is an open-source library for natural language processing. They also host a model hub where\npeople can share and download pre-trained models.\n\"\"\"\n\nquestions = [\n    \"Where is Hugging Face based?\",\n    \"When was Hugging Face founded?\",\n    \"What is the Transformers library?\"\n]\n\nprint(\"Question Answering:\")\nfor question in questions:\n    answer = qa_pipeline(question=question, context=context)\n    print(f\"Q: {question}\")\n    print(f\"A: {answer['answer']} (confidence: {answer['score']:.3f})\")\n    print()\n\n# 6. Tokenization example\ntokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')\n\ntext = \"Hello, how are you doing today? I'm learning about transformers!\"\n\ntokens = tokenizer.tokenize(text)\ntoken_ids = tokenizer.encode(text)\ndecoded = tokenizer.decode(token_ids)\n\nprint(f\"Original text: {text}\")\nprint(f\"Tokens: {tokens}\")\nprint(f\"Token IDs: {token_ids}\")\nprint(f\"Decoded: {decoded}\")\n\n# 7. Using Auto Classes for automatic model loading\nfrom transformers import AutoModel, AutoTokenizer\n\nmodel_name = 'bert-base-uncased'\nmodel = AutoModel.from_pretrained(model_name)\ntokenizer = AutoTokenizer.from_pretrained(model_name)\n\ninputs = tokenizer(text, return_tensors='pt', padding=True, truncation=True)\n\nwith torch.no_grad():\n    outputs = model(**inputs)\n\n# Get the embeddings\nembeddings = outputs.last_hidden_state.mean(dim=1)  # Mean pooling\nprint(f\"Text embeddings shape: {embeddings.shape}\")\nprint(f\"Embedding sample: {embeddings[0][:5].tolist()}\")"
+            },
+            "pricing": "Free tier available, Pro $9/month",
+            "image": "/images/resources/hugging-face.jpg",
+            "alternatives": [
+                "openai",
+                "anthropic",
+                "cohere"
+            ],
+            "relatedResources": [
+                "tensorflow",
+                "pytorch"
+            ],
+            "tutorials": [
+                {
+                    "title": "Hugging Face Course",
+                    "url": "https://huggingface.co/course"
+                },
+                {
+                    "title": "Transformers Documentation",
+                    "url": "https://huggingface.co/docs/transformers/index"
+                },
+                {
+                    "title": "Model Hub",
+                    "url": "https://huggingface.co/models"
+                }
+            ]
+        },
+        {
+            "slug": "mlflow",
+            "name": "MLflow - MLOps & Production",
+            "category": "MLOps & Production",
+            "shortDesc": "Open-source platform for the machine learning lifecycle, including experimentation, reproducibility, and deployment",
+            "fullDescription": "MLflow is an open-source platform to manage the ML lifecycle, including experimentation, reproducibility, and deployment. It provides tools for tracking experiments, packaging code into reproducible runs, and sharing and deploying models. MLflow is library-agnostic and works with any ML library and any programming language.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "Apache 2.0",
+                "Languages": "Python, R, Java, REST API",
+                "Components": "Tracking, Projects, Models, Registry",
+                "Storage": "Local, SQL, S3, Azure, GCS",
+                "UI": "Web interface for experiment tracking",
+                "Deployment": "REST API, Docker, Kubernetes",
+                "Integrations": "TensorFlow, PyTorch, Scikit-learn, XGBoost, etc.",
+                "Model Registry": "Model versioning and staging"
+            },
+            "features": {
+                "Experiment Tracking": "Log parameters, metrics, artifacts",
+                "Model Registry": "Version control for models",
+                "Project Packaging": "Reproducible ML projects",
+                "Model Serving": "REST API deployment",
+                "UI Dashboard": "Web interface for monitoring",
+                "API": "REST API for all operations",
+                "Plugins": "Custom storage and deployment backends",
+                "Authentication": "Enterprise security features"
+            },
+            "useCases": [
+                "Experiment tracking",
+                "Model versioning",
+                "Model deployment",
+                "ML pipeline orchestration",
+                "Model monitoring",
+                "A/B testing",
+                "Model governance",
+                "Collaboration"
+            ],
+            "bestPractices": [
+                "Log all hyperparameters and metrics",
+                "Use descriptive experiment names",
+                "Store models in registry with versions",
+                "Use tags for organization",
+                "Set up proper artifact storage",
+                "Use MLflow Projects for reproducibility",
+                "Monitor model performance in production",
+                "Implement proper access controls"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "MLflow Experiment Tracking Example",
+                "code": "import mlflow\nimport mlflow.sklearn\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score, classification_report\nimport pandas as pd\nimport numpy as np\n\n# Set MLflow experiment\nmlflow.set_experiment('Iris Classification Experiment')\n\n# Load data\nfrom sklearn.datasets import load_iris\niris = load_iris()\nX, y = iris.data, iris.target\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42\n)\n\n# Define hyperparameter grid\nparam_grid = {\n    'n_estimators': [50, 100, 200],\n    'max_depth': [3, 5, 7, None],\n    'min_samples_split': [2, 5, 10],\n    'min_samples_leaf': [1, 2, 4]\n}\n\nbest_accuracy = 0\nbest_params = {}\n\n# Hyperparameter tuning with MLflow tracking\nfor n_estimators in param_grid['n_estimators']:\n    for max_depth in param_grid['max_depth']:\n        for min_samples_split in param_grid['min_samples_split']:\n            for min_samples_leaf in param_grid['min_samples_leaf']:\n                \n                # Start MLflow run\n                with mlflow.start_run():\n                    # Create and train model\n                    model = RandomForestClassifier(\n                        n_estimators=n_estimators,\n                        max_depth=max_depth,\n                        min_samples_split=min_samples_split,\n                        min_samples_leaf=min_samples_leaf,\n                        random_state=42\n                    )\n                    \n                    model.fit(X_train, y_train)\n                    \n                    # Make predictions\n                    y_pred = model.predict(X_test)\n                    accuracy = accuracy_score(y_test, y_pred)\n                    \n                    # Log parameters\n                    mlflow.log_param('n_estimators', n_estimators)\n                    mlflow.log_param('max_depth', max_depth)\n                    mlflow.log_param('min_samples_split', min_samples_split)\n                    mlflow.log_param('min_samples_leaf', min_samples_leaf)\n                    \n                    # Log metrics\n                    mlflow.log_metric('accuracy', accuracy)\n                    mlflow.log_metric('precision', classification_report(y_test, y_pred, output_dict=True)['weighted avg']['precision'])\n                    mlflow.log_metric('recall', classification_report(y_test, y_pred, output_dict=True)['weighted avg']['recall'])\n                    mlflow.log_metric('f1_score', classification_report(y_test, y_pred, output_dict=True)['weighted avg']['f1-score'])\n                    \n                    # Log model\n                    mlflow.sklearn.log_model(model, 'model')\n                    \n                    # Log feature importance\n                    feature_importance = pd.DataFrame({\n                        'feature': iris.feature_names,\n                        'importance': model.feature_importances_\n                    })\n                    mlflow.log_dict(feature_importance.to_dict(), 'feature_importance.json')\n                    \n                    # Update best model\n                    if accuracy > best_accuracy:\n                        best_accuracy = accuracy\n                        best_params = {\n                            'n_estimators': n_estimators,\n                            'max_depth': max_depth,\n                            'min_samples_split': min_samples_split,\n                            'min_samples_leaf': min_samples_leaf\n                        }\n                    \n                    print(f'Accuracy: {accuracy:.4f}, Params: {n_estimators}, {max_depth}, {min_samples_split}, {min_samples_leaf}')\n\nprint(f'\\nBest Accuracy: {best_accuracy:.4f}')\nprint(f'Best Parameters: {best_params}')\n\n# Train final model with best parameters\nbest_model = RandomForestClassifier(**best_params, random_state=42)\nbest_model.fit(X_train, y_train)\n\n# Register the best model\nwith mlflow.start_run():\n    mlflow.sklearn.log_model(\n        best_model, \n        'best_model',\n        registered_model_name='IrisClassifier'\n    )\n    \n    # Log final metrics\n    final_pred = best_model.predict(X_test)\n    mlflow.log_metric('final_accuracy', accuracy_score(y_test, final_pred))\n    \n    print('\\nModel registered as IrisClassifier')\n\n# Load model from registry\nloaded_model = mlflow.sklearn.load_model('models:/IrisClassifier/1')\n\n# Make predictions with loaded model\ntest_predictions = loaded_model.predict(X_test[:5])\nprint(f'\\nLoaded model predictions: {test_predictions}')\nprint(f'Actual labels: {y_test[:5]}')\n\n# View experiments in UI:\nprint('\\nTo view experiments, run: mlflow ui')\nprint('Then open http://localhost:5000 in your browser')\n\n# Compare runs programmatically\nclient = mlflow.tracking.MlflowClient()\nexperiment = client.get_experiment_by_name('Iris Classification Experiment')\nruns = client.search_runs(experiment.experiment_id)\n\nprint(f'\\nTotal runs in experiment: {len(runs)}')\n\n# Find best run\nbest_run = max(runs, key=lambda r: r.data.metrics.get('accuracy', 0))\nprint(f'Best run accuracy: {best_run.data.metrics.get(\"accuracy\", 0):.4f}')\nprint(f'Best run parameters:')\nfor key, value in best_run.data.params.items():\n    print(f'  {key}: {value}')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/mlflow.jpg",
+            "alternatives": [
+                "weights-and-biases",
+                "comet-ml",
+                "neptune-ai"
+            ],
+            "relatedResources": [
+                "tensorflow",
+                "pytorch",
+                "scikit-learn"
+            ],
+            "tutorials": [
+                {
+                    "title": "MLflow Documentation",
+                    "url": "https://mlflow.org/docs/latest/index.html"
+                },
+                {
+                    "title": "MLflow Tutorials",
+                    "url": "https://mlflow.org/docs/latest/tutorials-and-examples/index.html"
+                },
+                {
+                    "title": "MLflow Model Registry",
+                    "url": "https://mlflow.org/docs/latest/model-registry.html"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,1289 @@
+{
+    "overview": {
+        "title": "Electronic Components Library",
+        "description": "Essential passive and active electronic components including resistors, capacitors, transistors, ICs, and diodes with specifications, applications, and circuit examples",
+        "totalComponents": 22,
+        "categories": [
+            "Resistor",
+            "Capacitor",
+            "Transistor",
+            "Integrated Circuit",
+            "Diode & LED"
+        ]
+    },
+    "components": [
+        {
+            "slug": "carbon-film-resistor",
+            "name": "Carbon Film Resistor (1/4W)",
+            "category": "Resistor",
+            "shortDesc": "Standard fixed resistor, 1/4 watt power rating, ±5% tolerance for general-purpose circuits",
+            "fullDescription": "Carbon film resistors are the most common type of fixed resistor used in electronic circuits. They provide reliable resistance values at low cost and are suitable for most general-purpose applications where high precision is not critical.",
+            "specifications": {
+                "Type": "Fixed Resistor",
+                "Power Rating": "1/4 Watt (0.25W)",
+                "Tolerance": "±5% (Gold band)",
+                "Temperature Coefficient": "±200 ppm/°C",
+                "Operating Temperature": "-55°C to +155°C",
+                "Resistance Range": "1Ω to 10MΩ",
+                "Material": "Carbon film on ceramic substrate",
+                "Lead Type": "Axial",
+                "Common Values": "10Ω, 100Ω, 1kΩ, 10kΩ, 100kΩ, 1MΩ"
+            },
+            "identification": {
+                "Color Code": "4 or 5 band color code",
+                "Reading": "Band 1&2 (or 1,2,3): Digits | Band 3 (or 4): Multiplier | Last: Tolerance",
+                "Example": "Brown-Black-Red-Gold = 10 × 10² = 1kΩ ±5%"
+            },
+            "useCases": [
+                "Current limiting for LEDs",
+                "Pull-up/pull-down resistors in digital circuits",
+                "Voltage dividers",
+                "Biasing transistors",
+                "RC timing circuits",
+                "General-purpose circuit applications"
+            ],
+            "codeSnippet": {
+                "language": "text",
+                "title": "LED Current Limiting Calculation",
+                "code": "// LED Current Limiting Resistor Calculation\n// Ohm's Law: R = V / I\n\nGiven:\n- Supply Voltage (Vs) = 5V\n- LED Forward Voltage (Vf) = 2V (typical for red LED)\n- LED Forward Current (If) = 20mA = 0.02A\n\nCalculation:\nVoltage across resistor = Vs - Vf = 5V - 2V = 3V\nResistance = V / I = 3V / 0.02A = 150Ω\n\nChoose nearest standard value: 150Ω or 220Ω (safer)\n\nPower dissipation:\nP = V² / R = (3V)² / 220Ω = 0.041W\n1/4W resistor is adequate (rated for 0.25W)\n"
+            },
+            "pricing": "$0.01 - $0.10",
+            "image": "/images/resources/carbon-film-resistor.jpg",
+            "safetyNotes": "Ensure power rating is not exceeded. Resistors can get hot when operating near their power limit.",
+            "relatedComponents": [
+                "potentiometer-10k",
+                "standard-led-5mm"
+            ],
+            "tutorials": [
+                {
+                    "title": "Resistor Color Code Guide",
+                    "url": "https://www.electronics-tutorials.ws/resistor/res_2.html"
+                },
+                {
+                    "title": "Understanding Resistors",
+                    "url": "https://learn.sparkfun.com/tutorials/resistors"
+                }
+            ]
+        },
+        {
+            "slug": "potentiometer-10k",
+            "name": "10kΩ Linear Potentiometer",
+            "category": "Resistor",
+            "shortDesc": "Variable resistor with 10kΩ maximum resistance, linear taper for volume controls and voltage adjustment",
+            "fullDescription": "A potentiometer is a three-terminal variable resistor that allows manual adjustment of resistance. The 10kΩ value is extremely common in electronics for volume controls, brightness adjustment, and as adjustable voltage dividers in sensor circuits.",
+            "specifications": {
+                "Type": "Variable Resistor (Potentiometer)",
+                "Resistance": "10kΩ",
+                "Taper": "Linear (B-type)",
+                "Power Rating": "0.2W - 0.5W",
+                "Tolerance": "±20%",
+                "Terminals": "3 (Two ends + wiper)",
+                "Rotation": "270° - 300°",
+                "Mounting": "Panel mount or PCB mount",
+                "Shaft": "6mm diameter (common)"
+            },
+            "identification": {
+                "Marking": "Usually marked with resistance value (103 = 10kΩ)",
+                "Taper Types": "B = Linear, A = Audio/Log",
+                "Terminals": "1 & 3 = Fixed ends, 2 = Wiper (variable)"
+            },
+            "useCases": [
+                "Volume controls in audio circuits",
+                "Brightness adjustment for LEDs",
+                "Adjustable voltage dividers",
+                "Sensor calibration",
+                "Variable timing in 555 timer circuits",
+                "User input controls in Arduino projects"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino Potentiometer Reading",
+                "code": "// Read potentiometer value and control LED brightness\nconst int potPin = A0;    // Potentiometer on analog pin 0\nconst int ledPin = 9;     // LED on PWM pin 9\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // Read potentiometer (0-1023)\n  int potValue = analogRead(potPin);\n  \n  // Map to PWM range (0-255)\n  int brightness = map(potValue, 0, 1023, 0, 255);\n  \n  // Set LED brightness\n  analogWrite(ledPin, brightness);\n  \n  // Display values\n  Serial.print(\"Pot: \");\n  Serial.print(potValue);\n  Serial.print(\" | Brightness: \");\n  Serial.println(brightness);\n  \n  delay(100);\n}\n"
+            },
+            "pricing": "$0.50 - $2.00",
+            "image": "/images/resources/potentiometer-10k.jpg",
+            "wiring": {
+                "Terminal 1": "Connect to VCC or one end of voltage divider",
+                "Terminal 2 (Wiper)": "Output to circuit (variable voltage)",
+                "Terminal 3": "Connect to GND or other end of divider"
+            },
+            "relatedComponents": [
+                "carbon-film-resistor",
+                "lm358-op-amp"
+            ],
+            "tutorials": [
+                {
+                    "title": "Potentiometer Tutorial",
+                    "url": "https://www.electronics-tutorials.ws/resistor/potentiometer.html"
+                },
+                {
+                    "title": "Arduino Potentiometer Guide",
+                    "url": "https://www.arduino.cc/en/Tutorial/BuiltInExamples/AnalogInput"
+                }
+            ]
+        },
+        {
+            "slug": "ceramic-capacitor-100nf",
+            "name": "Ceramic Capacitor 100nF (0.1µF)",
+            "category": "Capacitor",
+            "shortDesc": "Non-polarized ceramic capacitor, 100nF value for decoupling, filtering, and timing applications",
+            "fullDescription": "The 100nF (0.1µF) ceramic capacitor is one of the most essential components in electronics. Used primarily for decoupling power supplies and filtering high-frequency noise, it's found in virtually every digital circuit board.",
+            "specifications": {
+                "Type": "Ceramic Capacitor (MLCC)",
+                "Capacitance": "100nF (0.1µF)",
+                "Tolerance": "±10% to ±20% (K or M)",
+                "Voltage Rating": "50V (common)",
+                "Dielectric": "X7R or Y5V",
+                "Temperature Range": "-55°C to +125°C",
+                "Polarity": "Non-polarized",
+                "Package": "Radial lead or SMD",
+                "ESR": "Low (typically < 0.1Ω)"
+            },
+            "identification": {
+                "Marking": "104 = 10 × 10⁴ pF = 100,000pF = 100nF",
+                "Code Format": "First 2 digits + number of zeros in pF",
+                "Common Codes": "103 = 10nF, 104 = 100nF, 105 = 1µF"
+            },
+            "useCases": [
+                "Power supply decoupling for ICs",
+                "High-frequency noise filtering",
+                "Bypass capacitors near microcontrollers",
+                "RC timing circuits",
+                "Coupling and de-coupling in amplifiers",
+                "EMI/RFI suppression"
+            ],
+            "codeSnippet": {
+                "language": "text",
+                "title": "Decoupling Capacitor Placement",
+                "code": "// Power Supply Decoupling Best Practices\n\nPlacement Rules:\n1. Place 100nF ceramic capacitor as close as possible to each IC's VCC pin\n2. Keep leads short to minimize inductance\n3. Connect capacitor between VCC and GND pins\n4. Use one 100nF capacitor per IC\n\nTypical Circuit:\n    VCC ────┬─── IC VCC Pin\n            │\n           [100nF]\n            │\n    GND ────┴─── IC GND Pin\n\nWhy 100nF?\n- Effective at filtering high-frequency noise (>1MHz)\n- Low ESR and ESL\n- Inexpensive and widely available\n- Standard value in digital designs\n"
+            },
+            "pricing": "$0.02 - $0.20",
+            "image": "/images/resources/ceramic-capacitor.jpg",
+            "safetyNotes": "Non-polarized - can be connected either way. Ensure voltage rating exceeds circuit voltage.",
+            "relatedComponents": [
+                "electrolytic-capacitor-100uf",
+                "lm7805-regulator"
+            ],
+            "tutorials": [
+                {
+                    "title": "Capacitor Guide",
+                    "url": "https://learn.sparkfun.com/tutorials/capacitors"
+                },
+                {
+                    "title": "Decoupling Capacitors",
+                    "url": "https://www.analog.com/en/resources/glossary/decoupling-capacitor.html"
+                }
+            ]
+        },
+        {
+            "slug": "electrolytic-capacitor-100uf",
+            "name": "Electrolytic Capacitor 100µF/25V",
+            "category": "Capacitor",
+            "shortDesc": "Polarized aluminum electrolytic capacitor for power supply filtering and energy storage applications",
+            "fullDescription": "Electrolytic capacitors offer high capacitance values in relatively small packages, making them ideal for power supply filtering, energy storage, and audio coupling. The 100µF/25V variant is commonly used in low-voltage DC power supplies.",
+            "specifications": {
+                "Type": "Aluminum Electrolytic",
+                "Capacitance": "100µF",
+                "Voltage Rating": "25V DC",
+                "Tolerance": "±20%",
+                "Operating Temperature": "-40°C to +85°C (105°C variants available)",
+                "Polarity": "POLARIZED (+ and - marked)",
+                "ESR": "Medium to High",
+                "Lifetime": "2000-5000 hours @ rated temp",
+                "Lead Spacing": "2.5mm or 5mm radial"
+            },
+            "identification": {
+                "Polarity": "Negative lead is shorter, case has stripe indicating negative side",
+                "Value Marking": "100µF 25V printed on case",
+                "Warning": "MUST be connected with correct polarity!"
+            },
+            "useCases": [
+                "Power supply output filtering (smoothing)",
+                "Energy storage in DC supplies",
+                "Audio coupling capacitors",
+                "Motor starter circuits",
+                "Timing circuits with long time constants",
+                "Bulk decoupling for power rails"
+            ],
+            "codeSnippet": {
+                "language": "text",
+                "title": "Power Supply Filter Calculation",
+                "code": "// Basic Power Supply Filter Design\n\nGiven:\n- Unregulated DC input: 12V\n- Load current: 500mA\n- Ripple frequency: 100Hz (full-wave rectified 50Hz AC)\n- Desired ripple voltage: < 0.5V peak-to-peak\n\nCapacitance Calculation:\nC = I / (f × ΔV)\nwhere:\n  I = load current (A)\n  f = ripple frequency (Hz)\n  ΔV = allowable ripple voltage (V)\n\nC = 0.5A / (100Hz × 0.5V)\nC = 0.5 / 50 = 0.01F = 10,000µF\n\nPractical Design:\n- Use 10,000µF or higher\n- Voltage rating: Minimum 1.5× input voltage = 18V\n- Choose 25V rated capacitor for safety margin\n- Add 100nF ceramic in parallel for high-frequency filtering\n"
+            },
+            "pricing": "$0.20 - $1.00",
+            "image": "/images/resources/electrolytic-capacitor.jpg",
+            "safetyNotes": "CRITICAL: Reverse polarity will cause explosion! Always verify polarity before powering up. Can store charge - discharge before handling.",
+            "relatedComponents": [
+                "ceramic-capacitor-100nf",
+                "lm7805-regulator",
+                "1n4007-diode"
+            ],
+            "tutorials": [
+                {
+                    "title": "Electrolytic Capacitors Explained",
+                    "url": "https://www.electronics-tutorials.ws/capacitor/cap_3.html"
+                },
+                {
+                    "title": "Power Supply Filter Design",
+                    "url": "https://www.allaboutcircuits.com/technical-articles/understanding-power-supply-ripple-rejection-in-linear-regulators/"
+                }
+            ]
+        },
+        {
+            "slug": "2n2222-transistor",
+            "name": "2N2222 NPN Transistor",
+            "category": "Transistor",
+            "shortDesc": "General-purpose NPN bipolar junction transistor for switching and amplification up to 600mA",
+            "fullDescription": "The 2N2222 is one of the most popular and widely-used NPN transistors in electronics. It's excellent for low-power switching applications, driving relays, LEDs, small motors, and general-purpose amplification circuits.",
+            "specifications": {
+                "Type": "NPN Bipolar Junction Transistor (BJT)",
+                "Collector Current (Ic max)": "600mA continuous",
+                "Collector-Emitter Voltage (Vceo)": "40V",
+                "Power Dissipation (Pd)": "500mW (625mW for TO-92)",
+                "DC Current Gain (hFE)": "100-300 typical",
+                "Transition Frequency (fT)": "250MHz",
+                "Package": "TO-92 (3-pin plastic)",
+                "Pin Configuration": "1=Emitter, 2=Base, 3=Collector (EBC)"
+            },
+            "pinout": {
+                "Pin 1": "Emitter (E)",
+                "Pin 2": "Base (B)",
+                "Pin 3": "Collector (C)",
+                "Identification": "Flat side facing you, left to right: E-B-C"
+            },
+            "useCases": [
+                "Switching LEDs and small loads",
+                "Driving relays and motors (with flyback diode)",
+                "Logic level shifting",
+                "Audio amplifier stages",
+                "Oscillator circuits",
+                "Digital switching applications"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino Relay Driver Circuit",
+                "code": "// Drive a 5V relay using 2N2222 transistor\n// Safe switching with flyback protection\n\nconst int relayPin = 7;  // Digital pin controlling transistor base\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // Turn relay ON\n  digitalWrite(relayPin, HIGH);\n  Serial.println(\"Relay ON\");\n  delay(2000);\n  \n  // Turn relay OFF\n  digitalWrite(relayPin, LOW);\n  Serial.println(\"Relay OFF\");\n  delay(2000);\n}\n\n/* Circuit Connection:\n   Arduino Pin 7 ──[1kΩ]── Base (Pin 2) of 2N2222\n   Collector (Pin 3) ── Relay Coil + ── 5V\n   Emitter (Pin 1) ── GND\n   \n   Flyback Protection:\n   1N4007 diode across relay coil (cathode to +5V)\n   \n   Base Resistor Calculation:\n   Rb = (Vcc - Vbe) / Ib\n   Ib = Ic / hFE\n   For relay current ~50mA, hFE=100:\n   Ib = 50mA / 100 = 0.5mA\n   Rb = (5V - 0.7V) / 0.5mA = 8.6kΩ\n   Use standard 10kΩ for saturation (~0.43mA base current)\n*/\n"
+            },
+            "pricing": "$0.10 - $0.30",
+            "image": "/images/resources/2n2222-transistor.jpg",
+            "safetyNotes": "Always use current-limiting resistor on base. Add flyback diode when switching inductive loads (relays, motors).",
+            "relatedComponents": [
+                "carbon-film-resistor",
+                "1n4007-diode",
+                "standard-led-5mm"
+            ],
+            "tutorials": [
+                {
+                    "title": "Transistors Tutorial",
+                    "url": "https://learn.sparkfun.com/tutorials/transistors"
+                },
+                {
+                    "title": "2N2222 Datasheet",
+                    "url": "https://www.onsemi.com/pdf/datasheet/p2n2222a-d.pdf"
+                }
+            ]
+        },
+        {
+            "slug": "irf540n-mosfet",
+            "name": "IRF540N N-Channel MOSFET",
+            "category": "Transistor",
+            "shortDesc": "Power MOSFET for high-current switching up to 33A, ideal for motor control and high-power loads",
+            "fullDescription": "The IRF540N is a high-current N-channel power MOSFET designed for switching applications. With its low on-resistance and ability to handle up to 33A, it's perfect for controlling motors, high-power LEDs, and other demanding loads from microcontroller outputs.",
+            "specifications": {
+                "Type": "N-Channel Enhancement Mode Power MOSFET",
+                "Drain Current (Id max)": "33A continuous @ 25°C",
+                "Drain-Source Voltage (Vdss)": "100V",
+                "On-Resistance (Rds(on))": "0.044Ω @ Vgs=10V",
+                "Gate Threshold Voltage (Vgs(th))": "2-4V",
+                "Power Dissipation": "130W @ 25°C",
+                "Package": "TO-220 (3-pin through-hole)",
+                "Pin Configuration": "1=Gate, 2=Drain, 3=Source"
+            },
+            "pinout": {
+                "Pin 1 (Left)": "Gate (G) - Control input",
+                "Pin 2 (Middle)": "Drain (D) - High side connection",
+                "Pin 3 (Right)": "Source (S) - Low side/ground",
+                "Tab": "Connected to Drain, can be heatsink mounted"
+            },
+            "useCases": [
+                "DC motor speed control (PWM)",
+                "High-power LED dimming",
+                "Switching power supplies",
+                "Load switching for Arduino/Raspberry Pi",
+                "H-bridge motor drivers",
+                "Solenoid and relay coil drivers"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino PWM Motor Control",
+                "code": "// Control DC motor speed using IRF540N MOSFET\n// PWM signal from Arduino drives MOSFET gate\n\nconst int motorPin = 9;      // PWM pin connected to MOSFET gate\nconst int potPin = A0;       // Potentiometer for speed control\n\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // Read potentiometer (0-1023)\n  int potValue = analogRead(potPin);\n  \n  // Map to PWM range (0-255)\n  int motorSpeed = map(potValue, 0, 1023, 0, 255);\n  \n  // Set motor speed via PWM\n  analogWrite(motorPin, motorSpeed);\n  \n  // Display speed percentage\n  int speedPercent = map(motorSpeed, 0, 255, 0, 100);\n  Serial.print(\"Motor Speed: \");\n  Serial.print(speedPercent);\n  Serial.println(\"%\");\n  \n  delay(50);\n}\n\n/* Circuit Connections:\n   \n   Arduino Pin 9 (PWM) ──[220Ω]── Gate (Pin 1)\n   \n   Motor + ── Battery +\n   Motor - ── Drain (Pin 2)\n   Source (Pin 3) ── GND (common with Arduino GND)\n   \n   Flyback Diode:\n   1N4007 across motor (cathode to Motor+)\n   \n   Gate Resistor:\n   220Ω-1kΩ between Arduino and Gate\n   (limits current, prevents gate oscillation)\n   \n   Pull-down:\n   10kΩ resistor from Gate to Source\n   (ensures MOSFET is OFF when Arduino pin is floating)\n*/\n"
+            },
+            "pricing": "$0.50 - $1.50",
+            "image": "/images/resources/irf540n-mosfet.jpg",
+            "safetyNotes": "Use heatsink for high-current applications. Always add flyback diode for inductive loads. Gate-source voltage should not exceed 20V.",
+            "relatedComponents": [
+                "2n2222-transistor",
+                "1n4007-diode",
+                "carbon-film-resistor"
+            ],
+            "tutorials": [
+                {
+                    "title": "MOSFET Tutorial",
+                    "url": "https://www.electronics-tutorials.ws/transistor/tran_6.html"
+                },
+                {
+                    "title": "Motor Control with MOSFETs",
+                    "url": "https://www.arduino.cc/en/Tutorial/SecretsOfArduinoPWM"
+                }
+            ]
+        },
+        {
+            "slug": "ne555-timer",
+            "name": "NE555 Timer IC",
+            "category": "Integrated Circuit",
+            "shortDesc": "Versatile timer IC for oscillators, pulse generation, and timing applications from microseconds to hours",
+            "fullDescription": "The NE555 is one of the most popular and versatile integrated circuits ever made. It can operate in three modes: astable (oscillator), monostable (one-shot), and bistable (flip-flop), making it invaluable for timing, pulse generation, and oscillator circuits.",
+            "specifications": {
+                "Type": "Precision Timer IC",
+                "Supply Voltage": "4.5V to 16V",
+                "Output Current": "200mA (source or sink)",
+                "Operating Modes": "Astable, Monostable, Bistable",
+                "Timing Range": "Microseconds to hours",
+                "Output Voltage": "Nearly full Vcc (high), <0.25V (low)",
+                "Package": "8-pin DIP or SOIC",
+                "Operating Temperature": "0°C to +70°C (commercial)",
+                "Trigger Voltage": "1/3 Vcc",
+                "Threshold Voltage": "2/3 Vcc"
+            },
+            "pinout": {
+                "Pin 1": "GND - Ground",
+                "Pin 2": "TRIG - Trigger input (active low)",
+                "Pin 3": "OUT - Output",
+                "Pin 4": "RESET - Reset (active low, tie to Vcc if not used)",
+                "Pin 5": "CTRL - Control voltage (optional, usually 10nF to GND)",
+                "Pin 6": "THRES - Threshold",
+                "Pin 7": "DISCH - Discharge",
+                "Pin 8": "Vcc - Positive supply"
+            },
+            "useCases": [
+                "LED flashers and blinkers",
+                "PWM signal generation",
+                "Time delay circuits",
+                "Frequency dividers",
+                "Missing pulse detection",
+                "Sequential timing"
+            ],
+            "codeSnippet": {
+                "language": "text",
+                "title": "Astable Mode LED Blinker",
+                "code": "// 555 Timer Astable (Oscillator) Configuration\n// Creates square wave output to blink LED\n\nCircuit:\n  Vcc (Pin 8) ── +9V\n  \n  Pin 7 (DISCH) ──┬── R1 (10kΩ) ── Vcc\n                  │\n  Pin 6 (THRES) ──┴── R2 (10kΩ) ──┬── Pin 2 (TRIG)\n                                   │\n                             C1 (100µF) ── GND\n  \n  Pin 3 (OUT) ──[330Ω]── LED ──── GND\n  \n  Pin 4 (RESET) ── Vcc\n  Pin 5 (CTRL) ──[10nF]── GND\n  Pin 1 (GND) ── GND\n\nFormulas:\n  Frequency (f) = 1.44 / ((R1 + 2×R2) × C1)\n  Duty Cycle = (R1 + R2) / (R1 + 2×R2)\n\nCalculation:\n  f = 1.44 / ((10k + 2×10k) × 100µF)\n  f = 1.44 / (30k × 100µF)\n  f = 1.44 / 3 = 0.48 Hz\n  \n  Period = 1/f = 2.08 seconds\n  LED blinks approximately every 2 seconds\n\nAdjustments:\n- Increase C1 for slower blinking\n- Decrease C1 for faster blinking\n- Change R1/R2 ratio to adjust duty cycle\n"
+            },
+            "pricing": "$0.20 - $0.60",
+            "image": "/images/resources/ne555-timer.jpg",
+            "safetyNotes": "Pin 4 (RESET) must be tied to Vcc if not used. Output can source/sink 200mA but use current-limiting resistor for LEDs.",
+            "relatedComponents": [
+                "carbon-film-resistor",
+                "electrolytic-capacitor-100uf",
+                "standard-led-5mm"
+            ],
+            "tutorials": [
+                {
+                    "title": "555 Timer Tutorial",
+                    "url": "https://www.electronics-tutorials.ws/waveforms/555_timer.html"
+                },
+                {
+                    "title": "555 Timer Circuits",
+                    "url": "https://www.circuitstoday.com/555-timer-circuits"
+                }
+            ]
+        },
+        {
+            "slug": "lm7805-regulator",
+            "name": "LM7805 Voltage Regulator",
+            "category": "Integrated Circuit",
+            "shortDesc": "Fixed +5V linear voltage regulator, 1.5A output for powering digital circuits and microcontrollers",
+            "fullDescription": "The LM7805 is a three-terminal positive voltage regulator that provides a constant +5V output from a higher input voltage. It's the most common voltage regulator for powering 5V digital logic, microcontrollers, and other electronics requiring stable 5V DC supply.",
+            "specifications": {
+                "Type": "Linear Voltage Regulator",
+                "Output Voltage": "+5V (±4%)",
+                "Output Current": "1.5A max",
+                "Input Voltage Range": "7V to 35V",
+                "Dropout Voltage": "~2V",
+                "Line Regulation": "100mV typical",
+                "Load Regulation": "100mV typical",
+                "Package": "TO-220 (3-pin)",
+                "Operating Temperature": "0°C to +125°C",
+                "Thermal Shutdown": "Yes"
+            },
+            "pinout": {
+                "Pin 1 (Left)": "INPUT - Unregulated DC input (7-35V)",
+                "Pin 2 (Middle)": "GROUND - Common ground",
+                "Pin 3 (Right)": "OUTPUT - Regulated +5V output",
+                "Tab": "Connected to middle pin (GND), heatsink mountable"
+            },
+            "useCases": [
+                "Powering Arduino and microcontrollers",
+                "5V logic circuit power supply",
+                "Battery-powered device regulation",
+                "Linear bench power supplies",
+                "Automotive electronics (12V to 5V)",
+                "Sensor power supply"
+            ],
+            "codeSnippet": {
+                "language": "text",
+                "title": "Basic 5V Power Supply Circuit",
+                "code": "// LM7805 Basic Voltage Regulator Circuit\n// Input: 9-12V DC (from battery or wall adapter)\n// Output: Stable 5V @ up to 1.5A\n\nCircuit:\n  INPUT (9-12V) ──┬── C1 (100nF ceramic) ── GND\n                  │\n                  └── Pin 1 (INPUT)\n                  \n  Pin 2 (GND) ── GND\n  \n  Pin 3 (OUTPUT) ──┬── C2 (100µF electrolytic +) ── GND\n                   │\n                   ├── C3 (100nF ceramic) ── GND\n                   │\n                   └── +5V OUTPUT to load\n\nComponent Selection:\n- C1 (100nF ceramic): Input filter, reduces input noise\n- C2 (100µF/16V electrolytic): Output smoothing, improves transient response\n- C3 (100nF ceramic): High-frequency filtering\n\nHeatsink Requirements:\nPower dissipation = (Vin - 5V) × I_load\nExample: 12V input, 500mA load\nPd = (12V - 5V) × 0.5A = 3.5W\n\nThermal calculation:\nTjunction = Tambient + (Pd × Rθ)\nFor TO-220 without heatsink: Rθ ≈ 50°C/W\nTj = 25°C + (3.5W × 50°C/W) = 200°C (OVERHEATING!)\n\nSolution: ADD HEATSINK to reduce Rθ\nWith small heatsink: Rθ ≈ 15°C/W\nTj = 25°C + (3.5W × 15°C/W) = 77.5°C (OK)\n\nRule of Thumb:\n- For Pd > 1W, use heatsink\n- Keep Vin as low as possible (7-9V ideal for 5V output)\n- Use switching regulator for higher efficiency\n"
+            },
+            "pricing": "$0.30 - $1.00",
+            "image": "/images/resources/lm7805-regulator.jpg",
+            "safetyNotes": "Can get very hot! Use heatsink for currents >500mA. Input capacitor required for stability. Ensure adequate ventilation.",
+            "relatedComponents": [
+                "ceramic-capacitor-100nf",
+                "electrolytic-capacitor-100uf",
+                "1n4007-diode"
+            ],
+            "tutorials": [
+                {
+                    "title": "Voltage Regulator Guide",
+                    "url": "https://www.electronics-tutorials.ws/power/power_3.html"
+                },
+                {
+                    "title": "LM7805 Datasheet",
+                    "url": "https://www.ti.com/lit/ds/symlink/lm340.pdf"
+                }
+            ]
+        },
+        {
+            "slug": "lm358-op-amp",
+            "name": "LM358 Dual Op-Amp",
+            "category": "Integrated Circuit",
+            "shortDesc": "Dual operational amplifier IC for signal amplification, filtering, and analog signal processing",
+            "fullDescription": "The LM358 is a dual operational amplifier (op-amp) IC containing two independent, high-gain amplifiers in a single package. It's designed for single supply operation and is ideal for sensor signal conditioning, audio amplification, and general analog circuit applications.",
+            "specifications": {
+                "Type": "Dual Operational Amplifier",
+                "Supply Voltage": "3V to 32V (single supply) or ±1.5V to ±16V (dual)",
+                "Channels": "2 independent op-amps",
+                "Input Offset Voltage": "3mV max",
+                "Gain Bandwidth Product": "1.1MHz",
+                "Slew Rate": "0.6V/µs",
+                "Input Impedance": "Very high (>10MΩ)",
+                "Output Current": "±40mA",
+                "Package": "8-pin DIP or SOIC",
+                "Operating Temperature": "0°C to +70°C"
+            },
+            "pinout": {
+                "Pin 1": "OUT A - Op-amp A output",
+                "Pin 2": "IN- A - Op-amp A inverting input",
+                "Pin 3": "IN+ A - Op-amp A non-inverting input",
+                "Pin 4": "GND/V- - Ground or negative supply",
+                "Pin 5": "IN+ B - Op-amp B non-inverting input",
+                "Pin 6": "IN- B - Op-amp B inverting input",
+                "Pin 7": "OUT B - Op-amp B output",
+                "Pin 8": "Vcc/V+ - Positive supply"
+            },
+            "useCases": [
+                "Sensor signal amplification",
+                "Active filters (low-pass, high-pass, band-pass)",
+                "Voltage followers and buffers",
+                "Comparators",
+                "Audio preamplifiers",
+                "Signal conditioning for ADC inputs"
+            ],
+            "codeSnippet": {
+                "language": "text",
+                "title": "Non-Inverting Amplifier Configuration",
+                "code": "// LM358 Non-Inverting Amplifier Circuit\n// Amplifies input signal by gain factor\n\nCircuit (using Op-Amp A):\n\n  Input Signal ── Pin 3 (IN+ A)\n  \n  Pin 2 (IN- A) ──┬── R1 (10kΩ) ── GND\n                  │\n                  └── R2 (10kΩ) ── Pin 1 (OUT A) ── Output\n  \n  Pin 4 (GND) ── GND\n  Pin 8 (Vcc) ── +9V\n  \n  Bypass: 100nF capacitor between Pin 8 and Pin 4\n\nGain Calculation:\n  Voltage Gain (Av) = 1 + (R2 / R1)\n  \n  With R1 = R2 = 10kΩ:\n  Av = 1 + (10k / 10k) = 2\n  \n  Output = Input × 2\n\nExample Values:\n- Input: 1V → Output: 2V\n- Input: 2.5V → Output: 5V\n\nFor different gains:\n- Gain = 2: R2 = R1\n- Gain = 5: R2 = 4 × R1 (e.g., R1=10k, R2=40k)\n- Gain = 10: R2 = 9 × R1 (e.g., R1=10k, R2=90k)\n- Gain = 11: R2 = 10 × R1 (e.g., R1=10k, R2=100k)\n\nDesign Tips:\n1. Keep R1 between 1kΩ - 100kΩ\n2. Don't exceed supply voltage at output\n3. Add 100nF bypass capacitor near Vcc pin\n4. Use voltage divider if input can exceed Vcc\n"
+            },
+            "pricing": "$0.20 - $0.80",
+            "image": "/images/resources/lm358-op-amp.jpg",
+            "safetyNotes": "Output cannot swing to full supply rails. Keep signals within supply voltage range. Add bypass capacitor for stability.",
+            "relatedComponents": [
+                "carbon-film-resistor",
+                "ceramic-capacitor-100nf",
+                "potentiometer-10k"
+            ],
+            "tutorials": [
+                {
+                    "title": "Op-Amp Tutorial",
+                    "url": "https://www.electronics-tutorials.ws/opamp/opamp_1.html"
+                },
+                {
+                    "title": "LM358 Applications",
+                    "url": "https://www.ti.com/lit/ds/symlink/lm358.pdf"
+                }
+            ]
+        },
+        {
+            "slug": "74hc595-shift-register",
+            "name": "74HC595 8-Bit Shift Register",
+            "category": "Integrated Circuit",
+            "shortDesc": "Serial-in parallel-out shift register for expanding GPIO pins and driving multiple LEDs/displays",
+            "fullDescription": "The 74HC595 is an 8-bit serial-in, parallel-out shift register with output latches. It allows you to control 8 outputs using only 3 microcontroller pins, making it perfect for LED matrices, 7-segment displays, and GPIO expansion.",
+            "specifications": {
+                "Type": "8-Bit Shift Register with Output Latches",
+                "Supply Voltage": "2V to 6V",
+                "Output Current": "35mA per pin, 70mA total",
+                "Clock Frequency": "Up to 25MHz @ 4.5V",
+                "Outputs": "8 parallel outputs",
+                "Control Pins": "Serial data, clock, latch",
+                "Package": "16-pin DIP or SOIC",
+                "Cascadable": "Yes (daisy-chain multiple ICs)",
+                "Output Type": "3-state (can be high-Z)"
+            },
+            "pinout": {
+                "Pin 1-7, 15": "Q1-Q7, Q7' - Parallel outputs",
+                "Pin 8": "GND - Ground",
+                "Pin 9": "Q7S - Serial output for cascading",
+                "Pin 10": "MR - Master reset (active low, tie HIGH)",
+                "Pin 11": "SHCP - Shift register clock",
+                "Pin 12": "STCP - Storage register clock (latch)",
+                "Pin 13": "OE - Output enable (active low, tie LOW)",
+                "Pin 14": "DS - Serial data input",
+                "Pin 16": "Vcc - Positive supply"
+            },
+            "useCases": [
+                "LED matrix control",
+                "7-segment display drivers",
+                "GPIO expansion for microcontrollers",
+                "Multiplexed display control",
+                "Control multiple relays",
+                "Digital pattern generation"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino 8-LED Control with 74HC595",
+                "code": "// Control 8 LEDs using only 3 Arduino pins\n// Uses 74HC595 shift register\n\nconst int dataPin = 8;   // DS  - Serial data\nconst int latchPin = 9;  // STCP - Latch/storage clock\nconst int clockPin = 10; // SHCP - Shift clock\n\nvoid setup() {\n  pinMode(dataPin, OUTPUT);\n  pinMode(latchPin, OUTPUT);\n  pinMode(clockPin, OUTPUT);\n}\n\nvoid loop() {\n //Running LED animation\n  for (int i = 0; i < 8; i++) {\n    byte pattern = 1 << i;  // Shift bit left: 00000001, 00000010, 00000100...\n    updateShiftRegister(pattern);\n    delay(100);\n  }\n  \n  // All LEDs blink\n  updateShiftRegister(0xFF);  // All ON (11111111)\n  delay(500);\n  updateShiftRegister(0x00);  // All OFF (00000000)\n  delay(500);\n}\n\nvoid updateShiftRegister(byte data) {\n  // Pull latch LOW to start sending data\n  digitalWrite(latchPin, LOW);\n  \n  // Send 8 bits of data\n  shiftOut(dataPin, clockPin, MSBFIRST, data);\n  \n  // Pull latch HIGH to update outputs\n  digitalWrite(latchPin, HIGH);\n}\n\n/* Circuit Connections:\n   Arduino Pin 8 (dataPin) ──── Pin 14 (DS)\n   Arduino Pin 9 (latchPin) ─── Pin 12 (STCP)\n   Arduino Pin 10 (clockPin) ── Pin 11 (SHCP)\n   \n   Pin 10 (MR) ── Vcc (master reset disabled)\n   Pin 13 (OE) ── GND (output always enabled)\n   Pin 16 (Vcc) ── +5V\n   Pin 8 (GND) ── GND\n   \n   Outputs (Q0-Q7) ──[330Ω]── LED ──── GND\n   \n   Cascading (for 16+ LEDs):\n   Pin 9 (Q7S) of first IC ── Pin 14 (DS) of second IC\n   Share clock and latch pins between ICs\n*/\n"
+            },
+            "pricing": "$0.30 - $1.00",
+            "image": "/images/resources/74hc595-shift-register.jpg",
+            "safetyNotes": "Use current-limiting resistors with LEDs. Total output current should not exceed 70mA. Pin 10 (MR) must be HIGH for normal operation.",
+            "relatedComponents": [
+                "carbon-film-resistor",
+                "standard-led-5mm",
+                "ceramic-capacitor-100nf"
+            ],
+            "tutorials": [
+                {
+                    "title": "Shift Register Tutorial",
+                    "url": "https://www.arduino.cc/en/Tutorial/Foundations/ShiftOut"
+                },
+                {
+                    "title": "74HC595 Guide",
+                    "url": "https://lastminuteengineers.com/74hc595-shift-register-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "l293d-motor-driver",
+            "name": "L293D Motor Driver IC",
+            "category": "Integrated Circuit",
+            "shortDesc": "Dual H-bridge motor driver for controlling two DC motors or one stepper motor bidirectionally",
+            "fullDescription": "The L293D is a popular dual H-bridge motor driver IC that can control two DC motors independently or one stepper motor. It features built-in flyback diodes and can handle up to 600mA per channel, making it ideal for small robot and hobby projects.",
+            "specifications": {
+                "Type": "Dual H-Bridge Motor Driver",
+                "Channels": "2 independent H-bridges (4 half-bridges)",
+                "Output Current": "600mA per channel (1.2A peak)",
+                "Supply Voltage (Vcc2 - Motors)": "4.5V to 36V",
+                "Logic Voltage (Vcc1)": "4.5V to 5.5V",
+                "Built-in Protection": "Internal flyback diodes",
+                "Package": "16-pin DIP",
+                "Thermal Shutdown": "Yes",
+                "Logic Levels": "TTL compatible"
+            },
+            "pinout": {
+                "Pin 1, 9": "EN1, EN2 - Enable pins (PWM for speed control)",
+                "Pin 2, 7": "IN1, IN2 - Motor A direction control",
+                "Pin 3, 6": "OUT1, OUT2 - Motor A outputs",
+                "Pin 10, 15": "IN3, IN4 - Motor B direction control",
+                "Pin 11, 14": "OUT3, OUT4 - Motor B outputs",
+                "Pin 4, 5, 12, 13": "GND - Ground (heat dissipation)",
+                "Pin 8": "Vcc2 - Motor power supply (4.5-36V)",
+                "Pin 16": "Vcc1 - Logic power supply (5V)"
+            },
+            "useCases": [
+                "Two-wheel robot motor control",
+                "Stepper motor drivers",
+                "Bidirectional DC motor control",
+                "Robotic arm actuators",
+                "Toy vehicle propulsion",
+                "Small appliance motor control"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino Dual Motor Control",
+                "code": "// Control 2 DC motors with L293D\n// Speed and direction control for robot car\n\n// Motor A connections\nconst int enA = 9;   // Enable/PWM for Motor A\nconst int in1 = 8;   // Direction control 1\nconst int in2 = 7;   // Direction control 2\n\n// Motor B connections  \nconst int enB = 3;   // Enable/PWM for Motor B\nconst int in3 = 5;   // Direction control 3\nconst int in4 = 4;   // Direction control 4\n\nvoid setup() {\n  pinMode(enA, OUTPUT);\n  pinMode(in1, OUTPUT);\n  pinMode(in2, OUTPUT);\n  pinMode(enB, OUTPUT);\n  pinMode(in3, OUTPUT);\n  pinMode(in4, OUTPUT);\n}\n\nvoid loop() {\n  moveForward(200);    // Forward at speed 200/255\n  delay(2000);\n  \n  moveBackward(150);   // Backward at speed 150/255\n  delay(2000);\n  \n  turnRight(180);      // Turn right\n  delay(1000);\n  \n  stopMotors();        // Stop\n  delay(1000);\n}\n\nvoid moveForward(int speed) {\n  // Motor A forward\n  digitalWrite(in1, HIGH);\n  digitalWrite(in2, LOW);\n  analogWrite(enA, speed);\n  \n  // Motor B forward\n  digitalWrite(in3, HIGH);\n  digitalWrite(in4, LOW);\n  analogWrite(enB, speed);\n}\n\nvoid moveBackward(int speed) {\n  digitalWrite(in1, LOW);\n  digitalWrite(in2, HIGH);\n  analogWrite(enA, speed);\n  \n  digitalWrite(in3, LOW);\n  digitalWrite(in4, HIGH);\n  analogWrite(enB, speed);\n}\n\nvoid turnRight(int speed) {\n  // Motor A forward, Motor B backward\n  digitalWrite(in1, HIGH);\n  digitalWrite(in2, LOW);\n  digitalWrite(in3, LOW);\n  digitalWrite(in4, HIGH);\n  analogWrite(enA, speed);\n  analogWrite(enB, speed);\n}\n\nvoid stopMotors() {\n  analogWrite(enA, 0);\n  analogWrite(enB, 0);\n}\n\n/* Pin Connections:\n   Arduino → L293D:\n   Pin 9 (PWM) → Pin 1 (EN1)\n   Pin 8 → Pin 2 (IN1)\n   Pin 7 → Pin 7 (IN2)\n   Motor A → Pins 3 & 6 (OUT1, OUT2)\n   \n   Pin 3 (PWM) → Pin 9 (EN2)\n   Pin 5 → Pin 10 (IN3)\n   Pin 4 → Pin 15 (IN4)\n   Motor B → Pins 11 & 14 (OUT3, OUT4)\n   \n   +5V → Pin 16 (Vcc1)\n   Motor Power (+6-12V) → Pin 8 (Vcc2)\n   GND → Pins 4, 5, 12, 13 (all grounds)\n*/\n"
+            },
+            "pricing": "$1.00 - $3.00",
+            "image": "/images/resources/l293d-motor-driver.jpg",
+            "safetyNotes": "Can get hot with high loads - use heatsink if needed. Separate motor power supply recommended for motors >100mA. Connect all ground pins.",
+            "relatedComponents": [
+                "irf540n-mosfet",
+                "1n4007-diode",
+                "electrolytic-capacitor-100uf"
+            ],
+            "tutorials": [
+                {
+                    "title": "L293D Motor Driver Tutorial",
+                    "url": "https://lastminuteengineers.com/l293d-motor-driver-arduino-tutorial/"
+                },
+                {
+                    "title": "Arduino Robot Car Guide",
+                    "url": "https://www.instructables.com/Arduino-Bluetooth-RC-Car/"
+                }
+            ]
+        },
+        {
+            "slug": "standard-led-5mm",
+            "name": "Standard 5mm LED",
+            "category": "Diode & LED",
+            "shortDesc": "Common 5mm light-emitting diode in various colors for indicators, displays, and lighting projects",
+            "fullDescription": "The 5mm LED is the standard building block for electronic lighting and indicators. Available in multiple colors (red, green, blue, yellow, white), these LEDs are simple to use and extremely reliable for hobbyist and professional projects alike.",
+            "specifications": {
+                "Type": "Light Emitting Diode (LED)",
+                "Size": "5mm diameter",
+                "Forward Voltage (Vf)": "1.8-2.2V (red), 2-3V (green/yellow), 3-3.6V (blue/white)",
+                "Forward Current (If)": "20mA typical (30mA max)",
+                "Luminous Intensity": "200-5000mcd (varies by color)",
+                "Viewing Angle": "30-60° typical",
+                "Polarity": "Polarized (anode +, cathode -)",
+                "Lifespan": "50,000+ hours",
+                "Colors Available": "Red, Green, Blue, Yellow, White, RGB"
+            },
+            "identification": {
+                "Polarity": "Longer lead = Anode (+), Shorter lead = Cathode (-)",
+                "Flat Edge": "Flat side of LED indicates cathode side",
+                "Internal": "Larger internal element = cathode"
+            },
+            "useCases": [
+                "Status and power indicators",
+                "Display backlighting",
+                "Decorative lighting projects",
+                "Light barriers and sensors",
+                "LED matrices and displays",
+                "Signal and warning lights"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino LED Blink with Proper Resistor",
+                "code": "// Basic LED blink with current limiting resistor\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH);  // LED ON\n  delay(1000);\n  digitalWrite(ledPin, LOW);   // LED OFF\n  delay(1000);\n}\n\n/* Resistor Calculation:\n   Ohm's Law: R = V / I\n   \n   For Red LED with Arduino (5V):\n   - Supply Voltage (Vs) = 5V\n   - LED Forward Voltage (Vf) = 2V\n   - Desired Current (If) = 20mA = 0.02A\n   \n   Voltage across resistor = Vs - Vf = 5V - 2V = 3V\n   Resistance = V / I = 3V / 0.02A = 150Ω\n   \n   Use 150Ω or 220Ω (next standard value)\n   \n   For other colors:\n   - Green/Yellow LED (Vf ≈ 2.2V): Use 150Ω-220Ω\n   - Blue/White LED (Vf ≈ 3.3V): Use 100Ω-150Ω\n   \n   Circuit:\n   Arduino Pin → [Resistor] → LED Anode (+) → LED Cathode (-) → GND\n*/\n"
+            },
+            "pricing": "$0.05 - $0.30",
+            "image": "/images/resources/standard-led-5mm.jpg",
+            "safetyNotes": "ALWAYS use current-limiting resistor! Reverse polarity can damage LED. Exceeding maximum current will reduce lifespan or destroy LED.",
+            "relatedComponents": [
+                "carbon-film-resistor",
+                "2n2222-transistor",
+                "74hc595-shift-register"
+            ],
+            "tutorials": [
+                {
+                    "title": "LED Tutorial",
+                    "url": "https://learn.sparkfun.com/tutorials/light-emitting-diodes-leds"
+                },
+                {
+                    "title": "LED Resistor Calculator",
+                    "url": "https://www.digikey.com/en/resources/conversion-calculators/conversion-calculator-led-series-resistor"
+                }
+            ]
+        },
+        {
+            "slug": "1n4007-diode",
+            "name": "1N4007 Rectifier Diode",
+            "category": "Diode & LED",
+            "shortDesc": "General-purpose rectifier diode, 1A/1000V for AC-DC conversion and flyback protection circuits",
+            "fullDescription": "The 1N4007 is the most common general-purpose rectifier diode in electronics. With its 1000V reverse voltage rating and 1A forward current capability, it's perfect for AC-DC power supplies, flyback protection for inductive loads, and reverse polarity protection.",
+            "specifications": {
+                "Type": "Silicon Rectifier Diode",
+                "Forward Current (If)": "1A average",
+                "Peak Reverse Voltage (Vrrm)": "1000V",
+                "Forward Voltage Drop (Vf)": "0.7V @ 1A (1.1V max)",
+                "Recovery Time": "Fast recovery",
+                "Package": "DO-41 (axial leads)",
+                "Operating Temperature": "-65°C to +175°C",
+                "Polarity": "Cathode marked with band"
+            },
+            "identification": {
+                "Band": "Band on diode body marks cathode (negative) end",
+                "Arrow Symbol": "Arrow points from anode to cathode",
+                "Current Flow": "Conducts when anode is positive relative to cathode"
+            },
+            "useCases": [
+                "Full-wave bridge rectifiers in power supplies",
+                "Flyback/freewheeling diodes for relays and motors",
+                "Reverse polarity protection",
+                "Voltage clamping circuits",
+                "Half-wave rectification",
+                "Battery charging circuits"
+            ],
+            "codeSnippet": {
+                "language": "text",
+                "title": "Flyback Diode Protection Circuit",
+                "code": "// Flyback (Freewheeling) Diode for Relay/Motor Protection\n// Protects switching transistor from voltage spikes\n\nWhy Needed:\nWhen current through an inductor (relay coil, motor) is suddenly \ninterrupted, it generates a high-voltage spike (back-EMF) that can \ndestroy transistors and ICs.\n\nCircuit:\n                    +12V\n                     │\n                   [Relay]\n                   [Coil ]\n                     │\n        ┌────────────┴────────┐\n        │                     │\n       ═══ 1N4007           [C] Transistor collector\n      (Flyback)              │\n      Diode                  │\n        │                   [E] Emitter\n        │                     │\n       GND ──────────────────┴──── GND\n\nConnection:\n- Cathode (banded end) → +12V or relay coil positive\n- Anode → Ground side of relay coil\n- Diode is reverse-biased during normal operation\n- When coil turns OFF, diode provides path for collapsing magnetic field\n\nWithout Diode:\n- Voltage spike can reach 100V+\n- Transistor base-emitter junction destroyed\n- MCU pins damaged\n\nWith Diode:\n- Spike clamped to ~0.7V above supply\n- Components protected\n- Slight delay in relay release (energy dissipation)\n\nAlways use with:\n- Relays, solenoids, motors\n- Any inductive load switched by transistors\n"
+            },
+            "pricing": "$0.05 - $0.20",
+            "image": "/images/resources/1n4007-diode.jpg",
+            "safetyNotes": "Observe correct polarity. Can get warm in high-current applications. Not suitable for high-frequency switching (use Schottky for that).",
+            "relatedComponents": [
+                "lm7805-regulator",
+                "2n2222-transistor",
+                "l293d-motor-driver"
+            ],
+            "tutorials": [
+                {
+                    "title": "Diode Tutorial",
+                    "url": "https://learn.sparkfun.com/tutorials/diodes"
+                },
+                {
+                    "title": "Flyback Diode Explained",
+                    "url": "https://www.electronics-tutorials.ws/diode/diode_8.html"
+                }
+            ]
+        },
+        {
+            "slug": "bmp280-sensor",
+            "name": "BMP280 Pressure & Temperature Sensor",
+            "category": "Sensor",
+            "shortDesc": "High-precision barometric pressure and temperature sensor for altitude and weather monitoring",
+            "fullDescription": "The BMP280 is a digital barometric pressure and temperature sensor from Bosch Sensortec. It provides high accuracy pressure measurements (±1 hPa) and temperature readings, making it ideal for altitude measurement, weather stations, and indoor navigation systems.",
+            "specifications": {
+                "Type": "Digital Pressure & Temperature Sensor",
+                "Pressure Range": "300 - 1100 hPa",
+                "Pressure Accuracy": "±1 hPa",
+                "Temperature Range": "-40°C to +85°C",
+                "Temperature Accuracy": "±1°C",
+                "Altitude Accuracy": "±1 meter",
+                "Interface": "I2C or SPI",
+                "I2C Address": "0x76 or 0x77",
+                "Operating Voltage": "1.71V - 3.6V",
+                "Current Consumption": "2.7µA @ 1Hz sampling",
+                "Resolution": "Up to 20-bit",
+                "Dimensions": "Small SMD package or module"
+            },
+            "identification": {
+                "I2C Addresses": "0x76 (default) or 0x77 (alternate)",
+                "Detection": "Read chip ID register (0xD0) = 0x58"
+            },
+            "useCases": [
+                "Weather stations and forecasting",
+                "Altitude measurement and tracking",
+                "Indoor navigation and floor detection",
+                "Drone altitude stabilization",
+                "Smart home environmental monitoring",
+                "IoT atmospheric pressure logging"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino BMP280 Reading",
+                "code": "// Requires Adafruit BMP280 library\n#include <Wire.h>\n#include <Adafruit_BMP280.h>\n\nAdafruit_BMP280 bmp; // I2C\n\nvoid setup() {\n  Serial.begin(9600);\n  \n  if (!bmp.begin(0x76)) {\n    Serial.println(\"BMP280 not found!\");\n    while (1);\n  }\n  \n  // Default settings\n  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,\n                  Adafruit_BMP280::SAMPLING_X2,\n                  Adafruit_BMP280::SAMPLING_X16,\n                  Adafruit_BMP280::FILTER_X16,\n                  Adafruit_BMP280::STANDBY_MS_500);\n}\n\nvoid loop() {\n  float temp = bmp.readTemperature();\n  float pressure = bmp.readPressure() / 100.0F;\n  float altitude = bmp.readAltitude(1013.25);\n  \n  Serial.print(\"Temperature: \");\n  Serial.print(temp);\n  Serial.println(\" °C\");\n  \n  Serial.print(\"Pressure: \");\n  Serial.print(pressure);\n  Serial.println(\" hPa\");\n  \n  Serial.print(\"Altitude: \");\n  Serial.print(altitude);\n  Serial.println(\" m\");\n  Serial.println();\n  \n  delay(2000);\n}"
+            },
+            "pricing": "$2 - $4",
+            "image": "/images/resources/bmp280-sensor.jpg",
+            "safetyNotes": "Operates at 3.3V logic. Use level shifter if connecting to 5V microcontrollers without built-in protection.",
+            "relatedComponents": [
+                "dht22-sensor",
+                "oled-ssd1306"
+            ],
+            "tutorials": [
+                {
+                    "title": "BMP280 Sensor Guide",
+                    "url": "https://randomnerdtutorials.com/esp32-bmp280-pressure-sensor-arduino/"
+                },
+                {
+                    "title": "Adafruit BMP280 Library",
+                    "url": "https://github.com/adafruit/Adafruit_BMP280_Library"
+                }
+            ]
+        },
+        {
+            "slug": "mpu6050-imu",
+            "name": "MPU6050 6-Axis IMU Sensor",
+            "category": "Sensor",
+            "shortDesc": "6-axis motion tracking with 3-axis gyroscope and 3-axis accelerometer for robotics and motion sensing",
+            "fullDescription": "The MPU6050 is a popular 6-axis motion tracking device combining a 3-axis gyroscope, 3-axis accelerometer, and temperature sensor. With built-in Digital Motion Processor (DMP), it provides accurate motion and orientation data, perfect for robotics, drones, and VR/AR applications.",
+            "specifications": {
+                "Type": "6-Axis Inertial Measurement Unit (IMU)",
+                "Gyroscope": "3-axis, ±250, ±500, ±1000, ±2000°/sec",
+                "Accelerometer": "3-axis, ±2g, ±4g, ±8g, ±16g",
+                "Temperature Sensor": "Built-in, -40to85C",
+                "ADC": "16-bit",
+                "Interface": "I2C (up to 400kHz)",
+                "I2C Address": "0x68 (default) or 0x69 (AD0 high)",
+                "DMP": "Digital Motion Processor (on-chip)",
+                "Operating Voltage": "3-5V",
+                "Current": "3.9mA (normal), 5µA (sleep)",
+                "Output Rate": "Up to 8kHz",
+                "Dimensions": "Small module (15 x 10mm typical)"
+            },
+            "identification": {
+                "I2C Address": "0x68 or 0x69",
+                "WHO_AM_I": "Register 0x75 returns 0x68"
+            },
+            "useCases": [
+                "Quadcopter and drone stabilization",
+                "Self-balancing robots",
+                "Motion tracking for VR/AR",
+                "Gaming controllers",
+                "Activity and gesture recognition",
+                "Robotics orientation sensing"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "MPU6050 Basic Reading",
+                "code": "// Requires MPU6050 library\n#include <Wire.h>\n#include <MPU6050.h>\n\nMPU6050 mpu;\n\nvoid setup() {\n  Serial.begin(115200);\n  Wire.begin();\n  \n  mpu.initialize();\n  \n  if (!mpu.testConnection()) {\n    Serial.println(\"MPU6050 connection failed\");\n    while(1);\n  }\n  \n  Serial.println(\"MPU6050 ready!\");\n}\n\nvoid loop() {\n  int16_t ax, ay, az;\n  mpu.getAcceleration(&ax, &ay, &az);\n  \n  int16_t gx, gy, gz;\n  mpu.getRotation(&gx, &gy, &gz);\n  \n  Serial.print(\"Accel X:\"); Serial.print(ax);\n  Serial.print(\" Y:\"); Serial.print(ay);\n  Serial.print(\" Z:\"); Serial.println(az);\n  \n  Serial.print(\"Gyro X:\"); Serial.print(gx);\n  Serial.print(\" Y:\"); Serial.print(gy);\n  Serial.print(\" Z:\"); Serial.println(gz);\n  Serial.println();\n  \n  delay(500);\n}"
+            },
+            "pricing": "$2 - $5",
+            "image": "/images/resources/mpu6050-imu.jpg",
+            "safetyNotes": "Ensure proper I2C pull-up resistors (typically 4.7kOhm). Module usually includes these.",
+            "relatedComponents": [
+                "servo-motor",
+                "oled-ssd1306"
+            ],
+            "tutorials": [
+                {
+                    "title": "MPU6050 Complete Guide",
+                    "url": "https://lastminuteengineers.com/mpu6050-accel-gyro-arduino-tutorial/"
+                },
+                {
+                    "title": "DMP Sensor Fusion",
+                    "url": "https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050"
+                }
+            ]
+        },
+        {
+            "slug": "rc522-rfid",
+            "name": "RC522 RFID Module",
+            "category": "Communication",
+            "shortDesc": "13.56MHz RFID reader/writer module for access control and contactless identification",
+            "fullDescription": "The RC522 is a highly integrated RFID reader/writer module operating at 13.56MHz. It supports ISO/IEC 14443 A/MIFARE cards and provides SPI, I2C, and UART interfaces. Ideal for access control systems, inventory management, and contactless payment applications.",
+            "specifications": {
+                "Type": "RFID Reader/Writer Module",
+                "Frequency": "13.56 MHz",
+                "Protocol": "ISO/IEC 14443 A, MIFARE",
+                "Read Range": "0 - 60mm (depending on tag size)",
+                "Interface": "SPI (default), I2C, UART",
+                "Operating Voltage": "3.3V",
+                "Current Draw": "13-26mA (active), <80µA (power down)",
+                "Data Rate": "Up to 10 Mbit/s",
+                "Supported Cards": "MIFARE Classic 1K, 4K, Ultralight, DESFire",
+                "Operating Temperature": "-20C to +80C",
+                "Dimensions": "40 x 60mm (module with antenna)"
+            },
+            "pinout": {
+                "SDA/SS": "SPI Chip Select",
+                "SCK": "SPI Clock",
+                "MOSI": "SPI Data In",
+                "MISO": "SPI Data Out",
+                "IRQ": "Interrupt (optional)",
+                "GND": "Ground",
+                "RST": "Reset",
+                "3.3V": "Power supply"
+            },
+            "wiring": {
+                "Arduino Uno": "SDA->Pin 10, SCK->Pin 13, MOSI->Pin 11, MISO->Pin 12, RST->Pin 9",
+                "ESP32": "Use any GPIO pins for SPI",
+                "Note": "MUST use 3.3V power, NOT 5V!"
+            },
+            "useCases": [
+                "Access control systems",
+                "Automated attendance tracking",
+                "Smart lockers and cabinets",
+                "Inventory and asset management",
+                "Contactless payment terminals",
+                "Library book management"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "RC522 Card Reading",
+                "code": "// Requires MFRC522 library\n#include <SPI.h>\n#include <MFRC522.h>\n\n#define SS_PIN 10\n#define RST_PIN 9\n\nMFRC522 rfid(SS_PIN, RST_PIN);\n\nvoid setup() {\n  Serial.begin(9600);\n  SPI.begin();\n  rfid.PCD_Init();\n  \n  Serial.println(\"RFID Reader Ready\");\n  Serial.println(\"Place card near reader...\");\n}\n\nvoid loop() {\n  if (!rfid.PICC_IsNewCardPresent())\n    return;\n  \n  if (!rfid.PICC_ReadCardSerial())\n    return;\n  \n  Serial.print(\"Card UID: \");\n  for (byte i = 0; i < rfid.uid.size; i++) {\n    Serial.print(rfid.uid.uidByte[i] < 0x10 ? \" 0\" : \" \");\n    Serial.print(rfid.uid.uidByte[i], HEX);\n  }\n  Serial.println();\n  \n  rfid.PICC_HaltA();\n  rfid.PCD_StopCrypto1();\n  \n  delay(1000);\n}"
+            },
+            "pricing": "$1 - $3",
+            "image": "/images/resources/rc522-rfid.jpg",
+            "safetyNotes": "CRITICAL: Use only 3.3V power! 5V will damage the module. Many modules include level shifters for 5V MCU compatibility.",
+            "relatedComponents": [
+                "pn532-nfc",
+                "oled-ssd1306"
+            ],
+            "tutorials": [
+                {
+                    "title": "RC522 RFID Tutorial",
+                    "url": "https://lastminuteengineers.com/how-rfid-works-rc522-arduino-tutorial/"
+                },
+                {
+                    "title": "MFRC522 Library Guide",
+                    "url": "https://github.com/miguelbalboa/rfid"
+                }
+            ]
+        },
+        {
+            "slug": "pn532-nfc",
+            "name": "PN532 NFC/RFID Module",
+            "category": "Communication",
+            "shortDesc": "Advanced NFC module supporting reader/writer, P2P, and card emulation modes",
+            "fullDescription": "The PN532 is a highly integrated NFC controller supporting multiple protocols including ISO14443A/B, FeliCa, and ISO/IEC 18092. It can operate in three modes: reader/writer, peer-to-peer, and card emulation, making it versatile for NFC payments, data sharing, and access control applications.",
+            "specifications": {
+                "Type": "NFC/RFID Controller Module",
+                "Frequency": "13.56 MHz",
+                "Protocols": "ISO14443A/B, FeliCa, ISO/IEC 18092 (NFCIP-1)",
+                "NFC Modes": "Reader/Writer, P2P, Card Emulation",
+                "Read Range": "0 - 50mm",
+                "Interface": "I2C, SPI, or UART (selectable)",
+                "Operating Voltage": "3.3V - 5V (onboard regulator)",
+                "Current Draw": "~100mA (active), <100µA (power down)",
+                "Data Rate": "Up to 424 kbit/s",
+                "Supported Tags": "MIFARE, NTAG, FeliCa, ISO14443 Type A/B",
+                "Dimensions": "43 x 41mm (typical module)"
+            },
+            "pinout": {
+                "I2C Mode": "SCL, SDA",
+                "SPI Mode": "SCK, MISO, MOSI, SS",
+                "UART Mode": "TX, RX",
+                "VCC": "3.3V - 5V",
+                "GND": "Ground",
+                "RSTPD_N": "Reset/Power Down"
+            },
+            "wiring": {
+                "I2C (Default)": "SDA to A4, SCL to A5 (Arduino Uno)",
+                "SPI": "MISO->12, MOSI->11, SCK->13, SS->10",
+                "Mode Selection": "Usually via onboard switches or jumpers"
+            },
+            "useCases": [
+                "NFC contactless payments",
+                "Smartphone NFC data exchange",
+                "Smart posters and tags",
+                "Access control systems",
+                "Healthcare patient identification",
+                "NFC-enabled IoT devices"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "PN532 NFC Tag Reading",
+                "code": "// Requires Adafruit PN532 library\n#include <Wire.h>\n#include <Adafruit_PN532.h>\n\nAdafruit_PN532 nfc(2, 3);\n\nvoid setup() {\n  Serial.begin(115200);\n  nfc.begin();\n  \n  uint32_t versiondata = nfc.getFirmwareVersion();\n  if (!versiondata) {\n    Serial.println(\"PN532 not found!\");\n    while (1);\n  }\n  \n  Serial.print(\"Found PN53\");\n  Serial.println((versiondata >> 24) & 0xFF, HEX);\n  \n  nfc.SAMConfig();\n  Serial.println(\"Waiting for NFC card...\");\n}\n\nvoid loop() {\n  uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0};\n  uint8_t uidLength;\n  \n  if (nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength)) {\n    Serial.print(\"Found card with UID: \");\n    for (uint8_t i = 0; i < uidLength; i++) {\n      Serial.print(\" 0x\");\n      Serial.print(uid[i], HEX);\n    }\n    Serial.println();\n    \n    delay(1000);\n  }\n}"
+            },
+            "pricing": "$5 - $10",
+            "image": "/images/resources/pn532-nfc.jpg",
+            "safetyNotes": "Module typically includes voltage regulator for 5V operation. Check module specifications for power requirements.",
+            "relatedComponents": [
+                "rc522-rfid",
+                "esp32-devkit-v1"
+            ],
+            "tutorials": [
+                {
+                    "title": "PN532 NFC Module Guide",
+                    "url": "https://learn.adafruit.com/adafruit-pn532-rfid-nfc"
+                },
+                {
+                    "title": "NFC Data Exchange",
+                    "url": "https://github.com/adafruit/Adafruit-PN532"
+                }
+            ]
+        },
+        {
+            "slug": "ds18b20-temp",
+            "name": "DS18B20 Waterproof Temperature Sensor",
+            "category": "Sensor",
+            "shortDesc": "OneWire digital temperature sensor with high accuracy, available in waterproof probe version",
+            "fullDescription": "The DS18B20 is a digital temperature sensor using the 1-Wire protocol, allowing multiple sensors on a single data line. With ±0.5°C accuracy and available in waterproof stainless steel probe versions, it's ideal for applications requiring temperature monitoring in harsh or wet environments.",
+            "specifications": {
+                "Type": "Digital Temperature Sensor",
+                "Temperature Range": "-55°C to +125°C",
+                "Accuracy": "±0.5°C (-10°C to +85°C)",
+                "Resolution": "9 to 12-bit (configurable)",
+                "Interface": "1-Wire (OneWire protocol)",
+                "Operating Voltage": "3.0V - 5.5V",
+                "Current Draw": "1mA (active), 750nA (standby)",
+                "Output": "Digital (unique 64-bit address)",
+                "Response Time": "<750ms (12-bit resolution)",
+                "Probe Length": "1m, 2m, 3m (waterproof versions)",
+                "Probe Diameter": "6mm (stainless steel)"
+            },
+            "identification": {
+                "OneWire Address": "Each sensor has unique 64-bit ROM code",
+                "Family Code": "0x28 for DS18B20"
+            },
+            "useCases": [
+                "Aquarium and pool temperature monitoring",
+                "Outdoor weather stations",
+                "Refrigeration and freezer monitoring",
+                "HVAC temperature sensing",
+                "Soil temperature measurement",
+                "Multiple-sensor temperature arrays"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino DS18B20 Reading",
+                "code": "// Requires OneWire and DallasTemperature libraries\n#include <OneWire.h>\n#include <DallasTemperature.h>\n\n#define ONE_WIRE_BUS 2\n\nOneWire oneWire(ONE_WIRE_BUS);\nDallasTemperature sensors(&oneWire);\n\nvoid setup() {\n  Serial.begin(9600);\n  sensors.begin();\n  Serial.println(\"DS18B20 Temperature Sensor\");\n}\n\nvoid loop() {\n  sensors.requestTemperatures();\n  \n  float tempC = sensors.getTempCByIndex(0);\n  float tempF = sensors.getTempFByIndex(0);\n  \n  Serial.print(\"Temperature: \");\n  Serial.print(tempC);\n  Serial.print(\"°C / \");\n  Serial.print(tempF);\n  Serial.println(\"°F\");\n  \n  delay(1000);\n}\n\n// For multiple sensors:\n// DeviceAddress sensor1 = {0x28, 0xFF, ...};\n// sensors.getTempC(sensor1);"
+            },
+            "pricing": "$2 - $4",
+            "image": "/images/resources/ds18b20-sensor.jpg",
+            "safetyNotes": "Requires 4.7kOhm pull-up resistor between data and VCC. Waterproof versions rated IP68.",
+            "relatedComponents": [
+                "dht22-sensor",
+                "bmp280-sensor"
+            ],
+            "tutorials": [
+                {
+                    "title": "DS18B20 Temperature Sensor Tutorial",
+                    "url": "https://randomnerdtutorials.com/guide-for-ds18b20-temperature-sensor-with-arduino/"
+                },
+                {
+                    "title": "Multiple DS18B20 Sensors",
+                    "url": "https://lastminuteengineers.com/multiple-ds18b20-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "neo6m-gps",
+            "name": "NEO-6M GPS Module",
+            "category": "Communication",
+            "shortDesc": "Compact GPS module with high accuracy and fast satellite acquisition for location tracking",
+            "fullDescription": "The NEO-6M is a popular GPS module from u-blox featuring excellent sensitivity and fast time-to-first-fix. It provides accurate position, velocity, and time data via UART interface, making it perfect for GPS trackers, navigation systems, and location-based IoT projects.",
+            "specifications": {
+                "Type": "GPS Receiver Module",
+                "GPS Chip": "u-blox NEO-6M",
+                "Frequency": "1575.42 MHz (L1 band)",
+                "Channels": "50 channels",
+                "Sensitivity": "-161 dBm (tracking)",
+                "Accuracy": "2.5m CEP (horizontal)",
+                "Update Rate": "Up to 5 Hz (default 1 Hz)",
+                "Cold Start": "<27s (typical)",
+                "Hot Start": "<1s (typical)",
+                "Operating Voltage": "3.3V - 5V",
+                "Current Draw": "45mA (acquisition), 30mA (tracking)",
+                "Interface": "UART (9600 baud default)",
+                "Protocol": "NMEA, UBX",
+                "Antenna": "Ceramic patch antenna (built-in)",
+                "Backup Battery": "Rechargeable via supercap or battery",
+                "Dimensions": "25 x 35mm (typical module)"
+            },
+            "pinout": {
+                "VCC": "3.3V - 5V power",
+                "GND": "Ground",
+                "TX": "Transmit data to MCU RX",
+                "RX": "Receive data from MCU TX",
+                "PPS": "Pulse Per Second (optional)"
+            },
+            "wiring": {
+                "Arduino": "VCC to 5V, GND to GND, TX to Pin 4, RX to Pin 3 (SoftwareSerial)",
+                "ESP32": "VCC to 3.3V, TX to any RX pin, RX to any TX pin",
+                "Note": "Some modules are 3.3V logic - use level shifter for 5V MCUs"
+            },
+            "useCases": [
+                "GPS trackers and asset tracking",
+                "Autonomous vehicles and drones",
+                "Geocaching and outdoor navigation",
+                "Agricultural field mapping",
+                "Fleet management systems",
+                "Time synchronization for data logging"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino GPS Data Reading",
+                "code": "// Requires TinyGPS++ library\n#include <TinyGPS++.h>\n#include <SoftwareSerial.h>\n\nstatic const int RXPin = 4, TXPin = 3;\nstatic const uint32_t GPSBaud = 9600;\n\nTinyGPSPlus gps;\nSoftwareSerial ss(RXPin, TXPin);\n\nvoid setup() {\n  Serial.begin(115200);\n  ss.begin(GPSBaud);\n  Serial.println(\"NEO-6M GPS Module\");\n}\n\nvoid loop() {\n  while (ss.available() > 0) {\n    if (gps.encode(ss.read())) {\n      displayInfo();\n    }\n  }\n}\n\nvoid displayInfo() {\n  if (gps.location.isValid()) {\n    Serial.print(\"Lat: \");\n    Serial.print(gps.location.lat(), 6);\n    Serial.print(\" Lng: \");\n    Serial.println(gps.location.lng(), 6);\n    \n    Serial.print(\"Altitude: \");\n    Serial.print(gps.altitude.meters());\n    Serial.println(\" m\");\n    \n    Serial.print(\"Satellites: \");\n    Serial.println(gps.satellites.value());\n  } else {\n    Serial.println(\"Waiting for GPS fix...\");\n  }\n}"
+            },
+            "pricing": "$8 - $15",
+            "image": "/images/resources/neo6m-gps.jpg",
+            "safetyNotes": "Requires clear view of sky for satellite acquisition. Indoor use may not work. Cold start can take up to 30 seconds.",
+            "relatedComponents": [
+                "oled-ssd1306",
+                "esp32-devkit-v1"
+            ],
+            "tutorials": [
+                {
+                    "title": "NEO-6M GPS Module Tutorial",
+                    "url": "https://randomnerdtutorials.com/guide-to-neo-6m-gps-module-with-arduino/"
+                },
+                {
+                    "title": "GPS Tracker Project",
+                    "url": "https://create.arduino.cc/projecthub/electropeak/neo-6m-gps-module-with-arduino-70d24e"
+                }
+            ]
+        },
+        {
+            "slug": "relay-module-5v",
+            "name": "5V Single Channel Relay Module",
+            "category": "Modules",
+            "shortDesc": "Optocoupler-isolated relay for controlling high-power AC/DC devices with microcontrollers",
+            "fullDescription": "The 5V relay module allows microcontrollers to safely control high-voltage and high-current devices. Featuring optocoupler isolation for protection, it can switch up to 250VAC/30VDC at 10A, making it essential for home automation and appliance control projects.",
+            "specifications": {
+                "Type": "Electromechanical Relay Module",
+                "Control Voltage": "5V DC",
+                "Relay Type": "SPDT (Single Pole Double Throw)",
+                "Contact Rating": "10A @ 250VAC, 10A @ 30VDC",
+                "Coil Resistance": "70Ω",
+                "Trigger Current": "15-20mA",
+                "Isolation": "Optocoupler (PC817)",
+                "LED Indicators": "Power and relay status",
+                "Switching Time": "<10ms",
+                "Protection": "Flyback diode included",
+                "Screw Terminals": "COM, NO, NC",
+                "Logic": "Active LOW or HIGH (jumper selectable)",
+                "Dimensions": "50 x 26 x 18mm (single channel)"
+            },
+            "pinout": {
+                "VCC": "5V power input",
+                "GND": "Ground",
+                "IN": "Control signal input",
+                "COM": "Common terminal (relay)",
+                "NO": "Normally Open contact",
+                "NC": "Normally Closed contact"
+            },
+            "wiring": {
+                "Arduino": "VCC to 5V, GND to GND, IN to Digital Pin",
+                "Load Connection": "AC/DC device between COM and NO (or NC)",
+                "Safety": "Never work on live AC circuits without proper safety measures"
+            },
+            "useCases": [
+                "Home automation and appliance control",
+                "Lighting control systems",
+                "Motor and pump control",
+                "Irrigation systems",
+                "Smart power outlets",
+                "Industrial automation"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino Relay Control",
+                "code": "// Simple relay control example\nconst int relayPin = 7;\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n  digitalWrite(relayPin, LOW); // Relay OFF (for active HIGH modules)\n  Serial.begin(9600);\n  Serial.println(\"Relay Module Ready\");\n}\n\nvoid loop() {\n  // Turn relay ON\n  digitalWrite(relayPin, HIGH);\n  Serial.println(\"Relay ON - Device Powered\");\n  delay(5000);\n  \n  // Turn relay OFF\n  digitalWrite(relayPin, LOW);\n  Serial.println(\"Relay OFF - Device Unpowered\");\n  delay(5000);\n}\n\n// For multiple relays:\n// const int relay1 = 7;\n// const int relay2 = 8;\n// digitalWrite(relay1, HIGH);\n// digitalWrite(relay2, LOW);"
+            },
+            "pricing": "$1 - $3 (single), $3-8 (4-channel)",
+            "image": "/images/resources/relay-module-5v.jpg",
+            "safetyNotes": "WARNING: Can switch mains voltage (110V/220V AC). Risk of electric shock. Only qualified personnel should work with AC power. Always disconnect power before wiring.",
+            "relatedComponents": [
+                "pir-sensor",
+                "esp32-devkit-v1"
+            ],
+            "tutorials": [
+                {
+                    "title": "Relay Module Tutorial",
+                    "url": "https://randomnerdtutorials.com/guide-for-relay-module-with-arduino/"
+                },
+                {
+                    "title": "Home Automation with Relays",
+                    "url": "https://create.arduino.cc/projecthub/electropeak/home-automation-using-arduino-and-relay-module-f5ff9c"
+                }
+            ]
+        },
+        {
+            "slug": "ds3231-rtc",
+            "name": "DS3231 Real-Time Clock Module",
+            "category": "Modules",
+            "shortDesc": "High-precision RTC with temperature-compensated crystal and battery backup for timekeeping",
+            "fullDescription": "The DS3231 is an extremely accurate I2C real-time clock with integrated temperature-compensated crystal oscillator (TCXO). With battery backup capability and ±2ppm accuracy, it maintains accurate time even when the main power is off, perfect for data logging and scheduling applications.",
+            "specifications": {
+                "Type": "Real-Time Clock (RTC) Module",
+                "Clock Chip": "DS3231 (Maxim Integrated)",
+                "Accuracy": "±2ppm (±1 minute/year)",
+                "Temperature Compensation": "Yes (TCXO)",
+                "Interface": "I2C (400kHz)",
+                "I2C Address": "0x68",
+                "Operating Voltage": "2.3V - 5.5V",
+                "Current Draw": "200µA (active), 840nA (battery backup)",
+                "Battery": "CR2032 (3V, included on most modules)",
+                "Battery Life": "8-10 years (typical)",
+                "Temperature Range": "-40°C to +85°C",
+                "Timekeeping": "Seconds, minutes, hours, day, date, month, year",
+                "Alarms": "2 programmable alarms",
+                "Square Wave": "1Hz, 1.024kHz, 4.096kHz, 8.192kHz",
+                "Dimensions": "38 x 22 x 14mm (with battery holder)"
+            },
+            "pinout": {
+                "VCC": "5V or 3.3V power",
+                "GND": "Ground",
+                "SDA": "I2C Data",
+                "SCL": "I2C Clock",
+                "SQW": "Square Wave output (optional)",
+                "32K": "32.768kHz output (optional)"
+            },
+            "wiring": {
+                "Arduino Uno": "SDA to A4, SCL to A5, VCC to 5V, GND to GND",
+                "Arduino Mega": "SDA to Pin 20, SCL to Pin 21",
+                "ESP32": "SDA to GPIO21, SCL to GPIO22 (or any I2C pins)"
+            },
+            "useCases": [
+                "Data logging with timestamps",
+                "Scheduling and automation systems",
+                "Digital clocks and alarm systems",
+                "Time-based event triggering",
+                "Calendar applications",
+                "Power-efficient timekeeping"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino RTC Time Reading",
+                "code": "// Requires RTClib library\n#include <Wire.h>\n#include <RTClib.h>\n\nRTC_DS3231 rtc;\n\nvoid setup() {\n  Serial.begin(9600);\n  \n  if (!rtc.begin()) {\n    Serial.println(\"RTC not found!\");\n    while (1);\n  }\n  \n  if (rtc.lostPower()) {\n    Serial.println(\"RTC lost power, setting time!\");\n    // Set to compile time\n    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));\n  }\n}\n\nvoid loop() {\n  DateTime now = rtc.now();\n  \n  Serial.print(now.year(), DEC);\n  Serial.print('/');\n  Serial.print(now.month(), DEC);\n  Serial.print('/');\n  Serial.print(now.day(), DEC);\n  Serial.print(\" \");\n  Serial.print(now.hour(), DEC);\n  Serial.print(':');\n  Serial.print(now.minute(), DEC);\n  Serial.print(':');\n  Serial.print(now.second(), DEC);\n  Serial.println();\n  \n  Serial.print(\"Temperature: \");\n  Serial.print(rtc.getTemperature());\n  Serial.println(\" C\");\n  \n  delay(1000);\n}"
+            },
+            "pricing": "$2 - $5",
+            "image": "/images/resources/ds3231-rtc.jpg",
+            "safetyNotes": "Install CR2032 battery with correct polarity. Battery backup ensures time is maintained during power loss.",
+            "relatedComponents": [
+                "oled-ssd1306",
+                "lcd-16x2"
+            ],
+            "tutorials": [
+                {
+                    "title": "DS3231 RTC Module Tutorial",
+                    "url": "https://lastminuteengineers.com/ds3231-rtc-arduino-tutorial/"
+                },
+                {
+                    "title": "Data Logger with RTC",
+                    "url": "https://randomnerdtutorials.com/arduino-temperature-data-logger-with-sd-card-module/"
+                }
+            ]
+        },
+        {
+            "slug": "capacitive-soil-moisture",
+            "name": "Capacitive Soil Moisture Sensor v1.2",
+            "category": "Sensor",
+            "shortDesc": "Corrosion-resistant capacitive sensor for accurate soil moisture measurement in plant monitoring",
+            "fullDescription": "The capacitive soil moisture sensor measures soil moisture levels through capacitance changes rather than resistance, making it highly resistant to corrosion. Unlike resistive sensors, it doesn't make direct electrical contact with soil, ensuring long-term reliability for automated plant watering systems.",
+            "specifications": {
+                "Type": "Capacitive Soil Moisture Sensor",
+                "Operating Voltage": "3.3V - 5V",
+                "Output": "Analog voltage (0-3V)",
+                "Measurement Range": "0-100% relative moisture",
+                "Interface": "Analog output",
+                "Response Time": "1 second",
+                "Current Draw": "<5mA",
+                "Lifespan": "Years (corrosion resistant)",
+                "Operating Temperature": "0°C to +50°C",
+                "Protection": "Moisture-resistant coating",
+                "Probe Length": "98mm",
+                "Probe Width": "23mm"
+            },
+            "identification": {
+                "vs Resistive": "No exposed metal probes - uses capacitive sensing",
+                "Coating": "Usually has protective conformal coating"
+            },
+            "useCases": [
+                "Automated plant watering systems",
+                "Smart gardening and agriculture",
+                "Greenhouse automation",
+                "Indoor plant care monitors",
+                "Irrigation control systems",
+                "Soil moisture data logging"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Arduino Soil Moisture Reading",
+                "code": "// Capacitive soil moisture sensor\nconst int sensorPin = A0;\nconst int moistureThreshold = 500; // Adjust based on calibration\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(sensorPin, INPUT);\n  Serial.println(\"Soil Moisture Sensor\");\n}\n\nvoid loop() {\n  int sensorValue = analogRead(sensorPin);\n  \n  // Map sensor value to percentage (calibrate these values)\n  int moisturePercent = map(sensorValue, 1023, 300, 0, 100);\n  moisturePercent = constrain(moisturePercent, 0, 100);\n  \n  Serial.print(\"Raw: \");\n  Serial.print(sensorValue);\n  Serial.print(\" | Moisture: \");\n  Serial.print(moisturePercent);\n  Serial.print(\"%\");\n  \n  if (sensorValue > moistureThreshold) {\n    Serial.println(\" - DRY - Water needed!\");\n  } else {\n    Serial.println(\" - WET - Soil is moist\");\n  }\n  \n  delay(1000);\n}\n\n// Calibration:\n// 1. Read sensor in air (dry) - note value (e.g., 800-900)\n// 2. Read sensor in water (wet) - note value (e.g., 300-400)\n// 3. Adjust map() function accordingly"
+            },
+            "pricing": "$2 - $5",
+            "image": "/images/resources/capacitive-soil-moisture.jpg",
+            "safetyNotes": "Requires calibration for accurate readings. Insert vertically into soil to proper depth. Do not submerge electronics portion.",
+            "relatedComponents": [
+                "relay-module-5v",
+                "dht22-sensor"
+            ],
+            "tutorials": [
+                {
+                    "title": "Capacitive Soil Moisture Sensor Guide",
+                    "url": "https://how2electronics.com/interfacing-capacitive-soil-moisture-sensor-arduino/"
+                },
+                {
+                    "title": "Automatic Plant Watering System",
+                    "url": "https://randomnerdtutorials.com/esp32-esp8266-automatic-plant-watering/"
+                }
+            ]
+        }
+    ]
+}

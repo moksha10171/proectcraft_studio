@@ -1,0 +1,483 @@
+{
+    "overview": {
+        "title": "Hosting & Deployment Resources",
+        "description": "Complete guide to deploying web apps, managing domains, databases, and going from localhost to production with free and paid options",
+        "totalComponents": 6,
+        "categories": [
+            "Platform Hosting",
+            "Backend Hosting",
+            "Domain & DNS",
+            "Database Hosting"
+        ]
+    },
+    "resources": [
+        {
+            "slug": "vercel",
+            "name": "Vercel - Frontend Cloud Platform",
+            "category": "Platform Hosting",
+            "shortDesc": "Deploy Next.js, React, and static sites instantly with global CDN and automatic HTTPS",
+            "fullDescription": "Vercel is the platform created by the makers of Next.js, optimized for frontend frameworks with zero-configuration deployment. Connect your GitHub repo and every push automatically deploys to production with preview URLs for branches. Features edge functions, analytics, and the world's fastest CDN. Perfect for Next.js, but supports any framework (React, Vue, Angular, Svelte).",
+            "specifications": {
+                "Free Tier": "Unlimited personal projects, 100GB bandwidth/month",
+                "Pricing": "$20/month Pro, $40/month Team, Custom Enterprise",
+                "Bandwidth": "100GB free, then $0.40/GB",
+                "Build Time": "6000 minutes/month (free), unlimited (Pro)",
+                "Deployments": "Unlimited previews and production",
+                "Custom Domains": "Unlimited (free SSL included)",
+                "Edge Network": "100+ global data centers",
+                "Functions": "Serverless (Node.js, Python, Go, Ruby)",
+                "Analytics": "$10/month add-on (Web Vitals tracking)"
+            },
+            "features": {
+                "Git Integration": "Auto-deploy from GitHub, GitLab, Bitbucket",
+                "Preview Deployments": "Unique URL for every branch/PR",
+                "Zero Config": "Automatic framework detection",
+                "Edge Functions": "Run code at the edge (ultra-fast)",
+                "Image Optimization": "Automatic image optimization on CDN",
+                "Custom Domains": "Easy domain setup with automatic SSL",
+                "Environment Variables": "Per-environment secrets management",
+                "Rollbacks": "Instant rollback to any previous deployment",
+                "Team Collaboration": "Preview comments and reviews",
+                "Analytics": "Real-time Web Vitals and performance metrics"
+            },
+            "bestFor": [
+                "Next.js applications (best-in-class support)",
+                "Frontend frameworks (React, Vue, Svelte)",
+                "Static sites with dynamic features",
+                "Jamstack applications",
+                "E-commerce frontends",
+                "Portfolio and landing pages",
+                "Preview environments for teams",
+                "Projects requiring edge functions"
+            ],
+            "limitations": [
+                "Free tier limited to personal projects (no commercial use stated)",
+                "Bandwidth overage costs can add up ($0.40/GB)",
+                "Function execution time: 10s (Hobby), 60s (Pro)",
+                "Primarily frontend-focused (backend needs serverless functions)",
+                "Cold starts on serverless functions"
+            ],
+            "deployment": {
+                "method": "Connect GitHub repository",
+                "buildCommand": "npm run build (auto-detected)",
+                "outputDirectory": "out/ or .next/ (auto-detected)",
+                "envVariables": "Set in dashboard or vercel.json",
+                "customDomain": "Add domain → Configure DNS → Auto SSL"
+            },
+            "codeSnippet": {
+                "language": "json",
+                "title": "vercel.json Configuration",
+                "code": "{\n  \"buildCommand\": \"npm run build\",\n  \"outputDirectory\": \"dist\",\n  \"framework\": \"nextjs\",\n  \"rewrites\": [\n    { \"source\": \"/api/:path*\", \"destination\": \"/api/:path*\" }\n  ],\n  \"headers\": [\n    {\n      \"source\": \"/(.*)\",\n      \"headers\": [\n        { \"key\": \"X-Frame-Options\", \"value\": \"DENY\" },\n        { \"key\": \"X-Content-Type-Options\", \"value\": \"nosniff\" }\n      ]\n    }\n  ],\n  \"env\": {\n    \"API_URL\": \"@api_url\",\n    \"DATABASE_URL\": \"@database_url\"\n  }\n}"
+            },
+            "pricing": "Free (100GB), $20/month Pro, $40/month Team",
+            "image": "/images/resources/vercel-logo.jpg",
+            "alternatives": [
+                "netlify",
+                "cloudflare-pages"
+            ],
+            "relatedResources": [
+                "namecheap-domains",
+                "planetscale-database"
+            ],
+            "tutorials": [
+                {
+                    "title": "Vercel Documentation",
+                    "url": "https://vercel.com/docs"
+                },
+                {
+                    "title": "Deploy Next.js on Vercel",
+                    "url": "https://nextjs.org/learn/basics/deploying-nextjs-app"
+                }
+            ]
+        },
+        {
+            "slug": "netlify",
+            "name": "Netlify - All-in-One Platform for Modern Web",
+            "category": "Platform Hosting",
+            "shortDesc": "Deploy static sites and serverless functions with form handling and split testing",
+            "fullDescription": "Netlify is a comprehensive platform for deploying modern web projects, offering static site hosting, serverless functions, form handling, and A/B testing. Like Vercel but with unique features like form submissions, identity management, and large file uploads. Excellent for Jamstack sites, marketing pages, and content-heavy applications. Free tier is very generous.",
+            "specifications": {
+                "Free Tier": "100GB bandwidth/month, 300 build minutes/month",
+                "Pricing": "$19/month Pro (per site), $99/month Business",
+                "Bandwidth": "100GB free, then $20/100GB",
+                "Build Minutes": "300 free, then $7/500 minutes",
+                "Functions": "125K requests/month, 100 hours runtime (free)",
+                "Custom Domains": "Unlimited with automatic SSL",
+                "Team Members": "Unlimited (free)",
+                "Forms": "100 submissions/month (free)",
+                "Identity": "1,000 users (free)"
+            },
+            "features": {
+                "Instant Builds": "Auto-deploy from Git (GitHub, GitLab, Bitbucket)",
+                "Deploy Previews": "Unique URL for every PR",
+                "Serverless Functions": "Run backend code without servers",
+                "Form Handling": "Process form submissions without backend",
+                "Identity Service": "Built-in authentication (JWT-based)",
+                "Split Testing": "A/B test different deploys (Pro)",
+                "Analytics": "Track visitors and page views (add-on)",
+                "Large Media": "Git LFS for large files",
+                "Redirects & Rewrites": "Advanced routing rules",
+                "Edge Functions": "Run code at the edge (Deno runtime)"
+            },
+            "bestFor": [
+                "Static sites and Jamstack apps",
+                "Marketing websites with forms",
+                "Content-heavy sites (blogs, documentation)",
+                "Sites needing A/B testing",
+                "Projects with large media files (Git LFS)",
+                "Open source projects (generous free tier)",
+                "Teams (unlimited collaborators on free)",
+                "Sites requiring form handling without backend"
+            ],
+            "limitations": [
+                "Build minutes limited on free tier (300/month)",
+                "Functions have 10s timeout (26s on paid plans)",
+                "Can be expensive for high-traffic sites ($20/100GB)",
+                "Bandwidth overages costlier than Vercel",
+                "Build times can be slower than Vercel"
+            ],
+            "deployment": {
+                "method": "Connect Git repository or drag-and-drop",
+                "buildCommand": "npm run build",
+                "publishDirectory": "dist/ or build/",
+                "envVariables": "Set in Site settings → Environment variables",
+                "forms": "Add data-netlify='true' to forms (no backend needed)"
+            },
+            "codeSnippet": {
+                "language": "toml",
+                "title": "netlify.toml Configuration",
+                "code": "[build]\n  command = \"npm run build\"\n  publish = \"dist\"\n  functions = \"netlify/functions\"\n\n[build.environment]\n  NODE_VERSION = \"18\"\n\n[[redirects]]\n  from = \"/api/*\"\n  to = \"/.netlify/functions/:splat\"\n  status = 200\n\n[[headers]]\n  for = \"/*\"\n  [headers.values]\n    X-Frame-Options = \"DENY\"\n    X-XSS-Protection = \"1; mode=block\"\n    Content-Security-Policy = \"default-src 'self'\"\n\n# Form handling example\n# Add to your HTML form:\n# <form name=\"contact\" method=\"POST\" data-netlify=\"true\">\n#   <input type=\"text\" name=\"name\" />\n#   <button type=\"submit\">Send</button>\n# </form>\n# Submissions appear in Netlify dashboard!"
+            },
+            "pricing": "Free (100GB), $19/month Pro, $99/month Business",
+            "image": "/images/resources/netlify-logo.jpg",
+            "alternatives": [
+                "vercel",
+                "cloudflare-pages"
+            ],
+            "relatedResources": [
+                "namecheap-domains",
+                "supabase-database"
+            ],
+            "tutorials": [
+                {
+                    "title": "Netlify Documentation",
+                    "url": "https://docs.netlify.com/"
+                },
+                {
+                    "title": "Netlify Functions Guide",
+                    "url": "https://docs.netlify.com/functions/overview/"
+                }
+            ]
+        },
+        {
+            "slug": "railway",
+            "name": "Railway - Deploy Full-Stack Apps Instantly",
+            "category": "Backend Hosting",
+            "shortDesc": "Deploy Node.js, Python, Go apps with built-in databases and services",
+            "fullDescription": "Railway is a modern platform for deploying full-stack applications with zero DevOps overhead. Unlike Vercel/Netlify (frontend-focused), Railway excels at backend services, databases, and Docker containers. Features built-in PostgreSQL, Redis, MySQL, and MongoDB. Pay-as-you-go pricing with $5 free credits monthly. Perfect for APIs, web scrapers, Discord bots, and full-stack apps.",
+            "specifications": {
+                "Free Tier": "$5 credit/month (no credit card required)",
+                "Pricing": "Pay-per-use after free credits: ~$0.000463/GB-hour RAM",
+                "Estimated Cost": "~$5-10/month for small app with database",
+                "Databases": "PostgreSQL, MySQL, Redis, MongoDB (built-in)",
+                "Deployment": "Git push, Docker, or CLI",
+                "Regions": "US West, US East, EU West (auto-select)",
+                "Compute": "Up to 32GB RAM, 32 vCPUs",
+                "Storage": "Persistent volumes included",
+                "Uptime": "99.9% SLA (Pro plan)"
+            },
+            "features": {
+                "One-Click Databases": "PostgreSQL, MySQL, Redis, MongoDB provisioning",
+                "Docker Support": "Deploy any Dockerfile",
+                "Auto Scaling": "Scale based on usage",
+                "Environment Variables": "Per-environment secrets",
+                "Logs & Metrics": "Real-time logs and resource monitoring",
+                "Private Networking": "Services communicate privately",
+                "Cron Jobs": "Scheduled tasks",
+                "Webhooks": "Deploy webhooks for CI/CD",
+                "Templates": "One-click deploy starters (Next.js + Prisma, etc.)",
+                "Teams": "Collaborate on projects"
+            },
+            "bestFor": [
+                "Full-stack applications (frontend + backend + database)",
+                "Node.js, Python, Go, Ruby backends",
+                "Discord bots and automation scripts",
+                "Background workers and cron jobs",
+                "Microservices architecture",
+                "Projects needing multiple services (app + DB + Redis)",
+                "Docker-based deployments",
+                "Side projects and MVPs ($5/month is very affordable)"
+            ],
+            "limitations": [
+                "$5 free credits run out quickly with databases (careful monitoring needed)",
+                "No free tier after credits (unlike Vercel/Netlify)",
+                "Can get expensive for high-traffic apps",
+                "Limited to 3 regions (vs Vercel's 100+ edge locations)",
+                "Costs can be unpredictable without usage caps"
+            ],
+            "deployment": {
+                "method": "Connect GitHub repo, deploy Docker, or use CLI",
+                "buildCommand": "Auto-detected (npm install, pip install, etc.)",
+                "startCommand": "Auto-detected or specify in railway.json",
+                "database": "Click '+ New' → Database → PostgreSQL (instant provisioning)",
+                "envVariables": "Auto-injected DATABASE_URL for databases"
+            },
+            "codeSnippet": {
+                "language": "json",
+                "title": "railway.json Configuration",
+                "code": "{\n  \"$schema\": \"https://railway.app/railway.schema.json\",\n  \"build\": {\n    \"builder\": \"NIXPACKS\",\n    \"buildCommand\": \"npm install && npm run build\"\n  },\n  \"deploy\": {\n    \"startCommand\": \"npm start\",\n    \"restartPolicyType\": \"ON_FAILURE\",\n    \"restartPolicyMaxRetries\": 10\n  }\n}\n\n// Example: Express + PostgreSQL on Railway\n// 1. Create new project on Railway\n// 2. Add PostgreSQL service (one click)\n// 3. Deploy Express app from GitHub\n// 4. DATABASE_URL automatically injected\n\nimport express from 'express';\nimport pg from 'pg';\n\nconst app = express();\nconst pool = new pg.Pool({\n  connectionString: process.env.DATABASE_URL,\n  ssl: { rejectUnauthorized: false }\n});\n\napp.get('/api/users', async (req, res) => {\n  const result = await pool.query('SELECT * FROM users');\n  res.json(result.rows);\n});\n\napp.listen(process.env.PORT || 3000);"
+            },
+            "pricing": "$5 free/month, then pay-per-use (~$5-20/month typical)",
+            "image": "/images/resources/railway-logo.jpg",
+            "alternatives": [
+                "render",
+                "fly-io"
+            ],
+            "relatedResources": [
+                "render",
+                "supabase-database"
+            ],
+            "tutorials": [
+                {
+                    "title": "Railway Documentation",
+                    "url": "https://docs.railway.app/"
+                },
+                {
+                    "title": "Deploy Express App on Railway",
+                    "url": "https://railway.app/template/express"
+                }
+            ]
+        },
+        {
+            "slug": "render",
+            "name": "Render - Cloud for Modern Apps",
+            "category": "Backend Hosting",
+            "shortDesc": "Deploy web services, static sites, databases, and cron jobs with free tier",
+            "fullDescription": "Render is a unified platform for deploying web apps, APIs, static sites, databases, and background workers. Offers a generous free tier for web services (750 hours/month) and static sites. Better free tier than Railway but with some trade-offs (cold starts, slower builds). Supports Docker, Node.js, Python, Go, Ruby, Elixir, and more. Built-in PostgreSQL and Redis.",
+            "specifications": {
+                "Free Tier": "750 hours/month web services, unlimited static sites",
+                "Pricing": "Free tier, then $7/month (Basic), $25/month (Standard)",
+                "Web Services": "0.5GB RAM (free), 1GB RAM ($7/mo), 4GB RAM ($25/mo)",
+                "Static Sites": "Free forever (100GB bandwidth/month)",
+                "Databases": "Free PostgreSQL (90 days, then auto-delete), $7/month (persistent)",
+                "Cron Jobs": "$1/month per job",
+                "Regions": "Oregon, Frankfurt, Singapore, Ohio",
+                "Auto-scaling": "Available on Standard plan and above",
+                "SSL": "Free automatic SSL certificates"
+            },
+            "features": {
+                "Free Static Sites": "Unlimited free static sites (great for portfolios)",
+                "Free Web Services": "750 hours/month (one app always free)",
+                "Docker Support": "Deploy any Docker container",
+                "Managed PostgreSQL": "Automated backups and scaling",
+                "Redis": "Managed Redis instances",
+                "Cron Jobs": "Scheduled task runners",
+                "Zero-Downtime Deploys": "Blue-green deployments",
+                "DDoS Protection": "Built-in Layer 3/4 protection",
+                "Auto-scaling": "Scale based on traffic (paid plans)",
+                "Private Networking": "Services communicate securely"
+            },
+            "bestFor": [
+                "Free static sites (better than Netlify/Vercel for pure static)",
+                "Low-traffic APIs and web services (free tier)",
+                "Background workers and cron jobs",
+                "Docker-based applications",
+                "Node.js, Python, Ruby, Go backends",
+                "Projects needing PostgreSQL database",
+                "MVPs and side projects (free tier is great)",
+                "Open source projects (generous free tier)"
+            ],
+            "limitations": [
+                "Free tier services spin down after 15 min inactivity (50s cold start)",
+                "Free PostgreSQL databases deleted after 90 days",
+                "750 hours = ~one service always on, or multiple services part-time",
+                "Build times slower than Vercel/Netlify",
+                "Cold starts can be slow (30-50 seconds)",
+                "Free tier limited to 0.5GB RAM (can cause OOM errors)"
+            ],
+            "deployment": {
+                "method": "Connect Git repo (GitHub, GitLab) or deploy Docker",
+                "buildCommand": "Auto-detected or specify",
+                "startCommand": "Auto-detected or specify",
+                "staticSites": "Set publish directory (build/, dist/, etc.)",
+                "database": "Create PostgreSQL service, copy connection string"
+            },
+            "codeSnippet": {
+                "language": "yaml",
+                "title": "render.yaml Blueprint",
+                "code": "services:\n  - type: web\n    name: my-api\n    env: node\n    plan: free\n    buildCommand: npm install && npm run build\n    startCommand: npm start\n    envVars:\n      - key: DATABASE_URL\n        fromDatabase:\n          name: mydb\n          property: connectionString\n      - key: NODE_ENV\n        value: production\n\n  - type: web\n    name: frontend\n    env: static\n    buildCommand: npm run build\n    staticPublishPath: ./dist\n\ndatabases:\n  - name: mydb\n    plan: free\n    databaseName: myapp\n    user: myapp\n\n# Free tier strategy:\n# - Static sites: Always free\n# - One web service: Free (750 hours = 24/7)\n# - Database: Free for 90 days, then $7/month\n# Total: $0/month (first 90 days), $7/month after"
+            },
+            "pricing": "Free tier, $7/month Basic, $25/month Standard",
+            "image": "/images/resources/render-logo.jpg",
+            "alternatives": [
+                "railway",
+                "fly-io"
+            ],
+            "relatedResources": [
+                "railway",
+                "supabase-database"
+            ],
+            "tutorials": [
+                {
+                    "title": "Render Documentation",
+                    "url": "https://render.com/docs"
+                },
+                {
+                    "title": "Deploy Node.js App",
+                    "url": "https://render.com/docs/deploy-node-express-app"
+                }
+            ]
+        },
+        {
+            "slug": "namecheap-domains",
+            "name": "Namecheap - Domain Registration",
+            "category": "Domain & DNS",
+            "shortDesc": "Affordable domain registration starting at $8.88/year with free privacy protection",
+            "fullDescription": "Namecheap is one of the most popular domain registrars known for competitive pricing, free WhoisGuard privacy protection, and excellent customer support. Register .com, .net, .org, and 400+ TLDs. Includes free email forwarding, DNS management, and SSL certificates. No hidden fees, transparent renewal pricing. Great for beginners and professionals alike.",
+            "specifications": {
+                "Pricing (.com)": "$8.88-$13.98/year (first year), $13.98/year renewal",
+                "Pricing (.dev)": "$14.98/year (first year), $17.98/year renewal",
+                "Pricing (.app)": "$13.98/year (first year), $17.98/year renewal",
+                "Free Features": "WhoisGuard privacy protection (1 year free, then $2.88/year)",
+                "DNS Management": "Free PremiumDNS or use Cloudflare",
+                "Email Forwarding": "Free email forwarding",
+                "SSL Certificates": "Free PositiveSSL (1 year) with domain",
+                "Transfer Fee": "Usually same as renewal price",
+                "Support": "24/7 live chat and ticket system"
+            },
+            "features": {
+                "WhoisGuard": "Hide personal info from WHOIS database (free 1st year)",
+                "DNS Management": "Easy-to-use DNS panel",
+                "Email Forwarding": "Forward user@yourdomain.com to Gmail",
+                "Two-Factor Auth": "Secure your account with 2FA",
+                "Domain Forwarding": "Redirect to another domain",
+                "Dynamic DNS": "Update IP automatically",
+                "API Access": "Automate domain management",
+                "Bulk Registration": "Register multiple domains at once",
+                "Domain Marketplace": "Buy/sell premium domains"
+            },
+            "bestFor": [
+                "First-time domain buyers (beginner-friendly)",
+                "Bulk domain registration (portfolio investors)",
+                "Developers wanting API access",
+                "Privacy-conscious users (free WhoisGuard)",
+                "Budget-friendly domain registration",
+                "Transfer from expensive registrars",
+                "Buying premium domains (marketplace)",
+                "Freelancers and agencies managing client domains"
+            ],
+            "alternativeComparison": {
+                "Cloudflare Registrar": "$9.15/year .com (at-cost, no markup)",
+                "Google Domains": "$12/year .com (privacy included)",
+                "Porkbun": "$9.13/year .com (free privacy)",
+                "GoDaddy": "$11.99/year .com (expensive renewals, not recommended)"
+            },
+            "setupGuide": {
+                "step1": "Search for available domain on Namecheap",
+                "step2": "Add to cart, enable WhoisGuard (free 1st year)",
+                "step3": "Create account and checkout (~$9-14 for .com)",
+                "step4": "Go to Domain List → Manage → Advanced DNS",
+                "step5_Vercel": "Add CNAME: www → cname.vercel-dns.com, A: @ → 76.76.21.21",
+                "step5_Netlify": "Add CNAME: www → [site].netlify.app, A: @ → 75.2.60.5",
+                "step5_Cloudflare": "Change nameservers to Cloudflare (recommended)",
+                "step6": "Wait 1-48 hours for DNS propagation (usually <1 hour)",
+                "step7": "Add domain to Vercel/Netlify and auto-provision SSL"
+            },
+            "codeSnippet": {
+                "language": "bash",
+                "title": "DNS Configuration Examples",
+                "code": "# Vercel DNS Setup (in Namecheap Advanced DNS)\n# Type    Host    Value                      TTL\n# CNAME   www     cname.vercel-dns.com       Automatic\n# A       @       76.76.21.21                Automatic\n\n# Netlify DNS Setup\n# Type    Host    Value                      TTL\n# CNAME   www     yoursite.netlify.app       Automatic\n# A       @       75.2.60.5                  Automatic\n\n# Cloudflare Pages Setup (RECOMMENDED)\n# 1. Add site to Cloudflare (free plan)\n# 2. Change nameservers in Namecheap to:\n#    mary.ns.cloudflare.com\n#    todd.ns.cloudflare.com\n# 3. In Cloudflare: Add CNAME: www → yoursite.pages.dev\n# 4. Page Rule: Redirect root to www (or vice versa)\n\n# Email Forwarding Setup\n# 1. Namecheap Dashboard → Email Forwarding\n# 2. Add: hello@yourdomain.com → yourgmail@gmail.com\n# 3. Wait 10-30 min for activation\n# 4. Test by sending email to hello@yourdomain.com"
+            },
+            "pricing": "$8.88-$13.98/year (domain dependent)",
+            "image": "/images/resources/namecheap-logo.jpg",
+            "relatedResources": [
+                "cloudflare-pages",
+                "vercel"
+            ],
+            "tutorials": [
+                {
+                    "title": "Namecheap Knowledge Base",
+                    "url": "https://www.namecheap.com/support/knowledgebase/"
+                },
+                {
+                    "title": "Connect Domain to Vercel",
+                    "url": "https://vercel.com/docs/concepts/projects/domains/add-a-domain"
+                }
+            ]
+        },
+        {
+            "slug": "supabase-database",
+            "name": "Supabase - Open Source Firebase Alternative",
+            "category": "Database Hosting",
+            "shortDesc": "Free PostgreSQL database with authentication, storage, and real-time subscriptions",
+            "fullDescription": "Supabase is an open-source Firebase alternative providing a PostgreSQL database, authentication, file storage, and real-time subscriptions. Perfect for modern web apps, it offers a generous free tier with 500MB database storage, 1GB file storage, and 2GB bandwidth. Includes RESTful API, GraphQL support, and client libraries for JavaScript, Python, and more. Self-hostable for full control.",
+            "specifications": {
+                "Free Tier": "500MB database, 1GB storage, 2GB bandwidth/month",
+                "Pricing": "$25/month Pro (8GB database, 100GB storage)",
+                "Database": "PostgreSQL 15+ (full SQL support)",
+                "Auth": "Built-in authentication (email, OAuth, magic links)",
+                "Storage": "S3-compatible object storage",
+                "Realtime": "WebSocket subscriptions to database changes",
+                "Edge Functions": "Deno-based serverless functions",
+                "Bandwidth": "2GB/month (free), unlimited (Pro)",
+                "Backups": "Daily backups (Pro plan)",
+                "Regions": "10+ regions worldwide"
+            },
+            "features": {
+                "PostgreSQL": "Full-featured relational database",
+                "Auto-Generated APIs": "Instant REST and GraphQL APIs",
+                "Realtime": "Subscribe to database changes via WebSockets",
+                "Authentication": "Email, OAuth (Google, GitHub, etc.), magic links",
+                "Storage": "Upload and serve files with CDN",
+                "Row Level Security": "PostgreSQL RLS for fine-grained access control",
+                "Database Functions": "Write server-side logic in SQL/PL/pgSQL",
+                "Edge Functions": "Deploy serverless functions globally",
+                "Client Libraries": "JavaScript, Python, Flutter, Swift, Kotlin",
+                "Dashboard": "SQL editor, table editor, API explorer"
+            },
+            "bestFor": [
+                "Full-stack applications needing PostgreSQL",
+                "Real-time applications (chat, collaboration tools)",
+                "Apps requiring authentication (no Auth0 needed)",
+                "Projects needing file storage (S3-compatible)",
+                "Rapid prototyping with auto-generated APIs",
+                "Next.js, React, Vue applications",
+                "Mobile apps (Flutter, React Native)",
+                "Open-source projects (self-hostable)"
+            ],
+            "limitations": [
+                "Free tier pauses after 7 days inactivity (quick restore)",
+                "500MB database limit (free) - upgrade to Pro for 8GB",
+                "Limited egress bandwidth on free tier",
+                "Cold starts on Edge Functions",
+                "Real-time connections limited on free tier",
+                "No daily backups on free tier"
+            ],
+            "codeSnippet": {
+                "language": "typescript",
+                "title": "Next.js + Supabase Setup",
+                "code": "// 1. Install Supabase client\n// npm install @supabase/supabase-js\n\n// 2. Create Supabase client (lib/supabase.ts)\nimport { createClient } from '@supabase/supabase-js';\n\nconst supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;\nconst supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;\n\nexport const supabase = createClient(supabaseUrl, supabaseKey);\n\n// 3. Create a table in Supabase Dashboard\n// Table: posts\n// Columns: id (uuid), title (text), content (text), created_at (timestamp)\n\n// 4. Fetch data with auto-generated API\nimport { supabase } from '@/lib/supabase';\n\nexport async function getPosts() {\n  const { data, error } = await supabase\n    .from('posts')\n    .select('*')\n    .order('created_at', { ascending: false });\n  \n  if (error) throw error;\n  return data;\n}\n\n// 5. Insert data\nexport async function createPost(title: string, content: string) {\n  const { data, error } = await supabase\n    .from('posts')\n    .insert({ title, content })\n    .select()\n    .single();\n  \n  if (error) throw error;\n  return data;\n}\n\n// 6. Real-time subscription\nsupabase\n  .channel('posts')\n  .on('postgres_changes', \n    { event: '*', schema: 'public', table: 'posts' },\n    (payload) => console.log('Change detected:', payload)\n  )\n  .subscribe();\n\n// 7. Authentication\nconst { data, error } = await supabase.auth.signUp({\n  email: 'user@example.com',\n  password: 'password123'\n});"
+            },
+            "pricing": "Free (500MB), $25/month Pro (8GB)",
+            "image": "/images/resources/supabase-logo.jpg",
+            "alternatives": [
+                "firebase",
+                "planetscale-database"
+            ],
+            "relatedResources": [
+                "vercel",
+                "nextjs-framework"
+            ],
+            "tutorials": [
+                {
+                    "title": "Supabase Documentation",
+                    "url": "https://supabase.com/docs"
+                },
+                {
+                    "title": "Next.js + Supabase Tutorial",
+                    "url": "https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs"
+                }
+            ]
+        }
+    ]
+}

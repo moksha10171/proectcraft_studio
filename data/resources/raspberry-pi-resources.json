@@ -1,0 +1,671 @@
+{
+    "overview": {
+        "title": "Raspberry Pi Resources",
+        "description": "Complete guide to Raspberry Pi single-board computers, HATs, sensors, and accessories for computing, IoT, and embedded projects",
+        "totalComponents": 13,
+        "categories": [
+            "Board",
+            "HAT",
+            "Camera",
+            "Accessory",
+            "Display"
+        ]
+    },
+    "boards": [
+        {
+            "slug": "raspberry-pi-5",
+            "name": "Raspberry Pi 5",
+            "category": "Board",
+            "shortDesc": "Latest flagship Pi with 2.4GHz quad-core processor, PCIe 2.0, and up to 8GB RAM",
+            "fullDescription": "The Raspberry Pi 5 is the most powerful Pi yet, featuring a custom 2.4GHz quad-core processor, dual 4K display support, PCIe 2.0 interface for NVMe drives and AI accelerators, and improved I/O performance. Perfect for desktop computing, AI projects, and demanding applications.",
+            "specifications": {
+                "Processor": "Broadcom BCM2712 (ARM Cortex-A76)",
+                "CPU Clock": "2.4 GHz quad-core",
+                "RAM": "4GB or 8GB LPDDR4X",
+                "Storage": "MicroSD card slot",
+                "Video Output": "Dual 4Kp60 HDMI",
+                "USB Ports": "2x USB 3.0, 2x USB 2.0",
+                "GPIO": "40-pin header",
+                "Networking": "Gigabit Ethernet, WiFi 6, Bluetooth 5.0",
+                "PCIe": "1x PCIe 2.0 interface (HAT+ compatible)",
+                "Power": "5V/5A via USB-C (27W)",
+                "Dimensions": "85 x 56 mm"
+            },
+            "useCases": [
+                "Desktop replacement computer",
+                "AI and machine learning projects",
+                "High-performance media center",
+                "NVMe-based storage servers",
+                "Advanced robotics and automation",
+                "Multi-display digital signage"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "GPIO LED Blink",
+                "code": "# Raspberry Pi GPIO LED blink example\nimport RPi.GPIO as GPIO\nimport time\n\nLED_PIN = 17\n\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(LED_PIN, GPIO.OUT)\n\ntry:\n    while True:\n        GPIO.output(LED_PIN, GPIO.HIGH)\n        time.sleep(1)\n        GPIO.output(LED_PIN, GPIO.LOW)\n        time.sleep(1)\nexcept KeyboardInterrupt:\n    GPIO.cleanup()"
+            },
+            "pricing": "$60 (4GB) - $80 (8GB)",
+            "image": "/images/resources/raspberry-pi-5.jpg",
+            "relatedComponents": [
+                "m2-hat-plus",
+                "active-cooler"
+            ],
+            "tutorials": [
+                {
+                    "title": "Raspberry Pi 5 Getting Started",
+                    "url": "https://www.raspberrypi.com/documentation/computers/getting-started.html"
+                },
+                {
+                    "title": "Pi 5 PCIe Configuration",
+                    "url": "https://www.raspberrypi.com/documentation/computers/raspberry-pi-5.html"
+                }
+            ]
+        },
+        {
+            "slug": "raspberry-pi-4",
+            "name": "Raspberry Pi 4 Model B",
+            "category": "Board",
+            "shortDesc": "Popular Pi with 1.5GHz quad-core CPU, dual 4K displays, and up to 8GB RAM",
+            "fullDescription": "The Raspberry Pi 4 Model B offers desktop-level performance with a quad-core processor, up to 8GB RAM, dual display support, and USB 3.0. It's the most popular choice for hobbyists, educators, and professionals building everything from home servers to IoT devices.",
+            "specifications": {
+                "Processor": "Broadcom BCM2711 (ARM Cortex-A72)",
+                "CPU Clock": "1.5 GHz quad-core",
+                "RAM": "2GB, 4GB, or 8GB LPDDR4",
+                "Storage": "MicroSD card slot",
+                "Video Output": "2x micro HDMI (up to 4Kp60)",
+                "USB Ports": "2x USB 3.0, 2x USB 2.0",
+                "GPIO": "40-pin header",
+                "Networking": "Gigabit Ethernet, WiFi 5, Bluetooth 5.0",
+                "Power": "5V/3A via USB-C",
+                "Dimensions": "85 x 56 mm"
+            },
+            "useCases": [
+                "Home automation hub",
+                "Media center (Kodi, Plex)",
+                "Retro gaming console",
+                "Network attached storage (NAS)",
+                "Web server and development",
+                "Educational programming"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Temperature Monitoring",
+                "code": "# Read CPU temperature on Raspberry Pi\nimport os\n\ndef get_cpu_temp():\n    temp = os.popen('vcgencmd measure_temp').readline()\n    return temp.replace(\"temp=\", \"\").replace(\"'C\\n\", \"\")\n\nwhile True:\n    cpu_temp = get_cpu_temp()\n    print(f\"CPU Temperature: {cpu_temp}°C\")\n    time.sleep(5)"
+            },
+            "pricing": "$35 (2GB) - $75 (8GB)",
+            "image": "/images/resources/raspberry-pi-4.jpg",
+            "relatedComponents": [
+                "sense-hat",
+                "camera-module-3"
+            ],
+            "tutorials": [
+                {
+                    "title": "Pi 4 Setup Guide",
+                    "url": "https://www.raspberrypi.com/documentation/computers/getting-started.html"
+                }
+            ]
+        },
+        {
+            "slug": "raspberry-pi-zero-2-w",
+            "name": "Raspberry Pi Zero 2 W",
+            "category": "Board",
+            "shortDesc": "Ultra-compact Pi with quad-core CPU, WiFi, and Bluetooth in tiny form factor",
+            "fullDescription": "The Raspberry Pi Zero 2 W packs a quad-core processor, built-in WiFi and Bluetooth into a compact 65mm x 30mm board. Perfect for embedded projects, wearables, and space-constrained applications where size matters.",
+            "specifications": {
+                "Processor": "Broadcom BCM2710A1 (ARM Cortex-A53)",
+                "CPU Clock": "1 GHz quad-core",
+                "RAM": "512MB LPDDR2",
+                "Storage": "MicroSD card slot",
+                "Video Output": "Mini HDMI",
+                "USB": "1x micro USB OTG, 1x micro USB power",
+                "GPIO": "40-pin header (unpopulated)",
+                "Networking": "WiFi 4, Bluetooth 4.2",
+                "Power": "5V via micro USB",
+                "Dimensions": "65 x 30 mm"
+            },
+            "useCases": [
+                "Compact IoT devices",
+                "Wearable electronics",
+                "Embedded applications",
+                "Portable game consoles",
+                "Time-lapse cameras",
+                "Smart mirrors"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "WiFi Connection Status",
+                "code": "# Check WiFi connection status\nimport subprocess\n\ndef check_wifi():\n    try:\n        result = subprocess.check_output(['iwgetid', '-r'])\n        ssid = result.decode('utf-8').strip()\n        print(f\"Connected to: {ssid}\")\n        return True\n    except:\n        print(\"Not connected to WiFi\")\n        return False\n\ncheck_wifi()"
+            },
+            "pricing": "$15",
+            "image": "/images/resources/raspberry-pi-zero-2-w.jpg",
+            "relatedComponents": [
+                "camera-module",
+                "mini-display"
+            ],
+            "tutorials": [
+                {
+                    "title": "Pi Zero Setup",
+                    "url": "https://www.raspberrypi.com/documentation/computers/getting-started.html"
+                }
+            ]
+        },
+        {
+            "slug": "raspberry-pi-pico",
+            "name": "Raspberry Pi Pico",
+            "category": "Board",
+            "shortDesc": "Low-cost microcontroller board with RP2040 chip, dual-core ARM Cortex-M0+ at 133MHz",
+            "fullDescription": "The Raspberry Pi Pico is a low-cost, high-performance microcontroller board featuring the RP2040 chip designed by Raspberry Pi. With dual-core ARM Cortex-M0+ processor, flexible I/O, and comprehensive SDK support, it's perfect for embedded projects, physical computing, and learning microcontroller programming.",
+            "specifications": {
+                "Microcontroller": "RP2040 (designed by Raspberry Pi)",
+                "CPU": "Dual-core ARM Cortex-M0+, 133 MHz",
+                "SRAM": "264 KB",
+                "Flash Memory": "2 MB QSPI",
+                "GPIO Pins": "26 multi-function pins",
+                "ADC": "3 analog inputs, 12-bit",
+                "PWM": "16 PWM channels",
+                "Communication": "2x UART, 2x SPI, 2x I2C, USB 1.1",
+                "Special Features": "Programmable I/O (PIO) state machines",
+                "Operating Voltage": "1.8V - 5.5V",
+                "Temperature Sensor": "On-chip",
+                "Dimensions": "51 x 21 mm"
+            },
+            "useCases": [
+                "Embedded systems and IoT edge devices",
+                "Learning microcontroller programming",
+                "Physical computing projects",
+                "USB devices and HID controllers",
+                "Robotics controllers",
+                "Data logging and sensor interfaces"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "MicroPython Blink Example",
+                "code": "# Raspberry Pi Pico LED blink with MicroPython\nfrom machine import Pin\nimport time\n\nled = Pin(25, Pin.OUT)  # Built-in LED on GP25\n\nwhile True:\n    led.toggle()\n    time.sleep(0.5)"
+            },
+            "pricing": "$4 - $5",
+            "image": "/images/resources/raspberry-pi-pico.jpg",
+            "relatedComponents": [
+                "raspberry-pi-pico-w",
+                "raspberry-pi-pico-2"
+            ],
+            "tutorials": [
+                {
+                    "title": "Raspberry Pi Pico Get Started",
+                    "url": "https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html"
+                },
+                {
+                    "title": "Pico MicroPython Guide",
+                    "url": "https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico"
+                }
+            ]
+        },
+        {
+            "slug": "raspberry-pi-pico-w",
+            "name": "Raspberry Pi Pico W",
+            "category": "Board",
+            "shortDesc": "Pico with 2.4GHz WiFi and Bluetooth 5.2 for wireless IoT projects",
+            "fullDescription": "The Raspberry Pi Pico W adds wireless connectivity to the popular Pico board, featuring 2.4 GHz 802.11n WiFi and Bluetooth 5.2 via the Infineon CYW43439 chip. Perfect for IoT projects requiring internet connectivity while maintaining the same powerful RP2040 microcontroller and compact form factor.",
+            "specifications": {
+                "Microcontroller": "RP2040 (designed by Raspberry Pi)",
+                "CPU": "Dual-core ARM Cortex-M0+, 133 MHz",
+                "SRAM": "264 KB",
+                "Flash Memory": "2 MB QSPI",
+                "Wireless": "2.4 GHz 802.11n WiFi, Bluetooth 5.2",
+                "Wireless Chip": "Infineon CYW43439",
+                "GPIO Pins": "26 multi-function pins (3 analog)",
+                "Communication": "2x UART, 2x SPI, 2x I2C, USB 1.1",
+                "Operating Voltage": "1.8V - 5.5V",
+                "Dimensions": "51 x 21 mm"
+            },
+            "useCases": [
+                "WiFi-enabled IoT sensors",
+                "Wireless data logging",
+                "Remote environmental monitoring",
+                "Smart home controllers",
+                "Web-connected projects",
+                "Bluetooth LE devices"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "WiFi Connection Example",
+                "code": "# Connect Pico W to WiFi with MicroPython\nimport network\nimport time\n\nwlan = network.WLAN(network.STA_IF)\nwlan.active(True)\nwlan.connect('YOUR_SSID', 'YOUR_PASSWORD')\n\n# Wait for connection\nmax_wait = 10\nwhile max_wait > 0:\n    if wlan.status() < 0 or wlan.status() >= 3:\n        break\n    max_wait -= 1\n    print('Waiting for connection...')\n    time.sleep(1)\n\nif wlan.status() != 3:\n    raise RuntimeError('Network connection failed')\nelse:\n    print('Connected!')\n    status = wlan.ifconfig()\n    print('IP:', status[0])"
+            },
+            "pricing": "$6 - $7",
+            "image": "/images/resources/raspberry-pi-pico-w.jpg",
+            "relatedComponents": [
+                "raspberry-pi-pico",
+                "raspberry-pi-pico-2"
+            ],
+            "tutorials": [
+                {
+                    "title": "Pico W Get Started",
+                    "url": "https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html"
+                },
+                {
+                    "title": "Pico W WiFi Examples",
+                    "url": "https://projects.raspberrypi.org/en/projects/get-started-pico-w"
+                }
+            ]
+        },
+        {
+            "slug": "raspberry-pi-pico-2",
+            "name": "Raspberry Pi Pico 2",
+            "category": "Board",
+            "shortDesc": "Advanced Pico with RP2350, dual-core ARM Cortex-M33 or RISC-V at 150MHz, enhanced security",
+            "fullDescription": "The Raspberry Pi Pico 2 features the new RP2350 microcontroller with selectable dual-core ARM Cortex-M33 or RISC-V Hazard3 processors running at 150MHz. It offers doubled memory, comprehensive security features including Arm TrustZone, and maintains full hardware compatibility with the original Pico.",
+            "specifications": {
+                "Microcontroller": "RP2350 (designed by Raspberry Pi)",
+                "CPU": "Dual-core ARM Cortex-M33 or RISC-V Hazard3, 150 MHz",
+                "SRAM": "520 KB",
+                "Flash Memory": "4 MB QSPI",
+                "GPIO Pins": "26 multi-function pins (4 analog)",
+                "ADC": "4 analog inputs, 12-bit",
+                "Communication": "2x UART, 2x SPI, 2x I2C, USB 1.1",
+                "Security Features": "Arm TrustZone, boot signing, OTP, SHA-256, TRNG",
+                "Architecture": "Selectable ARM or RISC-V",
+                "Operating Voltage": "1.8V - 5.5V",
+                "Dimensions": "51 x 21 mm"
+            },
+            "useCases": [
+                "Security-critical embedded systems",
+                "RISC-V development and learning",
+                "High-performance edge computing",
+                "Advanced robotics projects",
+                "Secure data logging",
+                "Industrial control systems"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Dual-Core Example",
+                "code": "# Pico 2 dual-core example with MicroPython\nimport _thread\nfrom machine import Pin\nimport time\n\nled = Pin(25, Pin.OUT)\n\ndef core1_task():\n    \"\"\"Task running on second core\"\"\"\n    while True:\n        print(\"Core 1 running\")\n        time.sleep(2)\n\n# Start task on second core\n_thread.start_new_thread(core1_task, ())\n\n# Main core task\nwhile True:\n    led.toggle()\n    print(\"Core 0 running\")\n    time.sleep(1)"
+            },
+            "pricing": "$5 - $6",
+            "image": "/images/resources/raspberry-pi-pico-2.jpg",
+            "relatedComponents": [
+                "raspberry-pi-pico",
+                "raspberry-pi-pico-w"
+            ],
+            "tutorials": [
+                {
+                    "title": "Pico 2 Get Started",
+                    "url": "https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html"
+                },
+                {
+                    "title": "RP2350 Datasheet",
+                    "url": "https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf"
+                }
+            ]
+        }
+    ],
+    "components": [
+        {
+            "slug": "sense-hat",
+            "name": "Raspberry Pi Sense HAT",
+            "category": "HAT",
+            "shortDesc": "Multi-sensor HAT with 8x8 LED matrix, gyroscope, accelerometer, and environmental sensors",
+            "fullDescription": "The Sense HAT is a versatile board featuring an 8x8 RGB LED matrix, a five-button joystick, and multiple sensors including gyroscope, accelerometer, magnetometer, temperature, barometric pressure, and humidity. Originally designed for the Astro Pi mission on the International Space Station.",
+            "specifications": {
+                "LED Matrix": "8x8 RGB LEDs",
+                "Gyroscope": "3-axis (ST LSM9DS1)",
+                "Accelerometer": "3-axis (ST LSM9DS1)",
+                "Magnetometer": "3-axis (ST LSM9DS1)",
+                "Temperature": "ST HTS221 (±0.5°C accuracy)",
+                "Humidity": "ST HTS221 (±3.5% accuracy)",
+                "Pressure": "ST LPS25H (260-1260 hPa)",
+                "Joystick": "5-position (up, down, left, right, center)",
+                "Interface": "I2C, GPIO header passthrough",
+                "Power": "Powered via Pi GPIO",
+                "Dimensions": "65 x 56 mm"
+            },
+            "gpioRequirements": {
+                "Pins Used": "I2C pins (GPIO 2, GPIO 3)",
+                "Additional": "All GPIO pins available via passthrough header"
+            },
+            "useCases": [
+                "Environmental monitoring stations",
+                "Educational STEM projects",
+                "Data logging and visualization",
+                "Orientation and motion detection",
+                "LED matrix animations and games",
+                "Scientific experiments"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Sense HAT Environmental Data",
+                "code": "from sense_hat import SenseHat\nimport time\n\nsense = SenseHat()\nsense.clear()\n\nwhile True:\n    # Read sensors\n    temp = sense.get_temperature()\n    humidity = sense.get_humidity()\n    pressure = sense.get_pressure()\n    \n    # Display on LED matrix\n    sense.show_message(\n        f\"T:{temp:.1f}C H:{humidity:.1f}%\",\n        scroll_speed=0.05,\n        text_colour=[255, 255, 0]\n    )\n    \n    print(f\"Temp: {temp:.1f}°C\")\n    print(f\"Humidity: {humidity:.1f}%\")\n    print(f\"Pressure: {pressure:.1f} mbar\")\n    \n    time.sleep(5)"
+            },
+            "pricing": "$35 - $45",
+            "image": "/images/resources/sense-hat.jpg",
+            "compatibleBoards": [
+                "Raspberry Pi 5",
+                "Raspberry Pi 4",
+                "Raspberry Pi 3",
+                "Raspberry Pi 2"
+            ],
+            "relatedComponents": [
+                "camera-module-3"
+            ],
+            "tutorials": [
+                {
+                    "title": "Sense HAT Getting Started",
+                    "url": "https://www.raspberrypi.com/documentation/accessories/sense-hat.html"
+                },
+                {
+                    "title": "Astro Pi Projects",
+                    "url": "https://astro-pi.org/"
+                }
+            ]
+        },
+        {
+            "slug": "camera-module-3",
+            "name": "Raspberry Pi Camera Module 3",
+            "category": "Camera",
+            "shortDesc": "12MP autofocus camera with HDR support for high-quality photos and videos",
+            "fullDescription": "The Camera Module 3 features a 12-megapixel Sony IMX708 sensor with autofocus, HDR support, and improved low-light performance. Connects via the CSI camera port and supports both photos and 1080p video recording.",
+            "specifications": {
+                "Sensor": "Sony IMX708 (1/2.43-inch)",
+                "Resolution": "11.9 megapixels",
+                "Lens": "Autofocus, 75° field of view",
+                "Focus Range": "5cm to infinity",
+                "Video": "1080p50, 720p100, 480p200",
+                "HDR": "Support for high dynamic range",
+                "Interface": "15-pin CSI connector",
+                "Power": "Powered via CSI port",
+                "Dimensions": "25 x 24 x 11.5 mm"
+            },
+            "gpioRequirements": {
+                "Interface": "CSI camera port (not GPIO)",
+                "Additional": "No GPIO pins used"
+            },
+            "useCases": [
+                "Time-lapse photography",
+                "Security camera systems",
+                "Computer vision projects",
+                "Wildlife monitoring",
+                "QR code scanning",
+                "Video streaming"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Capture Photo with Camera",
+                "code": "from picamera2 import Picamera2\nimport time\n\n# Initialize camera\ncamera = Picamera2()\n\n# Configure for photo capture\nconfig = camera.create_still_configuration()\ncamera.configure(config)\n\n# Start and capture\ncamera.start()\ntime.sleep(2)  # Allow camera to adjust\n\ncamera.capture_file(\"photo.jpg\")\nprint(\"Photo captured!\")\n\ncamera.stop()"
+            },
+            "pricing": "$25 - $35",
+            "image": "/images/resources/camera-module-3.jpg",
+            "compatibleBoards": [
+                "Raspberry Pi 5",
+                "Raspberry Pi 4",
+                "Raspberry Pi 3",
+                "Raspberry Pi Zero"
+            ],
+            "relatedComponents": [
+                "sense-hat",
+                "pir-sensor"
+            ],
+            "tutorials": [
+                {
+                    "title": "Camera Module Setup",
+                    "url": "https://www.raspberrypi.com/documentation/accessories/camera.html"
+                },
+                {
+                    "title": "Picamera2 Library Guide",
+                    "url": "https://github.com/raspberrypi/picamera2"
+                }
+            ]
+        },
+        {
+            "slug": "m2-hat-plus",
+            "name": "M.2 HAT+ for Raspberry Pi 5",
+            "category": "HAT",
+            "shortDesc": "PCIe HAT+ for connecting NVMe SSDs and AI accelerators to Raspberry Pi 5",
+            "fullDescription": "The M.2 HAT+ enables high-speed NVMe SSD storage and AI accelerator connections via the PCIe 2.0 interface on Raspberry Pi 5. Supports M.2 2230 and 2242 form factors with up to 500 MB/s transfer speeds.",
+            "specifications": {
+                "Interface": "PCIe 2.0 x1 lane",
+                "Connector": "M.2 M-key socket",
+                "Form Factors": "2230, 2242 M.2 modules",
+                "Compatible Devices": "NVMe SSDs, AI accelerators (e.g., Coral TPU)",
+                "Transfer Speed": "Up to 500 MB/s",
+                "Power": "Powered via Pi GPIO",
+                "Standby Support": "Compatible with HAT+ standard",
+                "Dimensions": "65 x 56 mm"
+            },
+            "gpioRequirements": {
+                "Interface": "PCIe port (dedicated)",
+                "GPIO Passthrough": "40-pin header available"
+            },
+            "useCases": [
+                "Fast boot from NVMe SSD",
+                "High-speed storage expansion",
+                "AI inference with Coral TPU",
+                "Database servers",
+                "Video editing workstations",
+                "Network storage solutions"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Enable PCIe and Check NVMe",
+                "code": "# Enable PCIe on Raspberry Pi 5\nsudo raspi-config nonint do_boot_wait 0\n\n# Reboot to apply changes\nsudo reboot\n\n# After reboot, check NVMe detection\nlsblk\n\n# Expected output should show nvme0n1 device\n# Format and mount NVMe drive\nsudo mkfs.ext4 /dev/nvme0n1\nsudo mount /dev/nvme0n1 /mnt/nvme"
+            },
+            "pricing": "$12 - $15",
+            "image": "/images/resources/m2-hat-plus.jpg",
+            "compatibleBoards": [
+                "Raspberry Pi 5"
+            ],
+            "relatedComponents": [
+                "active-cooler"
+            ],
+            "tutorials": [
+                {
+                    "title": "M.2 HAT+ Setup Guide",
+                    "url": "https://www.raspberrypi.com/documentation/accessories/m2-hat-plus.html"
+                }
+            ]
+        },
+        {
+            "slug": "active-cooler",
+            "name": "Raspberry Pi Active Cooler",
+            "category": "Accessory",
+            "shortDesc": "Official aluminum heatsink with integrated fan for optimal Pi 5 cooling",
+            "fullDescription": "The Active Cooler is designed specifically for Raspberry Pi 5, combining an aluminum heatsink with a temperature-controlled fan. Connects to the dedicated fan connector for automatic speed adjustment based on CPU temperature.",
+            "specifications": {
+                "Type": "Aluminum heatsink with fan",
+                "Fan Size": "30mm diameter",
+                "Fan Speed": "Variable (temperature controlled)",
+                "Noise Level": "< 25 dBA at max speed",
+                "Power": "Powered via 4-pin fan connector",
+                "Mounting": "Push-pin installation",
+                "Cooling Capacity": "Reduces temps by up to 30°C",
+                "Dimensions": "41 x 41 x 16 mm"
+            },
+            "gpioRequirements": {
+                "Pins Used": "None (uses dedicated fan connector)",
+                "GPIO Clearance": "Does not interfere with GPIO header"
+            },
+            "useCases": [
+                "Sustained high-performance computing",
+                "Overclocking Pi 5",
+                "24/7 server operations",
+                "AI inference workloads",
+                "Video encoding/transcoding",
+                "Gaming and emulation"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Monitor Temperature",
+                "code": "# Monitor CPU temperature with Active Cooler\nwatch -n 1 'vcgencmd measure_temp'\n\n# Expected output with Active Cooler:\n# temp=45.0'C (vs 70-80'C without cooling)\n\n# Python script for temperature monitoring\npython3 << EOF\nimport os\nimport time\n\nwhile True:\n    temp = os.popen('vcgencmd measure_temp').readline()\n    print(f\"CPU: {temp.strip()}\")\n    time.sleep(2)\nEOF"
+            },
+            "pricing": "$5 - $8",
+            "image": "/images/resources/active-cooler.jpg",
+            "compatibleBoards": [
+                "Raspberry Pi 5"
+            ],
+            "relatedComponents": [
+                "raspberry-pi-5",
+                "m2-hat-plus"
+            ],
+            "tutorials": [
+                {
+                    "title": "Active Cooler Installation",
+                    "url": "https://www.raspberrypi.com/documentation/accessories/active-cooler.html"
+                }
+            ]
+        },
+        {
+            "slug": "poe-plus-hat",
+            "name": "PoE+ HAT",
+            "category": "HAT",
+            "shortDesc": "Power over Ethernet HAT delivering up to 25W for Pi 4 and earlier models",
+            "fullDescription": "The PoE+ HAT allows your Raspberry Pi to receive power and network connectivity through a single Ethernet cable. Delivers up to 25W of power, suitable for Pi 4 with peripherals. Includes a cooling fan and supports 802.3at PoE+ standard.",
+            "specifications": {
+                "Power Standard": "IEEE 802.3at PoE+",
+                "Power Output": "Up to 25W (5V/5A)",
+                "Fan": "25mm temperature-controlled",
+                "Network": "Gigabit Ethernet passthrough",
+                "Interface": "40-pin GPIO header",
+                "Operating Temp": "0-50°C",
+                "Dimensions": "65 x 56 mm"
+            },
+            "gpioRequirements": {
+                "Pins Used": "GPIO header for power and fan control",
+                "GPIO Passthrough": "All pins available via top header"
+            },
+            "useCases": [
+                "IP security cameras",
+                "Network monitoring devices",
+                "Access points and routers",
+                "Industrial installations",
+                "Remote IoT deployments",
+                "Classroom computer labs"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Check PoE Status",
+                "code": "# Check if PoE HAT is detected\nvcgencmd get_throttled\n\n# Monitor power supply status\nvcgencmd pmic_read_adc\n\n# Check fan status\ncat /sys/class/thermal/cooling_device0/cur_state\n\n# Expected output: 0-3 (fan speed levels)"
+            },
+            "pricing": "$20 - $25",
+            "image": "/images/resources/poe-plus-hat.jpg",
+            "compatibleBoards": [
+                "Raspberry Pi 4",
+                "Raspberry Pi 3B+"
+            ],
+            "relatedComponents": [
+                "camera-module-3"
+            ],
+            "tutorials": [
+                {
+                    "title": "PoE HAT Setup",
+                    "url": "https://www.raspberrypi.com/documentation/accessories/poe-hat.html"
+                }
+            ]
+        },
+        {
+            "slug": "official-7inch-touchscreen",
+            "name": "Official 7-inch Touchscreen Display",
+            "category": "Display",
+            "shortDesc": "800x480 capacitive touch display with 10-finger multi-touch support",
+            "fullDescription": "The official Raspberry Pi 7-inch touchscreen provides an intuitive touch interface for your projects. Features a 800x480 resolution display with10-finger capacitive multi-touch, connects via DSI port, and is powered directly from the Pi's GPIO pins. Perfect for creating tablets, infotainment systems, and interactive displays.",
+            "specifications": {
+                "Screen Size": "7 inches diagonal",
+                "Resolution": "800 x 480 pixels",
+                "Touch Technology": "10-finger capacitive multi-touch",
+                "Viewing Angle": "Wide angle viewing",
+                "Interface": "DSI (Display Serial Interface)",
+                "Power": "Powered from Pi GPIO (5V)",
+                "Backlight": "LED backlight",
+                "Dimensions": "194 x 110 x 20 mm",
+                "Viewable Area": "155 x 86 mm"
+            },
+            "gpioRequirements": {
+                "Power Pins": "5V and GND from GPIO header",
+                "Interface": "DSI port (dedicated, not GPIO)",
+                "GPIO Passthrough": "Compatible with header extension"
+            },
+            "useCases": [
+                "Portable Raspberry Pi tablets",
+                "Smart home control panels",
+                "Digital photo frames",
+                "Infotainment systems",
+                "Interactive kiosks",
+                "Touchscreen gaming consoles"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Touch Event Detection",
+                "code": "# Simple touchscreen input demo\nimport pygame\nimport sys\n\n# Initialize Pygame\npygame.init()\nscreen = pygame.display.set_mode((800, 480))\npygame.display.set_caption('Touch Demo')\npygame.mouse.set_visible(True)\n\n# Colors\nWHITE = (255, 255, 255)\nBLUE = (0, 0, 255)\n\nrunning = True\nwhile running:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            running = False\n        \n        if event.type == pygame.MOUSEBUTTONDOWN:\n            pos = pygame.mouse.get_pos()\n            print(f\"Touch at: {pos}\")\n            # Draw circle at touch point\n            pygame.draw.circle(screen, BLUE, pos, 20)\n            pygame.display.flip()\n    \n    screen.fill(WHITE)\n    font = pygame.font.Font(None, 36)\n    text = font.render('Touch the screen!', True, (0, 0, 0))\n    screen.blit(text, (250, 220))\n    pygame.display.flip()\n\npygame.quit()\nsys.exit()\n"
+            },
+            "pricing": "$60 - $75",
+            "image": "/images/resources/7inch-touchscreen.jpg",
+            "compatibleBoards": [
+                "Raspberry Pi 5",
+                "Raspberry Pi 4",
+                "Raspberry Pi 3",
+                "Raspberry Pi 2"
+            ],
+            "relatedComponents": [
+                "raspberry-pi-5",
+                "camera-module-3"
+            ],
+            "tutorials": [
+                {
+                    "title": "Touchscreen Setup Guide",
+                    "url": "https://www.raspberrypi.com/documentation/accessories/display.html"
+                },
+                {
+                    "title": "Assembly Instructions",
+                    "url": "https://www.youtube.com/watch?v=tK-w-wDvRTg"
+                }
+            ]
+        },
+        {
+            "slug": "official-power-supply-usbc",
+            "name": "Official USB-C Power Supply (5V/3A)",
+            "category": "Accessory",
+            "shortDesc": "Official 5V 3A USB-C power supply for Raspberry Pi 4 and Pi 400",
+            "fullDescription": "The official Raspberry Pi USB-C power supply delivers stable 5.1V at 3A (15.3W) specifically designed for Raspberry Pi 4 Model B and Pi 400. Features over-current, over-voltage, and short-circuit protection with 1.5m cable length.",
+            "specifications": {
+                "Output Voltage": "5.1V DC",
+                "Output Current": "3.0A (3000mA)",
+                "Maximum Power": "15.3W (15W)",
+                "Connector": "USB Type-C",
+                "Cable Length": "1.5 meters (5 feet)",
+                "Input Voltage": "100-240V AC (50/60Hz)",
+                "Input Current": "0.5A maximum",
+                "No-load Power": "<0.075W",
+                "Protection": "Short-circuit, over-current, over-voltage, over-temperature"
+            },
+            "gpioRequirements": {
+                "Pins Used": "None (USB-C power port)",
+                "GPIO": "Not applicable"
+            },
+            "useCases": [
+                "Powering Raspberry Pi 4",
+                "Powering Raspberry Pi 400",
+                "Desktop computing setups",
+                "Media center installations",
+                "Development workstations",
+                "Server deployments"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Check Power Supply Status",
+                "code": "# Check current voltage and throttling status\nvcgencmd measure_volts\nvcgencmd get_throttled\n\n# Expected output with good power:\n# volt=5.10V\n# throttled=0x0 (no throttling)\n\n# Monitor power supply quality\nvcgencmd pmic_read_adc EXT5V_V\n\n# Check if under-voltage occurred\ndmesg | grep -i voltage\n"
+            },
+            "pricing": "$8 - $10",
+            "image": "/images/resources/usbc-power-supply.jpg",
+            "compatibleBoards": [
+                "Raspberry Pi 4",
+                "Raspberry Pi 400"
+            ],
+            "relatedComponents": [
+                "raspberry-pi-4",
+                "active-cooler"
+            ],
+            "tutorials": [
+                {
+                    "title": "Power Supply Guide",
+                    "url": "https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#power-supply"
+                }
+            ]
+        }
+    ]
+}

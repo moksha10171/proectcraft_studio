@@ -1,0 +1,6 @@
+packages:
+  - frontend
+
+# Allow native build scripts required by Next.js image optimization
+allowBuilds:
+  sharp: true

@@ -1,0 +1,1101 @@
+{
+    "overview": {
+        "title": "ESP32 & ESP8266 Resources",
+        "description": "Comprehensive guide to ESP32 and ESP8266 WiFi/Bluetooth microcontrollers for IoT projects, including development boards, modules, and specifications",
+        "totalComponents": 18,
+        "categories": [
+            "Board",
+            "Module"
+        ]
+    },
+    "boards": [
+        {
+            "slug": "esp32-devkit-v1",
+            "name": "ESP32 DevKit V1 (DOIT)",
+            "category": "Board",
+            "shortDesc": "Popular 30-pin ESP32 development board with WiFi, Bluetooth, dual-core 240MHz processor",
+            "fullDescription": "The ESP32 DevKit V1 DOIT is one of the most popular ESP32 development boards featuring the ESP32-WROOM-32 module. It offers dual-core processing up to 240MHz, integrated WiFi and Bluetooth, and a rich set of peripherals. Compatible with Arduino IDE and easily programmable via USB.",
+            "specifications": {
+                "Processor": "Xtensa dual-core 32-bit LX6, up to 240 MHz",
+                "Flash Memory": "4MB",
+                "SRAM": "520KB",
+                "Connectivity": "WiFi 802.11 b/g/n, Bluetooth v4.2 (BR/EDR and BLE)",
+                "GPIO Pins": "40 pins (30-pin or 36-pin variant)",
+                "ADC": "16 channels, 12-bit",
+                "DAC": "2 channels, 8-bit",
+                "PWM": "19 pins",
+                "Touch Sensors": "10 capacitive touch pins",
+                "Communication": "3x UART, 3x SPI, 2x I2C, I2S",
+                "Special Features": "Hall sensor, temperature sensor",
+                "USB-to-Serial": "CP2102",
+                "Power": "5V via Micro-USB or VIN, 3.3V regulated output",
+                "Dimensions": "55 x 28 mm"
+            },
+            "pinout": {
+                "Power": "VIN (5V), 3V3, GND",
+                "Serial": "TX0 (GPIO1), RX0 (GPIO3)",
+                "I2C": "SDA (GPIO21), SCL (GPIO22)",
+                "SPI": "MOSI (GPIO23), MISO (GPIO19), SCK (GPIO18), CS (GPIO5)",
+                "Boot": "GPIO0 (Boot button)",
+                "Built-in LED": "GPIO2",
+                "Note": "GPIO6-11 reserved for flash, GPIO34-39 input-only"
+            },
+            "useCases": [
+                "IoT sensors and data logging",
+                "WiFi/Bluetooth gateway devices",
+                "Home automation controllers",
+                "Wearable electronics",
+                "Wireless sensor networks",
+                "Smart displays and interfaces"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "WiFi Scanner Example",
+                "code": "#include \"WiFi.h\"\n\nvoid setup() {\n  Serial.begin(115200);\n  \n  // Set WiFi to station mode\n  WiFi.mode(WIFI_STA);\n  WiFi.disconnect();\n  delay(100);\n  \n  Serial.println(\"WiFi Scanner Ready\");\n}\n\nvoid loop() {\n  Serial.println(\"Scanning...\");\n  \n  // WiFi.scanNetworks will return the number of networks found\n  int n = WiFi.scanNetworks();\n  Serial.println(\"Scan complete\");\n  \n  if (n == 0) {\n    Serial.println(\"No networks found\");\n  } else {\n    Serial.print(n);\n    Serial.println(\" networks found\");\n    \n    for (int i = 0; i < n; ++i) {\n      Serial.print(i + 1);\n      Serial.print(\": \");\n      Serial.print(WiFi.SSID(i));\n      Serial.print(\" (\");\n      Serial.print(WiFi.RSSI(i));\n      Serial.print(\"dBm) \");\n      Serial.println(WiFi.encryptionType(i) == WIFI_AUTH_OPEN ? \"Open\" : \"Encrypted\");\n    }\n  }\n  \n  delay(5000);\n}\n"
+            },
+            "pricing": "$5 - $10",
+            "image": "/images/resources/esp32-devkit-v1.jpg",
+            "compatibleBoards": [
+                "ESP32-WROOM-32",
+                "ESP32-WROVER"
+            ],
+            "relatedComponents": [
+                "esp32-cam",
+                "esp32-c3"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32 DevKit Getting Started",
+                    "url": "https://randomnerdtutorials.com/getting-started-with-esp32/"
+                },
+                {
+                    "title": "ESP32 Pinout Reference",
+                    "url": "https://espboards.dev/blog/esp32-devkitc-pinout-guide/"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-c3-supermini",
+            "name": "ESP32-C3 SuperMini",
+            "category": "Board",
+            "shortDesc": "Ultra-compact RISC-V ESP32-C3 board with WiFi 4, Bluetooth 5.0, USB-C, only 22.5 x 18mm",
+            "fullDescription": "The ESP32-C3 SuperMini is an ultra-compact development board featuring a 32-bit RISC-V single-core processor. Despite its tiny size, it packs WiFi and Bluetooth 5.0 connectivity, making it perfect for battery-powered IoT projects and wearables where space is critical.",
+            "specifications": {
+                "Processor": "32-bit RISC-V single-core, up to 160 MHz",
+                "Flash Memory": "4MB",
+                "SRAM": "400KB",
+                "ROM": "384KB",
+                "Connectivity": "WiFi 802.11 b/g/n (WiFi 4), Bluetooth 5.0 LE",
+                "GPIO Pins": "11 programmable (10 freely usable)",
+                "ADC": "4 analog inputs, 2x 12-bit SAR ADC (6 channels)",
+                "PWM": "11 pins",
+                "Communication": "2x UART, 1x I2C, 1x SPI, I2S",
+                "Deep Sleep": "43µA",
+                "Security": "AES-128/256, RSA, HMAC, SHA, secure boot",
+                "USB": "USB-C (programming & power)",
+                "Built-in LED": "GPIO 8",
+                "Dimensions": "22.5 x 18 mm"
+            },
+            "pinout": {
+                "Power": "5V (USB-C), 3.3V, GND",
+                "Serial": "TX (GPIO21), RX (GPIO20)",
+                "I2C": "SDA (GPIO8), SCL (GPIO9)",
+                "SPI": "MOSI (GPIO6), MISO (GPIO5), SCK (GPIO4), CS (GPIO7)",
+                "LED": "GPIO8",
+                "Boot": "GPIO9 (Boot button)"
+            },
+            "useCases": [
+                "Wearable IoT devices",
+                "Battery-powered sensors",
+                "Compact smart home gadgets",
+                "Wireless mesh networks",
+                "BLE beacons and trackers",
+                "Space-constrained projects"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Blink LED Example",
+                "code": "// ESP32-C3 SuperMini LED Blink\nconst int LED_PIN = 8;  // Built-in LED\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(LED_PIN, OUTPUT);\n  Serial.println(\"ESP32-C3 SuperMini Ready\");\n}\n\nvoid loop() {\n  digitalWrite(LED_PIN, HIGH);\n  Serial.println(\"LED ON\");\n  delay(500);\n  \n  digitalWrite(LED_PIN, LOW);\n  Serial.println(\"LED OFF\");\n  delay(500);\n}\n"
+            },
+            "pricing": "$3 - $6",
+            "image": "/images/resources/esp32-c3-supermini.jpg",
+            "compatibleBoards": [
+                "ESP32-C3",
+                "ESP32-C3-MINI"
+            ],
+            "relatedComponents": [
+                "esp32-devkit-v1",
+                "esp8266-nodemcu"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-C3 SuperMini Guide",
+                    "url": "https://randomnerdtutorials.com/esp32-c3-supermini/"
+                },
+                {
+                    "title": "ESP32-C3 Arduino IDE Setup",
+                    "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/getting_started.html"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-s3-devkitc",
+            "name": "ESP32-S3 DevKitC",
+            "category": "Board",
+            "shortDesc": "High-performance dual-core LX7 with AI acceleration, WiFi 4, Bluetooth 5.0 for advanced IoT",
+            "fullDescription": "The ESP32-S3 DevKitC features a powerful dual-core Xtensa LX7 processor running at 240MHz with AI acceleration capabilities. Designed for advanced IoT applications including voice recognition, image processing, and machine learning at the edge.",
+            "specifications": {
+                "Processor": "Dual-core 32-bit Xtensa LX7, up to 240 MHz",
+                "Flash Memory": "16MB (optional)",
+                "SRAM": "512KB",
+                "PSRAM": "2MB (optional)",
+                "ROM": "384KB",
+                "Connectivity": "WiFi 802.11 b/g/n, Bluetooth LE 5.0 (2Mbps)",
+                "GPIO Pins": "45 programmable",
+                "ADC": "20 channels, 12-bit",
+                "DAC": "2 channels",
+                "Communication": "3x UART, 2x I2C, 4x SPI, 2x I2S",
+                "Special Features": "Vector instructions for AI, LCD interface, DVP camera interface",
+                "USB": "USB OTG, USB Serial/JTAG",
+                "Neural Network": "Vector instruction acceleration",
+                "Dimensions": "25.4 x 46 mm"
+            },
+            "pinout": {
+                "Power": "5V, 3.3V, GND",
+                "Serial": "TX (GPIO43), RX(GPIO44)",
+                "I2C": "SDA (GPIO8), SCL (GPIO9)",
+                "SPI": "MOSI (GPIO11), MISO (GPIO13), SCK (GPIO12), CS (GPIO10)",
+                "USB": "D+ (GPIO20), D- (GPIO19)"
+            },
+            "useCases": [
+                "Voice recognition systems",
+                "AI-powered smart speakers",
+                "Edge AI applications",
+                "Advanced image processing",
+                "Machine learning inference",
+                "High-performance sensor hubs"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Bluetooth Service Example",
+                "code": "#include <BLEDevice.h>\n#include <BLEServer.h>\n#include <BLEUtils.h>\n\n#define SERVICE_UUID \"4fafc201-1fb5-459e-8fcc-c5c9c331914b\"\n#define CHARACTERISTIC_UUID \"beb5483e-36e1-4688-b7f5-ea07361b26a8\"\n\nvoid setup() {\n  Serial.begin(115200);\n  Serial.println(\"Starting BLE Server...\");\n  \n  BLEDevice::init(\"ESP32-S3 Device\");\n  BLEServer *pServer = BLEDevice::createServer();\n  BLEService *pService = pServer->createService(SERVICE_UUID);\n  \n  BLECharacteristic *pCharacteristic = pService->createCharacteristic(\n    CHARACTERISTIC_UUID,\n    BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE\n  );\n  \n  pCharacteristic->setValue(\"Hello from ESP32-S3!\");\n  pService->start();\n  \n  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();\n  pAdvertising->addServiceUUID(SERVICE_UUID);\n  pAdvertising->start();\n  \n  Serial.println(\"BLE Server ready. Waiting for connections...\");\n}\n\nvoid loop() {\n  delay(2000);\n}\n"
+            },
+            "pricing": "$8 - $15",
+            "image": "/images/resources/esp32-s3-devkitc.jpg",
+            "compatibleBoards": [
+                "ESP32-S3-WROOM",
+                "ESP32-S3-WROVER"
+            ],
+            "relatedComponents": [
+                "esp32-cam",
+                "esp32-devkit-v1"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-S3 Getting Started",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/"
+                },
+                {
+                    "title": "ESP32-S3 AI Features",
+                    "url": "https://www.espressif.com/en/products/socs/esp32-s3"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-cam",
+            "name": "ESP32-CAM (AI-Thinker)",
+            "category": "Board",
+            "shortDesc": "ESP32 with OV2640 2MP camera, microSD slot, WiFi/BT for video streaming and image processing",
+            "fullDescription": "The ESP32-CAM combines an ESP32 dual-core microcontroller with a 2-megapixel OV2640 camera module and microSD card slot. Perfect for video streaming, surveillance, facial recognition, and image-based IoT applications. Requires external FTDI programmer for uploading code.",
+            "specifications": {
+                "Processor": "Dual-core Tensilica LX6, up to 240 MHz",
+                "Flash Memory": "4MB",
+                "SRAM": "520KB",
+                "PSRAM": "4MB (external)",
+                "Camera": "OV2640 2MP (1600x1200 UXGA)",
+                "Image Formats": "JPEG, RGB565, YUV422",
+                "Connectivity": "WiFi 802.11 b/g/n/e/i, Bluetooth 4.2",
+                "microSD Slot": "Supports up to 32GB (FAT32)",
+                "Flash LED": "GPIO 4",
+                "Usable GPIOs": "~10 pins (others used by camera/SD)",
+                "Power": "5V 2A recommended",
+                "Programming": "Requires external FTDI/USB-TTL",
+                "Dimensions": "27 x 40.5 x 4.5 mm"
+            },
+            "pinout": {
+                "Power": "5V, 3.3V, GND",
+                "Serial": "U0T (GPIO1), U0R (GPIO3)",
+                "Boot": "GPIO0 (pull LOW for programming)",
+                "Flash LED": "GPIO4",
+                "SD Card": "GPIO2, 4, 12, 13, 14, 15 (reserved)",
+                "Note": "Limited GPIO due to camera/SD interfaces"
+            },
+            "useCases": [
+                "IP surveillance cameras",
+                "Face recognition systems",
+                "QR code scanners",
+                "Wildlife monitoring",
+                "Time-lapse photography",
+                "Video streaming servers"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Camera Web Server",
+                "code": "// Use CameraWebServer example from ESP32 library\n// File > Examples > ESP32 > Camera > CameraWebServer\n\n// Important configurations in the sketch:\n#define CAMERA_MODEL_AI_THINKER // Select camera model\n\n// WiFi credentials\nconst char* ssid = \"YOUR_SSID\";\nconst char* password = \"YOUR_PASSWORD\";\n\nvoid setup() {\n  Serial.begin(115200);\n  \n  // Camera configuration\n  camera_config_t config;\n  config.ledc_channel = LEDC_CHANNEL_0;\n  config.ledc_timer = LEDC_TIMER_0;\n  config.pin_d0 = Y2_GPIO_NUM;\n  config.pin_d1 = Y3_GPIO_NUM;\n  // ... (other pin configurations)\n  config.xclk_freq_hz = 20000000;\n  config.pixel_format = PIXFORMAT_JPEG;\n  \n  // Init camera\n  esp_err_t err = esp_camera_init(&config);\n  if (err != ESP_OK) {\n    Serial.printf(\"Camera init failed with error 0x%x\", err);\n    return;\n  }\n  \n  // Connect to WiFi\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println(\"\");\n  Serial.print(\"Camera Ready! Use 'http://\");\n  Serial.print(WiFi.localIP());\n  Serial.println(\"' to connect\");\n  \n  startCameraServer();\n}\n\nvoid loop() {\n  delay(10000);\n}\n"
+            },
+            "pricing": "$6 - $12",
+            "image": "/images/resources/esp32-cam.jpg",
+            "compatibleBoards": [
+                "ESP32-WROOM-32",
+                "ESP32-WROVER"
+            ],
+            "relatedComponents": [
+                "esp32-devkit-v1",
+                "esp32-s3-devkitc"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-CAM Getting Started",
+                    "url": "https://randomnerdtutorials.com/esp32-cam-video-streaming-face-recognition-arduino-ide/"
+                },
+                {
+                    "title": "ESP32-CAM Pinout Guide",
+                    "url": "https://lastminuteengineers.com/esp32-cam-pinout/"
+                }
+            ]
+        },
+        {
+            "slug": "esp8266-nodemcu",
+            "name": "ESP8266 NodeMCU V3",
+            "category": "Board",
+            "shortDesc": "Popular ESP8266-12E dev board with WiFi, Arduino IDE compatible, CP2102/CH340 USB-UART",
+            "fullDescription": "The NodeMCU ESP8266 is one of the most popular open-source development boards for IoT applications. Based on the ESP8266-12E module with integrated 2.4GHz WiFi, it's breadboard-friendly, Arduino IDE compatible, and features a built-in USB-to-serial converter for easy programming.",
+            "specifications": {
+                "Processor": "Tensilica 32-bit RISC Xtensa L106, 80-160 MHz",
+                "Flash Memory": "4MB",
+                "SRAM": "64KB",
+                "Connectivity": "WiFi 802.11 b/g/n (2.4 GHz)",
+                "GPIO Pins": "16 digital (11 usable)",
+                "ADC": "1 channel, 10-bit (3.2V max)",
+                "PWM": "All GPIO pins support PWM",
+                "Communication": "UART, SPI, I2C (software), I2S",
+                "USB-to-Serial": "CP2102 (V2) or CH340G (V3)",
+                "Power": "5V via Micro-USB or VIN, 3.3V operating voltage",
+                "Current Draw": "70mA active, <200µA standby",
+                "Dimensions": "58 x 31 x 13 mm"
+            },
+            "pinout": {
+                "Power": "VIN (7-12V), 3V3, GND",
+                "Serial": "TX (GPIO1), RX (GPIO3)",
+                "I2C": "SDA (GPIO4/D2), SCL (GPIO5/D1)",
+                "SPI": "MOSI (GPIO13), MISO (GPIO12), SCK (GPIO14), CS (GPIO15)",
+                "Special": "RST (Reset), FLASH (Bootloader), WAKE (Deep sleep wake)"
+            },
+            "useCases": [
+                "WiFi-enabled sensors",
+                "Smart home devices",
+                "Web servers and clients",
+                "IoT data logging",
+                "MQTT brokers/clients",
+                "Wireless weather stations"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Web Server Example",
+                "code": "#include <ESP8266WiFi.h>\n#include <ESP8266WebServer.h>\n\nconst char* ssid = \"YOUR_SSID\";\nconst char* password = \"YOUR_PASSWORD\";\n\nESP8266WebServer server(80);\n\nvoid handleRoot() {\n  String html = \"<html><body>\";\n  html += \"<h1>ESP8266 Web Server</h1>\";\n  html += \"<p>Hello from NodeMCU!</p>\";\n  html += \"</body></html>\";\n  server.send(200, \"text/html\", html);\n}\n\nvoid setup() {\n  Serial.begin(115200);\n  \n  // Connect to WiFi\n  WiFi.begin(ssid, password);\n  Serial.print(\"Connecting to WiFi\");\n  \n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  \n  Serial.println(\"\");\n  Serial.print(\"Connected! IP address: \");\n  Serial.println(WiFi.localIP());\n  \n  server.on(\"/\", handleRoot);\n  server.begin();\n  Serial.println(\"HTTP server started\");\n}\n\nvoid loop() {\n  server.handleClient();\n}\n"
+            },
+            "pricing": "$3 - $8",
+            "image": "/images/resources/esp8266-nodemcu.jpg",
+            "compatibleBoards": [
+                "ESP8266-12E",
+                "ESP8266-12F"
+            ],
+            "relatedComponents": [
+                "esp32-devkit-v1",
+                "wemos-d1-mini"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP8266 NodeMCU Getting Started",
+                    "url": "https://randomnerdtutorials.com/getting-started-with-esp8266-wifi-transceiver-review/"
+                },
+                {
+                    "title": "NodeMCU Pinout Guide",
+                    "url": "https://lastminuteengineers.com/esp8266-nodemcu-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "wemos-d1-mini",
+            "name": "Wemos D1 Mini ESP8266",
+            "category": "Board",
+            "shortDesc": "Ultra-compact ESP8266 board, perfect for battery-powered projects, 34 x 25mm size",
+            "fullDescription": "The Wemos D1 Mini is an ultra-compact ESP8266 development board favored for its small size and low power consumption. With all the power of the ESP8266-12E/F in a tiny form factor, it's ideal for battery-powered IoT projects and space-constrained applications.",
+            "specifications": {
+                "Processor": "ESP-8266EX (ESP-12F), 32-bit 80-160 MHz",
+                "Flash Memory": "4MB (16MB in D1 Mini Pro)",
+                "SRAM": "64KB",
+                "Connectivity": "WiFi 802.11 b/g/n (2.4 GHz)",
+                "GPIO Pins": "11 digital I/O",
+                "Analog": "1x 10-bit ADC (A0, 3.2V max)",
+                "PWM": "All GPIO pins",
+                "Communication": "UART, SPI, I2C",
+                "USB-to-Serial": "CH340G",
+                "Power": "5V via Micro-USB, up to 24V max input, 3.3V logic",
+                "Deep Sleep": "Optimized for battery applications",
+                "Dimensions": "34 x 25 x 6 mm"
+            },
+            "pinout": {
+                "Power": "5V, 3.3V, GND",
+                "Digital": "D0-D8 (11 pins total)",
+                "Analog": "A0 (10-bit, 0-3.2V)",
+                "Serial": "TX (GPIO1/D10), RX (GPIO3/D9)",
+                "I2C": "SDA (D2), SCL (D1)",
+                "SPI": "MOSI (D7), MISO (D6), SCK (D5), CS (D8)"
+            },
+            "useCases": [
+                "Battery-powered sensors",
+                "Wearable electronics",
+                "Compact weather stations",
+                "BLE gateways",
+                "Portable data loggers",
+                "Space-constrained IoT devices"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Deep Sleep Battery Example",
+                "code": "#include <ESP8266WiFi.h>\n\nconst int LED = D4;  // Built-in LED\nconst int SLEEP_TIME = 60;  // Sleep for 60 seconds\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(LED, OUTPUT);\n  \n  Serial.println(\"Waking up...\");\n  \n  // Blink LED\n  for (int i = 0; i < 3; i++) {\n    digitalWrite(LED, LOW);  // LED is active LOW\n    delay(100);\n    digitalWrite(LED, HIGH);\n    delay(100);\n  }\n  \n  // Read sensor data here\n  int sensorValue = analogRead(A0);\n  Serial.print(\"Sensor reading: \");\n  Serial.println(sensorValue);\n  \n  // Go to deep sleep\n  Serial.print(\"Going to sleep for \");\n  Serial.print(SLEEP_TIME);\n  Serial.println(\" seconds...\");\n  \n  ESP.deepSleep(SLEEP_TIME * 1000000);  // Microseconds\n}\n\nvoid loop() {\n  // Never executed - device resets after deep sleep\n}\n\n// Note: Connect D0 to RST for wake-up from deep sleep\n"
+            },
+            "pricing": "$2 - $5",
+            "image": "/images/resources/wemos-d1-mini.jpg",
+            "compatibleBoards": [
+                "ESP8266-12E",
+                "ESP8266-12F"
+            ],
+            "relatedComponents": [
+                "esp8266-nodemcu",
+                "esp32-c3-supermini"
+            ],
+            "tutorials": [
+                {
+                    "title": "Wemos D1 Mini Getting Started",
+                    "url": "https://www.makersportal.com/blog/2019/2/25/wemos-d1-mini-esp8266-projects"
+                },
+                {
+                    "title": "D1 Mini Deep Sleep Guide",
+                    "url": "https://randomnerdtutorials.com/esp8266-deep-sleep-with-arduino-ide/"
+                }
+            ]
+        },
+        {
+            "slug": "adafruit-feather-huzzah-esp8266",
+            "name": "Adafruit Feather HUZZAH ESP8266",
+            "category": "Board",
+            "shortDesc": "Feather form-factor ESP8266 with LiPo battery support, JST connector, on-board charging",
+            "fullDescription": "The Adafruit Feather HUZZAH ESP8266 combines the WiFi power of ESP8266 with Adafruit's Feather ecosystem. Features include automatic LiPo battery charging, JST connector for battery, and compatibility with all Feather Wings for easy expansion. Perfect for portable WiFi projects.",
+            "specifications": {
+                "Processor": "ESP8266 @ 80MHz (overclockable to 160MHz)",
+                "Flash Memory": "4MB",
+                "SRAM": "32KB instruction, 80KB user data",
+                "Connectivity": "WiFi 802.11 b/g/n",
+                "GPIO Pins": "9 digital I/O",
+                "ADC": "1x 10-bit analog input",
+                "PWM": "5 pins",
+                "Communication": "UART, I2C, SPI, I2S",
+                "USB-to-Serial": "CP2104",
+                "Power": "USB or LiPo battery (3.7V)",
+                "Battery Charging": "On-board 500mA LiPo charger (MCP73831)",
+                "Reset": "Auto",
+                "Enable": "Pull-up, auto-enable",
+                "Dimensions": "51 x 23 x 8 mm (Feather standard)"
+            },
+            "pinout": {
+                "Power": "USB, BAT (JST), 3V, GND",
+                "Digital": "GPIO 0, 2, 4, 5, 12, 13, 14, 15, 16",
+                "Analog": "A (ADC pin)",
+                "Serial": "TX, RX",
+                "I2C": "SDA (GPIO 4), SCL (GPIO 5)",
+                "SPI": "MOSI (GPIO 13), MISO (GPIO 12), SCK (GPIO 14)"
+            },
+            "useCases": [
+                "Portable WiFi projects",
+                "Battery-powered weather stations",
+                "Mobile IoT sensors",
+                "Wearable tech with Feather Wings",
+                "Remote monitoring systems",
+                "Solar-powered data loggers"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Battery Monitoring Example",
+                "code": "#include <ESP8266WiFi.h>\n\n// Read battery voltage\nfloat getBatteryVoltage() {\n  // Read ADC (0-1024)\n  int rawValue = analogRead(A0);\n  \n  // Convert to voltage (ESP8266 ADC is 0-1V, with voltage divider)\n  // Feather HUZZAH has internal voltage divider\n  float voltage = (rawValue / 1024.0) * 4.2;  // Max LiPo voltage\n  \n  return voltage;\n}\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(A0, INPUT);\n  \n  Serial.println(\"Adafruit Feather HUZZAH ESP8266\");\n}\n\nvoid loop() {\n  float vbat = getBatteryVoltage();\n  \n  Serial.print(\"Battery Voltage: \");\n  Serial.print(vbat);\n  Serial.println(\"V\");\n  \n  // Calculate percentage (rough estimate)\n  float percentage = ((vbat - 3.3) / (4.2 - 3.3)) * 100.0;\n  percentage = constrain(percentage, 0, 100);\n  \n  Serial.print(\"Battery Level: \");\n  Serial.print(percentage);\n  Serial.println(\"%\");\n  \n  delay(5000);\n}\n"
+            },
+            "pricing": "$16 - $20",
+            "image": "/images/resources/adafruit-feather-huzzah.jpg",
+            "compatibleBoards": [
+                "ESP8266 Feather Wings",
+                "All Adafruit Feather accessories"
+            ],
+            "relatedComponents": [
+                "esp8266-nodemcu",
+                "wemos-d1-mini"
+            ],
+            "tutorials": [
+                {
+                    "title": "Feather HUZZAH ESP8266 Guide",
+                    "url": "https://learn.adafruit.com/adafruit-feather-huzzah-esp8266"
+                },
+                {
+                    "title": "Feather Wing Compatibility",
+                    "url": "https://www.adafruit.com/category/943"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-c6-devkit",
+            "name": "ESP32-C6 DevKit",
+            "category": "Board",
+            "shortDesc": "RISC-V ESP32 with WiFi 6, Bluetooth 5.3, and Matter support for next-gen smart home",
+            "fullDescription": "The ESP32-C6 is Espressif's first WiFi 6 SoC featuring a 32-bit RISC-V processor at 160MHz. It integrates 2.4GHz WiFi 6 (802.11ax), Bluetooth 5.3 LE, and IEEE 802.15.4 for Thread and Zigbee, making it perfect for Matter-compatible smart home devices with improved efficiency and low latency.",
+            "specifications": {
+                "Processor": "32-bit RISC-V single-core, up to 160 MHz",
+                "Flash Memory": "4MB",
+                "SRAM": "512KB",
+                "ROM": "320KB",
+                "Connectivity": "WiFi 6 (802.11ax) 2.4GHz, Bluetooth 5.3 LE, IEEE 802.15.4",
+                "Protocols": "Matter, Thread, Zigbee support",
+                "GPIO Pins": "30 programmable (QFN40 package)",
+                "ADC": "7 channels, 12-bit",
+                "Communication": "3x UART, 2x I2C, 3x SPI, I2S, USB Serial/JTAG",
+                "Security": "RSA-3072 secure boot, AES-128/256 encryption, HMAC, ECDSA",
+                "Power Consumption": "Low-power with WiFi 6 TWT support",
+                "Dimensions": "Standard dev board form factor"
+            },
+            "pinout": {
+                "Power": "5V (USB), 3.3V, GND",
+                "Serial": "TX (GPIO16), RX (GPIO17)",
+                "I2C": "SDA (GPIO6), SCL (GPIO7)",
+                "SPI": "MOSI (GPIO7), MISO (GPIO2), SCK (GPIO6)",
+                "USB": "D+ (GPIO13), D- (GPIO12)"
+            },
+            "useCases": [
+                "Matter-compatible smart home devices",
+                "WiFi 6 IoT applications",
+                "Thread and Zigbee mesh networks",
+                "Low-latency wireless sensors",
+                "Battery-powered connected devices",
+                "Multi-protocol gateway devices"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "WiFi 6 Connection Example",
+                "code": "#include \"WiFi.h\"\n\nconst char* ssid = \"YOUR_SSID\";\nconst char* password = \"YOUR_PASSWORD\";\n\nvoid setup() {\n  Serial.begin(115200);\n  \n  // Connect to WiFi 6 network\n  WiFi.mode(WIFI_STA);\n  WiFi.begin(ssid, password);\n  \n  Serial.print(\"Connecting to WiFi..\");\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  \n  Serial.println(\"\");\n  Serial.println(\"Connected to WiFi 6!\");\n  Serial.print(\"IP Address: \");\n  Serial.println(WiFi.localIP());\n  Serial.print(\"WiFi Protocol: \");\n  Serial.println(WiFi.getProtocol()); // Shows WiFi 6 support\n}\n\nvoid loop() {\n  // Your code here\n  delay(1000);\n}"
+            },
+            "pricing": "$4 - $7",
+            "image": "/images/resources/esp32-c6-devkit.jpg",
+            "compatibleBoards": [
+                "ESP32-C6-WROOM-1",
+                "ESP32-C6-MINI-1"
+            ],
+            "relatedComponents": [
+                "esp32-devkit-v1",
+                "esp32-h2"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-C6 Getting Started",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32c6/get-started/"
+                },
+                {
+                    "title": "Matter Development Guide",
+                    "url": "https://github.com/espressif/esp-matter"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-h2-devkit",
+            "name": "ESP32-H2 DevKit",
+            "category": "Board",
+            "shortDesc": "Ultra-low-power ESP32 with Zigbee, Thread, and Bluetooth 5 LE for mesh networking",
+            "fullDescription": "The ESP32-H2 is designed specifically for ultra-low-power IoT mesh networking. Featuring a 32-bit RISC-V processor at 96MHz, it supports IEEE 802.15.4 (Zigbee/Thread) and Bluetooth 5 LE, making it ideal for battery-powered smart home devices and mesh network applications.",
+            "specifications": {
+                "Processor": "32-bit RISC-V single-core, up to 96 MHz",
+                "Flash Memory": "4MB (in-package)",
+                "SRAM": "320KB",
+                "ROM": "128KB",
+                "Connectivity": "IEEE 802.15.4 (Zigbee/Thread), Bluetooth 5.0 LE",
+                "Data Rate": "250 Kbps (802.15.4)",
+                "GPIO Pins": "19 programmable",
+                "ADC": "5 channels, 12-bit",
+                "Communication": "2x UART, 2x I2C, 2x SPI",
+                "Certifications": "Zigbee-Compliant, Thread-Certified 1.3.0",
+                "Security": "ECC secure boot, AES-128/256 encryption",
+                "Power Consumption": "Ultra-low power for battery operation",
+                "Dimensions": "Compact dev board"
+            },
+            "pinout": {
+                "Power": "3.3V, GND",
+                "GPIO": "19 pins total",
+                "UART": "TX (GPIO24), RX (GPIO23)",
+                "I2C": "SDA (GPIO1), SCL (GPIO0)"
+            },
+            "useCases": [
+                "Zigbee smart home devices",
+                "Thread mesh networks",
+                "Bluetooth LE sensors",
+                "Battery-powered IoT nodes",
+                "Mesh network gateways",
+                "Low-power environmental monitors"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Zigbee Device Example",
+                "code": "#include \"esp_zigbee_core.h\"\n\n// Example Zigbee light device\nvoid setup() {\n  Serial.begin(115200);\n  \n  // Initialize Zigbee stack\n  esp_zb_cfg_t zb_cfg = ESP_ZB_ZED_CONFIG();\n  esp_zb_init(&zb_cfg);\n  \n  // Configure as Zigbee end device\n  esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);\n  \n  Serial.println(\"Zigbee device initialized\");\n  Serial.println(\"Searching for coordinator...\");\n  \n  // Start Zigbee\n  esp_zb_start(false);\n}\n\nvoid loop() {\n  // Zigbee stack runs in background\n  delay(1000);\n}"
+            },
+            "pricing": "$2.50 - $4",
+            "image": "/images/resources/esp32-h2-devkit.jpg",
+            "compatibleBoards": [
+                "ESP32-H2-MINI-1",
+                "ESP32-H2-WROOM"
+            ],
+            "relatedComponents": [
+                "esp32-c6-devkit",
+                "esp8266-nodemcu"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-H2 Getting Started",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32h2/"
+                },
+                {
+                    "title": "Zigbee Development Guide",
+                    "url": "https://github.com/espressif/esp-zigbee-sdk"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-p4-function-board",
+            "name": "ESP32-P4 Function Evaluation Board",
+            "category": "Board",
+            "shortDesc": "High-performance dual-core RISC-V at 400MHz for edge AI, HMI, and industrial IoT",
+            "fullDescription": "The ESP32-P4 is Espressif's most powerful MCU, featuring dual-core RISC-V processors at 400MHz with AI instruction extensions. Designed for rich HMI applications, it includes MIPI interfaces for camera and display, H.264 encoding, and extensive peripheral support. Typically paired with ESP32-C6 for wireless connectivity.",
+            "specifications": {
+                "Processor": "Dual-core RISC-V, up to 400 MHz + LP-Core at 40 MHz",
+                "SRAM": "768KB on-chip",
+                "PSRAM": "Up to 32MB external (dev boards)",
+                "Flash": "Up to 32MB (dev boards)",
+                "Connectivity": "Ethernet, paired with ESP32-C6 for WiFi 6/BT via SDIO",
+                "Display": "MIPI-DSI for displays",
+                "Camera": "MIPI-CSI interface",
+                "Video": "H.264 encoder, JPEG codec",
+                "GPIO": "50+ programmable pins",
+                "USB": "USB OTG 2.0 HS",
+                "Communication": "Multiple UART, SPI, I2C, SDIO Host 3.0",
+                "ADC": "2x 12-bit SAR ADC",
+                "Security": "Secure Boot, Flash Encryption, Key Management Unit",
+                "Dimensions": "Development board varies"
+            },
+            "pinout": {
+                "Power": "5V, 3.3V, GND",
+                "USB": "USB OTG for host/device",
+                "Display": "MIPI-DSI connector",
+                "Camera": "MIPI-CSI connector",
+                "Ethernet": "RJ45 connector (some boards)"
+            },
+            "useCases": [
+                "Edge AI and machine learning",
+                "Rich HMI applications",
+                "Industrial automation and control",
+                "Smart displays and kiosks",
+                "Video processing systems",
+                "Advanced robotics with vision"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Dual-Core Processing Example",
+                "code": "#include \"freertos/FreeRTOS.h\"\n#include \"freertos/task.h\"\n#include \"esp_log.h\"\n\nstatic const char *TAG = \"ESP32-P4\";\n\n// Task for Core 0\nvoid core0_task(void *pvParameters) {\n    while(1) {\n        ESP_LOGI(TAG, \"Core 0 processing at 400MHz\");\n        vTaskDelay(pdMS_TO_TICKS(1000));\n    }\n}\n\n// Task for Core 1\nvoid core1_task(void *pvParameters) {\n    while(1) {\n        ESP_LOGI(TAG, \"Core 1 processing at 400MHz\");\n        vTaskDelay(pdMS_TO_TICKS(1000));\n    }\n}\n\nvoid app_main(void) {\n    ESP_LOGI(TAG, \"ESP32-P4 Dual-Core Demo\");\n    \n    // Create task on Core 0\n    xTaskCreatePinnedToCore(core0_task, \"Core0\", 4096, NULL, 5, NULL, 0);\n    \n    // Create task on Core 1\n    xTaskCreatePinnedToCore(core1_task, \"Core1\", 4096, NULL, 5, NULL, 1);\n}"
+            },
+            "pricing": "$8 - $15 (dev boards)",
+            "image": "/images/resources/esp32-p4.jpg",
+            "compatibleBoards": [
+                "ESP32-P4-Function-EV-Board"
+            ],
+            "relatedComponents": [
+                "esp32-s3-devkitc",
+                "esp32-c6-devkit"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-P4 Overview",
+                    "url": "https://www.espressif.com/en/products/socs/esp32-p4"
+                },
+                {
+                    "title": "P4 Development Guide",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32p4/"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-s2-devkit",
+            "name": "ESP32-S2 DevKit",
+            "category": "Board",
+            "shortDesc": "Cost-effective ESP32 with USB Native, WiFi 4, ideal for USB devices and IoT sensors",
+            "fullDescription": "The ESP32-S2 is Espressif's cost-effective WiFi-only microcontroller featuring a single-core Xtensa LX7 processor at 240MHz with native USB support. Designed for IoT applications where Bluetooth isn't required, it offers excellent value with built-in USB OTG, making it perfect for USB HID devices and WiFi sensors.",
+            "specifications": {
+                "Processor": "32-bit Xtensa LX7 single-core, up to 240 MHz",
+                "Flash Memory": "4MB",
+                "SRAM": "320KB",
+                "PSRAM": "Optional external (up to 16MB)",
+                "Connectivity": "WiFi 802.11 b/g/n (WiFi 4), NO Bluetooth",
+                "GPIO Pins": "43 programmable",
+                "ADC": "20 channels, 13-bit",
+                "DAC": "2 channels, 8-bit",
+                "Communication": "4x SPI, 2x I2C, 2x I2S, 2x UART",
+                "USB": "USB OTG 1.1 (native, no USB-to-Serial chip needed)",
+                "Touch": "14 capacitive touch pins",
+                "Temperature Sensor": "Built-in",
+                "Dimensions": "Standard dev board form factor"
+            },
+            "pinout": {
+                "Power": "5V (USB), 3.3V, GND",
+                "USB": "D+ (GPIO20), D- (GPIO19)",
+                "Serial": "TX (GPIO43), RX (GPIO44)",
+                "I2C": "SDA (GPIO8), SCL (GPIO9)"
+            },
+            "useCases": [
+                "USB HID devices (keyboards, mice)",
+                "WiFi-only IoT sensors",
+                "Cost-effective smart home devices",
+                "USB Mass Storage devices",
+                "WiFi to Serial bridges",
+                "Low-cost data loggers"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "USB Device Example",
+                "code": "#include \"USB.h\"\n#include \"USBHIDKeyboard.h\"\n\nUSBHIDKeyboard Keyboard;\n\nvoid setup() {\n  Serial.begin(115200);\n  USB.begin();\n  Keyboard.begin();\n  Serial.println(\"ESP32-S2 USB Keyboard Ready\");\n}\n\nvoid loop() {\n  if (digitalRead(0) == LOW) {\n    Keyboard.print(\"Hello from ESP32-S2!\");\n    delay(1000);\n  }\n  delay(100);\n}"
+            },
+            "pricing": "$3 - $5",
+            "image": "/images/resources/esp32-s2-devkit.jpg",
+            "compatibleBoards": [
+                "ESP32-S2-WROOM",
+                "ESP32-S2-WROVER"
+            ],
+            "relatedComponents": [
+                "esp32-devkit-v1",
+                "esp32-c3-supermini"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-S2 Getting Started",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/get-started/"
+                },
+                {
+                    "title": "USB Device Examples",
+                    "url": "https://github.com/espressif/arduino-esp32/tree/master/libraries/USB"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-wrover",
+            "name": "ESP32-WROVER Development Board",
+            "category": "Board",
+            "shortDesc": "ESP32 with 8MB PSRAM for memory-intensive applications like camera and AI processing",
+            "fullDescription": "The ESP32-WROVER module features an additional 8MB of PSRAM (Pseudo Static RAM), making it ideal for applications requiring large memory buffers such as camera image processing, audio streaming, and AI inference. Perfect for advanced projects that need more memory than standard ESP32 boards.",
+            "specifications": {
+                "Processor": "Dual-core Xtensa LX6, up to 240 MHz",
+                "Flash Memory": "4MB (16MB variants available)",
+                "SRAM": "520KB",
+                "PSRAM": "8MB (SPI PSRAM)",
+                "Connectivity": "WiFi 802.11 b/g/n, Bluetooth 4.2 (BR/EDR and BLE)",
+                "GPIO Pins": "38 programmable",
+                "ADC": "18 channels, 12-bit",
+                "DAC": "2 channels, 8-bit",
+                "Communication": "3x UART, 4x SPI, 2x I2C, I2S",
+                "Camera Interface": "Supports DVP camera",
+                "Power": "5V via Micro-USB or VIN",
+                "Dimensions": "55 x 28 mm"
+            },
+            "pinout": {
+                "Power": "VIN (5V), 3V3, GND",
+                "Serial": "TX (GPIO1), RX (GPIO3)",
+                "I2C": "SDA (GPIO21), SCL (GPIO22)",
+                "SPI": "MOSI (GPIO23), MISO (GPIO19), SCK (GPIO18)"
+            },
+            "useCases": [
+                "ESP32-CAM applications with frame buffers",
+                "Audio streaming and processing",
+                "AI inference at the edge",
+                "Large data buffers and caching",
+                "Image processing applications",
+                "TensorFlow Lite models"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "PSRAM Usage Example",
+                "code": "#include <esp_heap_caps.h>\n\nvoid setup() {\n  Serial.begin(115200);\n  if (psramFound()) {\n    Serial.println(\"PSRAM found!\");\n    Serial.printf(\"Total PSRAM: %d bytes\\n\", ESP.getPsramSize());\n    Serial.printf(\"Free PSRAM: %d bytes\\n\", ESP.getFreePsram());\n    uint8_t* buffer = (uint8_t*)ps_malloc(1024 * 1024);\n    if (buffer != NULL) {\n      Serial.println(\"Successfully allocated 1MB from PSRAM\");\n      free(buffer);\n    }\n  } else {\n    Serial.println(\"PSRAM not found!\");\n  }\n}\n\nvoid loop() {\n  delay(1000);\n}"
+            },
+            "pricing": "$6 - $10",
+            "image": "/images/resources/esp32-wrover.jpg",
+            "compatibleBoards": [
+                "ESP32-WROOM-32",
+                "ESP32-CAM"
+            ],
+            "relatedComponents": [
+                "esp32-cam",
+                "esp32-s3-devkitc"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-WROVER Setup",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-wrover-kit.html"
+                },
+                {
+                    "title": "PSRAM Programming Guide",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/external-ram.html"
+                }
+            ]
+        },
+        {
+            "slug": "m5stack-core2",
+            "name": "M5Stack Core2",
+            "category": "Module",
+            "shortDesc": "All-in-one ESP32 development kit with 2\" touch screen, speaker, microphone, and IMU",
+            "fullDescription": "The M5Stack Core2 is a comprehensive IoT development kit featuring an ESP32 with 16MB flash, 8MB PSRAM, a 320x240 capacitive touchscreen, stereo speakers, microphone, 6-axis IMU, vibration motor, RTC, and SD card slot. Everything you need in one compact, stackable package with Grove connectors for easy expansion.",
+            "specifications": {
+                "Processor": "ESP32-D0WDQ6-V3 dual-core @ 240MHz",
+                "Flash Memory": "16MB",
+                "PSRAM": "8MB",
+                "Display": "2\" IPS LCD 320x240 capacitive touch",
+                "Audio": "1W stereo speakers, NS4168 amplifier, I2S microphone",
+                "Sensors": "6-axis IMU (MPU6886), RTC (BM8563)",
+                "Vibration": "Vibration motor",
+                "Power": "390mAh battery, USB-C charging, AXP192 PMU",
+                "Expansion": "Grove ports (I2C, UART), M-Bus connector",
+                "Storage": "MicroSD card slot (up to 16GB)",
+                "WiFi/BT": "802.11 b/g/n, Bluetooth 4.2",
+                "Dimensions": "54 x 54 x 16 mm"
+            },
+            "pinout": {
+                "Grove A": "GPIO 32, GPIO 33 (I2C/GPIO)",
+                "Grove B": "GPIO 26, GPIO 36 (UART/GPIO)",
+                "Grove C": "GPIO 13, GPIO 14 (UART/GPIO)",
+                "M-Bus": "Full GPIO expansion via stackable modules"
+            },
+            "useCases": [
+                "Rapid IoT prototyping",
+                "Portable smart displays",
+                "Voice-controlled devices",
+                "Environmental monitoring stations",
+                "Handheld game consoles",
+                "All-in-one automation controllers"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "M5Stack Touch Display Example",
+                "code": "#include <M5Core2.h>\n\nvoid setup() {\n  M5.begin();\n  M5.Lcd.fillScreen(BLACK);\n  M5.Lcd.setTextSize(2);\n  M5.Lcd.println(\"M5Stack Core2\");\n  M5.Lcd.println(\"Touch the screen!\");\n}\n\nvoid loop() {\n  M5.update();\n  TouchPoint_t pos = M5.Touch.getPressPoint();\n  if (pos.x != -1) {\n    M5.Lcd.fillCircle(pos.x, pos.y, 5, WHITE);\n    Serial.printf(\"Touch: X=%d, Y=%d\\n\", pos.x, pos.y);\n  }\n  delay(10);\n}"
+            },
+            "pricing": "$45 - $55",
+            "image": "/images/resources/m5stack-core2.jpg",
+            "compatibleBoards": [
+                "M5Stack modules and accessories"
+            ],
+            "relatedComponents": [
+                "esp32-wrover",
+                "esp32-s3-devkitc"
+            ],
+            "tutorials": [
+                {
+                    "title": "M5Stack Core2 Docs",
+                    "url": "https://docs.m5stack.com/en/core/core2"
+                },
+                {
+                    "title": "M5Stack Arduino Library",
+                    "url": "https://github.com/m5stack/M5Core2"
+                }
+            ]
+        },
+        {
+            "slug": "m5stick-c-plus",
+            "name": "M5StickC Plus",
+            "category": "Module",
+            "shortDesc": "Pocket-sized ESP32 with 1.14\" color display, IMU, microphone, and battery",
+            "fullDescription": "The M5StickC Plus is an ultra-compact ESP32 development kit featuring a 1.14-inch color LCD, 6-axis IMU, infrared transmitter, microphone, buzzer, and 120mAh battery in a tiny wearable form factor. Perfect for portable IoT devices, wearables, and quick prototyping projects.",
+            "specifications": {
+                "Processor": "ESP32-PICO-D4 dual-core @ 240MHz",
+                "Flash Memory": "4MB",
+                "Display": "1.14\" TFT LCD 135x240 ST7789V2",
+                "IMU": "6-axis (MPU6886)",
+                "Audio": "Built-in buzzer, SPM1423 microphone",
+                "Infrared": "IR transmitter (GPIO 9)",
+                "Power": "120mAh battery, USB-C charging, AXP192 PMU",
+                "RTC": "BM8563",
+                "Buttons": "2 programmable buttons + reset",
+                "Grove": "Grove port for expansion",
+                "Dimensions": "48 x 24 x 14 mm",
+                "Weight": "15g"
+            },
+            "pinout": {
+                "Grove Port": "GPIO 32, GPIO 33 (I2C)",
+                "HAT Connector": "GPIO 0, GPIO 26, GPIO 36",
+                "Internal": "IMU (I2C), Display (SPI)"
+            },
+            "useCases": [
+                "Wearable IoT devices",
+                "Portable environmental sensors",
+                "Remote controls (IR transmitter)",
+                "Smart watches and fitness trackers",
+                "Handheld game devices",
+                "Quick prototyping and demos"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "M5StickC Display Example",
+                "code": "#include <M5StickCPlus.h>\n\nvoid setup() {\n  M5.begin();\n  M5.Lcd.setRotation(3);\n  M5.Lcd.fillScreen(BLACK);\n  M5.Lcd.setTextSize(2);\n  M5.Lcd.setCursor(10, 10);\n  M5.Lcd.println(\"M5StickC+\");\n  M5.Lcd.setCursor(10, 40);\n  M5.Lcd.printf(\"Bat: %.0f%%\", M5.Axp.GetBatteryLevel());\n}\n\nvoid loop() {\n  M5.update();\n  if (M5.BtnA.wasPressed()) {\n    M5.Lcd.println(\"Button A pressed\");\n  }\n  delay(10);\n}"
+            },
+            "pricing": "$15 - $20",
+            "image": "/images/resources/m5stick-c-plus.jpg",
+            "compatibleBoards": [
+                "M5StickC HAT accessories"
+            ],
+            "relatedComponents": [
+                "m5stack-core2",
+                "esp32-c3-supermini"
+            ],
+            "tutorials": [
+                {
+                    "title": "M5StickC Plus Docs",
+                    "url": "https://docs.m5stack.com/en/core/m5stickc_plus"
+                },
+                {
+                    "title": "Quick Start Guide",
+                    "url": "https://github.com/m5stack/M5StickC-Plus"
+                }
+            ]
+        },
+        {
+            "slug": "lilygo-t-display",
+            "name": "LILYGO T-Display ESP32",
+            "category": "Module",
+            "shortDesc": "ESP32 with built-in 1.14\" IPS color display and two programmable buttons",
+            "fullDescription": "The LILYGO T-Display features an ESP32 with a built-in 1.14-inch 135x240 IPS color display, two programmable buttons, and battery charging circuit. Its compact design and integrated display make it perfect for creating portable displays, gauges, and interactive devices without external components.",
+            "specifications": {
+                "Processor": "ESP32-WROVER-B dual-core @ 240MHz",
+                "Flash Memory": "4MB",
+                "PSRAM": "8MB",
+                "Display": "1.14\" IPS TFT 135x240 ST7789",
+                "Buttons": "2 programmable buttons",
+                "Battery": "JST 1.25mm connector, charging circuit",
+                "USB": "USB-C",
+                "GPIO": "Exposed I/O pins on both sides",
+                "Antenna": "On-board antenna",
+                "Dimensions": "52 x 26 x 9 mm"
+            },
+            "pinout": {
+                "Display": "GPIO 4 (TFT_CS), GPIO 16 (DC), GPIO 23 (MOSI), GPIO 18 (SCK)",
+                "Buttons": "GPIO 0, GPIO 35",
+                "LED": "GPIO 5",
+                "Available": "Multiple GPIO pins exposed"
+            },
+            "useCases": [
+                "Portable info displays (weather, stocks, news)",
+                "IoT sensor dashboards",
+                "Smart watches and wearables",
+                "Cryptocurrency tickers",
+                "Mini gaming devices",
+                "Status monitors and gauges"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "T-Display Hello World",
+                "code": "#include <TFT_eSPI.h>\n\nTFT_eSPI tft = TFT_eSPI();\n\nvoid setup() {\n  Serial.begin(115200);\n  tft.init();\n  tft.setRotation(1);\n  tft.fillScreen(TFT_BLACK);\n  tft.setTextColor(TFT_WHITE, TFT_BLACK);\n  tft.setTextSize(2);\n  tft.setCursor(10, 10);\n  tft.println(\"LILYGO T-Display\");\n  tft.setTextColor(TFT_GREEN);\n  tft.setCursor(10, 40);\n  tft.printf(\"WiFi: %s\", WiFi.status() == WL_CONNECTED ? \"ON\" : \"OFF\");\n}\n\nvoid loop() {\n  delay(1000);\n}"
+            },
+            "pricing": "$10 - $15",
+            "image": "/images/resources/lilygo-t-display.jpg",
+            "compatibleBoards": [
+                "ESP32-WROVER modules"
+            ],
+            "relatedComponents": [
+                "m5stick-c-plus",
+                "esp32-wrover"
+            ],
+            "tutorials": [
+                {
+                    "title": "T-Display Setup Guide",
+                    "url": "https://github.com/Xinyuan-LilyGO/TTGO-T-Display"
+                },
+                {
+                    "title": "TFT_eSPI Library",
+                    "url": "https://github.com/Bodmer/TFT_eSPI"
+                }
+            ]
+        },
+        {
+            "slug": "esp32-ethernet-kit",
+            "name": "ESP32-Ethernet-Kit",
+            "category": "Board",
+            "shortDesc": "ESP32 development board with wired Ethernet, PoE support, and CAN bus",
+            "fullDescription": "The ESP32-Ethernet-Kit combines WiFi/Bluetooth with wired 100Mbps Ethernet via the IP101GRI PHY chip. Features optional PoE (Power over Ethernet), CAN bus interface, SD card slot, and LCD interface, making it ideal for industrial applications requiring reliable wired connectivity.",
+            "specifications": {
+                "Processor": "ESP32-WROVER-B dual-core @ 240MHz",
+                "Flash Memory": "4MB",
+                "PSRAM": "8MB",
+                "Ethernet": "10/100Mbps via IP101GRI PHY",
+                "PoE": "Optional 802.3af PoE support",
+                "CAN Bus": "SN65HVD230 CAN transceiver",
+                "Storage": "MicroSD card slot",
+                "LCD Interface": "8-bit parallel LCD interface",
+                "USB": "Micro-USB",
+                "GPIO": "Accessible via headers",
+                "Dimensions": "88 x 68 mm"
+            },
+            "pinout": {
+                "Ethernet PHY": "RMII interface (GPIO0,19,21,22,25,26,27)",
+                "CAN": "TX (GPIO25), RX (GPIO26)",
+                "SD Card": "SPI interface",
+                "LCD": "8-bit parallel data bus"
+            },
+            "useCases": [
+                "Industrial automation and control",
+                "Reliable network appliances",
+                "PoE-powered IoT devices",
+                "CAN bus gateways",
+                "Wired security systems",
+                "Network monitoring devices"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Ethernet Connection Example",
+                "code": "#include <ETH.h>\n\nstatic bool eth_connected = false;\n\nvoid WiFiEvent(WiFiEvent_t event) {\n  switch (event) {\n    case SYSTEM_EVENT_ETH_START:\n      Serial.println(\"ETH Started\");\n      ETH.setHostname(\"esp32-eth\");\n      break;\n    case SYSTEM_EVENT_ETH_GOT_IP:\n      Serial.print(\"ETH IP: \");\n      Serial.println(ETH.localIP());\n      eth_connected = true;\n      break;\n  }\n}\n\nvoid setup() {\n  Serial.begin(115200);\n  WiFi.onEvent(WiFiEvent);\n  ETH.begin();\n}\n\nvoid loop() {\n  if (eth_connected) {\n    Serial.println(\"Ethernet is connected\");\n  }\n  delay(5000);\n}"
+            },
+            "pricing": "$25 - $35",
+            "image": "/images/resources/esp32-ethernet-kit.jpg",
+            "compatibleBoards": [
+                "ESP32-WROVER-B"
+            ],
+            "relatedComponents": [
+                "esp32-wrover",
+                "esp32-devkit-v1"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP32-Ethernet-Kit Guide",
+                    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-ethernet-kit.html"
+                }
+            ]
+        },
+        {
+            "slug": "adafruit-huzzah32",
+            "name": "Adafruit HUZZAH32 ESP32 Feather",
+            "category": "Module",
+            "shortDesc": "Feather-format ESP32 with LiPo charging, Feather Wing compatible",
+            "fullDescription": "The Adafruit HUZZAH32 brings ESP32 power to the Feather ecosystem, featuring automatic LiPo battery charging, JST connector, and compatibility with all Adafruit Feather Wings. Perfect for portable WiFi/Bluetooth projects with easy battery management and modular expansion.",
+            "specifications": {
+                "Processor": "ESP32 dual-core @ 240MHz",
+                "Flash Memory": "4MB",
+                "SRAM": "520KB",
+                "Connectivity": "WiFi 802.11 b/g/n, Bluetooth Classic + BLE",
+                "GPIO Pins": "21 GPIO, 13 ADC channels",
+                "Battery": "LiPo charger (500mA), JST connector",
+                "USB": "Micro USB with CP2104",
+                "Auto-reset": "Yes",
+                "3.3V Regulator": "500mA output",
+                "Feather Wings": "Compatible with all Feather accessories",
+                "Dimensions": "51 x 23 mm (Feather standard)"
+            },
+            "pinout": {
+                "Power": "USB, BAT, 3V, EN, GND",
+                "GPIO": "Multiple GPIO with ADC, PWM, I2C, SPI",
+                "I2C": "SDA (GPIO 23), SCL (GPIO 22)",
+                "SPI": "MOSI, MISO, SCK",
+                "ADC": "13 analog inputs"
+            },
+            "useCases": [
+                "Portable WiFi/BT devices with battery",
+                "Feather Wing-based projects",
+                "Wearable electronics",
+                "Solar-powered sensors",
+                "Mobile data loggers",
+                "Battery-operated automation"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Battery Monitor Example",
+                "code": "#define VBAT_PIN A13\n\nvoid setup() {\n  Serial.begin(115200);\n}\n\nvoid loop() {\n  float vbat = analogRead(VBAT_PIN);\n  vbat *= 2;\n  vbat *= 3.3;\n  vbat /= 4096;\n  Serial.print(\"Battery: \");\n  Serial.print(vbat);\n  Serial.println(\"V\");\n  delay(5000);\n}"
+            },
+            "pricing": "$20 - $25",
+            "image": "/images/resources/adafruit-huzzah32.jpg",
+            "compatibleBoards": [
+                "All Adafruit Feather Wings and accessories"
+            ],
+            "relatedComponents": [
+                "esp32-devkit-v1",
+                "adafruit-feather-huzzah-esp8266"
+            ],
+            "tutorials": [
+                {
+                    "title": "HUZZAH32 Overview",
+                    "url": "https://learn.adafruit.com/adafruit-huzzah32-esp32-feather"
+                }
+            ]
+        },
+        {
+            "slug": "ttgo-lora32-v2",
+            "name": "TTGO LoRa32 V2 (ESP32 + LoRa + OLED)",
+            "category": "Module",
+            "shortDesc": "ESP32 with LoRa SX1276, OLED display, and WiFi/BT for long-range IoT",
+            "fullDescription": "The TTGO LoRa32 V2 combines ESP32's WiFi/Bluetooth with Semtech SX1276 LoRa transceiver (868/915MHz) and a 0.96-inch OLED display. Perfect for long-range wireless communication projects spanning several kilometers, ideal for sensor networks, tracking, and remote monitoring in areas without cellular coverage.",
+            "specifications": {
+                "Processor": "ESP32 dual-core @ 240MHz",
+                "Flash Memory": "4MB (16MB version available)",
+                "LoRa": "Semtech SX1276/SX1278 (868MHz or 915MHz)",
+                "LoRa Range": "Up to 10+ km (line of sight)",
+                "Display": "0.96\" OLED 128x64 (SSD1306)",
+                "WiFi/BT": "802.11 b/g/n, Bluetooth 4.2",
+                "Battery": "JST 1.25mm connector with charging",
+                "USB": "Micro USB",
+                "Antenna": "U.FL connector for external antenna",
+                "SD Card": "Optional microSD slot",
+                "Dimensions": "51 x 26 mm"
+            },
+            "pinout": {
+                "LoRa": "SPI (MOSI, MISO, SCK, CS, RST, DIO)",
+                "OLED": "I2C (SDA GPIO 21, SCL GPIO 22)",
+                "Available GPIO": "Multiple pins exposed",
+                "LED": "GPIO 25"
+            },
+            "useCases": [
+                "Long-range sensor networks (10+ km)",
+                "Agricultural monitoring",
+                "Wildlife tracking",
+                "Remote environmental stations",
+                "Off-grid communication",
+                "LoRaWAN gateways and nodes"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "LoRa Send Example",
+                "code": "#include <SPI.h>\n#include <LoRa.h>\n#include <Adafruit_SSD1306.h>\n\n#define BAND 915E6\nAdafruit_SSD1306 display(128, 64, &Wire, -1);\nint counter = 0;\n\nvoid setup() {\n  Serial.begin(115200);\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n  display.clearDisplay();\n  display.setTextSize(1);\n  display.setTextColor(WHITE);\n  display.setCursor(0, 0);\n  display.println(\"LoRa Sender\");\n  display.display();\n  LoRa.setPins(18, 14, 26);\n  if (!LoRa.begin(BAND)) {\n    while (1);\n  }\n}\n\nvoid loop() {\n  LoRa.beginPacket();\n  LoRa.print(\"Hello LoRa \");\n  LoRa.print(counter++);\n  LoRa.endPacket();\n  delay(2000);\n}"
+            },
+            "pricing": "$15 - $25",
+            "image": "/images/resources/ttgo-lora32-v2.jpg",
+            "compatibleBoards": [
+                "LoRaWAN-compatible devices"
+            ],
+            "relatedComponents": [
+                "esp32-devkit-v1",
+                "lilygo-t-display"
+            ],
+            "tutorials": [
+                {
+                    "title": "TTGO LoRa32 Setup",
+                    "url": "https://github.com/LilyGO/TTGO-LORA32"
+                },
+                {
+                    "title": "LoRa Arduino Library",
+                    "url": "https://github.com/sandeepmistry/arduino-LoRa"
+                }
+            ]
+        }
+    ]
+}

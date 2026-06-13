@@ -1,0 +1,622 @@
+{
+    "overview": {
+        "title": "Cybersecurity Tools & Resources",
+        "description": "Master penetration testing, network security, web application security, and ethical hacking with industry-standard tools and methodologies",
+        "totalComponents": 8,
+        "categories": [
+            "Web Application Security",
+            "Network Security",
+            "Penetration Testing",
+            "Digital Forensics"
+        ]
+    },
+    "resources": [
+        {
+            "slug": "burp-suite",
+            "name": "Burp Suite - Web Vulnerability Scanner",
+            "category": "Web Application Security",
+            "shortDesc": "Professional web vulnerability scanner and penetration testing tool for web applications",
+            "fullDescription": "Burp Suite is the leading platform for web application security testing. It combines automated scanning with manual testing tools to identify vulnerabilities like SQL injection, XSS, CSRF, and authentication flaws. Used by professional security testers and bug bounty hunters worldwide.",
+            "specifications": {
+                "Pricing": "Community Edition (Free), Professional ($399/year), Enterprise (Custom)",
+                "Free Tier": "Full Community Edition with manual tools",
+                "Supported Languages": "Java (Community), Java/Cross-platform (Professional)",
+                "Operating Systems": "Windows, macOS, Linux",
+                "Proxy Support": "HTTP/HTTPS, WebSockets",
+                "Extensions": "BApp Store with 100+ extensions",
+                "API Support": "REST API for automation",
+                "Reporting": "HTML/PDF reports with findings"
+            },
+            "features": {
+                "Proxy": "Intercept and modify HTTP/S traffic",
+                "Scanner": "Automated vulnerability scanning",
+                "Intruder": "Customizable attack payloads",
+                "Repeater": "Manual request/response testing",
+                "Sequencer": "Session token analysis",
+                "Decoder": "Encoding/decoding utilities",
+                "Comparer": "Request/response comparison",
+                "Logger": "Traffic history and logging"
+            },
+            "useCases": [
+                "Web application penetration testing",
+                "API security testing",
+                "Bug bounty hunting",
+                "Security research and analysis",
+                "Manual vulnerability verification",
+                "Intercepting and modifying requests",
+                "Session management testing"
+            ],
+            "bestPractices": [
+                "Configure proxy settings in browser",
+                "Use Repeater for manual testing",
+                "Check Scanner results carefully",
+                "Use Intruder for fuzzing and brute force",
+                "Enable SSL/TLS interception",
+                "Document findings with screenshots",
+                "Test on staging environments first"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "Burp Suite API Example - Automated Scanning",
+                "code": "import requests\n\n# Example: Using Burp Suite REST API for scanning\nBURP_API_URL = 'http://localhost:1337/v0.1/'\n\n# Start a new scan\nscan_config = {\n    'urls': ['https://example.com'],\n    'scan_configurations': [\n        {\n            'type': 'Crawl',\n            'name': 'Crawl strategy'\n        }\n    ]\n}\n\nresponse = requests.post(\n    f'{BURP_API_URL}scan',\n    json=scan_config,\n    headers={'Authorization': 'Basic ' + b64encode(b'user:pass').decode()}\n)\n\nscan_id = response.json()['scan_id']\nprint(f'Scan started with ID: {scan_id}')\n\n# Check scan status\nstatus = requests.get(f'{BURP_API_URL}scan/{scan_id}')\nprint(f'Scan status: {status.json()[\"status\"]}')"
+            },
+            "pricing": "Free Community Edition, $399/year Professional",
+            "image": "/images/resources/burp-suite.jpg",
+            "alternatives": [
+                "owasp-zap",
+                "acunetix",
+                "nessus"
+            ],
+            "relatedResources": [
+                "owasp-zap",
+                "wireshark"
+            ],
+            "tutorials": [
+                {
+                    "title": "Burp Suite Documentation",
+                    "url": "https://portswigger.net/burp/documentation"
+                },
+                {
+                    "title": "Burp Suite Academy",
+                    "url": "https://portswigger.net/web-security"
+                },
+                {
+                    "title": "Burp Suite REST API",
+                    "url": "https://portswigger.net/burp/documentation/desktop/tools/api"
+                }
+            ]
+        },
+        {
+            "slug": "owasp-zap",
+            "name": "OWASP ZAP - Automated Security Scanner",
+            "category": "Web Application Security",
+            "shortDesc": "Free web application security scanner maintained by OWASP for finding vulnerabilities",
+            "fullDescription": "OWASP Zed Attack Proxy (ZAP) is a free, open-source web application security scanner. It's one of the most popular tools for finding vulnerabilities in web applications and APIs. ZAP combines automated scanning with a comprehensive set of manual tools for penetration testing.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "Apache 2.0",
+                "Operating Systems": "Windows, macOS, Linux, Docker",
+                "Languages": "Java (core), JavaScript (add-ons)",
+                "Proxy Types": "HTTP/HTTPS, WebSockets, AJAX",
+                "Add-ons": "200+ available extensions",
+                "API Support": "REST API for automation",
+                "Reporting": "HTML/XML/JSON export formats"
+            },
+            "features": {
+                "Automated Scanner": "Active and passive scanning",
+                "Proxy": "Man-in-the-middle proxy",
+                "Spider": "Web crawler for discovery",
+                "Fuzzer": "Custom fuzzing payloads",
+                "Scripting": "JavaScript/Python/Groovy support",
+                "API Testing": "REST/SOAP API scanning",
+                "Authentication": "Form/scripted authentication",
+                "Session Management": "Cookie/header handling"
+            },
+            "useCases": [
+                "Automated vulnerability scanning",
+                "API security testing",
+                "Development security testing",
+                "Manual penetration testing",
+                "Regression testing for security",
+                "Bug bounty preparation",
+                "Security training and education"
+            ],
+            "bestPractices": [
+                "Configure proxy in browser settings",
+                "Use Context for session handling",
+                "Enable passive scanning first",
+                "Review alerts before active scanning",
+                "Use scripts for custom authentication",
+                "Export results for reporting",
+                "Keep add-ons updated"
+            ],
+            "codeSnippet": {
+                "language": "python",
+                "title": "ZAP API Example - Automated Scanning",
+                "code": "import requests\n\n# ZAP API example\nZAP_API_URL = 'http://localhost:8080'\nZAP_API_KEY = 'your-api-key'\n\n# Start spidering\ntarget_url = 'https://example.com'\nspider_scan = requests.get(\n    f'{ZAP_API_URL}/JSON/spider/action/scan/',\n    params={\n        'apikey': ZAP_API_KEY,\n        'url': target_url,\n        'maxChildren': '10'\n    }\n)\n\nscan_id = spider_scan.json()['scan']\nprint(f'Spider scan started: {scan_id}')\n\n# Check spider status\nstatus = requests.get(\n    f'{ZAP_API_URL}/JSON/spider/view/status/',\n    params={'apikey': ZAP_API_KEY, 'scanId': scan_id}\n)\nprint(f'Spider progress: {status.json()[\"status\"]}%')\n\n# Start active scan\nascan = requests.get(\n    f'{ZAP_API_URL}/JSON/ascan/action/scan/',\n    params={\n        'apikey': ZAP_API_KEY,\n        'url': target_url,\n        'recurse': 'true',\n        'inScopeOnly': 'false'\n    }\n)\nprint(f'Active scan started: {ascan.json()[\"scan\"]}')"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/owasp-zap.jpg",
+            "alternatives": [
+                "burp-suite",
+                "nikto",
+                "arachni"
+            ],
+            "relatedResources": [
+                "burp-suite",
+                "nmap"
+            ],
+            "tutorials": [
+                {
+                    "title": "OWASP ZAP User Guide",
+                    "url": "https://www.zaproxy.org/getting-started/"
+                },
+                {
+                    "title": "ZAP API Documentation",
+                    "url": "https://www.zaproxy.org/docs/api/"
+                },
+                {
+                    "title": "OWASP Testing Guide",
+                    "url": "https://owasp.org/www-project-testing-guide/"
+                }
+            ]
+        },
+        {
+            "slug": "metasploit",
+            "name": "Metasploit Framework - Penetration Testing",
+            "category": "Penetration Testing",
+            "shortDesc": "Comprehensive penetration testing framework with thousands of exploits and payloads",
+            "fullDescription": "Metasploit Framework is the world's most used penetration testing framework. It provides a complete environment for exploit development, payload generation, and vulnerability verification. Used by security professionals, researchers, and ethical hackers for comprehensive security assessments.",
+            "specifications": {
+                "Pricing": "Free Community Edition, Pro ($15K/year)",
+                "License": "BSD-3-Clause",
+                "Languages": "Ruby (framework), Multiple (modules)",
+                "Operating Systems": "Linux, macOS, Windows",
+                "Database": "PostgreSQL (recommended)",
+                "Modules": "2000+ exploits, 500+ payloads, 300+ auxiliaries",
+                "Platforms": "Windows, Linux, macOS, Android, iOS, routers",
+                "Interfaces": "Console (msfconsole), Web (msfweb), API"
+            },
+            "features": {
+                "Exploit Database": "2000+ ready-to-use exploits",
+                "Payload Generator": "500+ payload options",
+                "Meterpreter": "Advanced post-exploitation agent",
+                "Auxiliary Modules": "Reconnaissance and scanning tools",
+                "Post Modules": "Privilege escalation and data extraction",
+                "Encoder": "Payload encoding and obfuscation",
+                "Nops": "NOP sled generation",
+                "Database": "Vulnerability and host tracking"
+            },
+            "useCases": [
+                "Vulnerability exploitation",
+                "Penetration testing",
+                "Security research",
+                "Exploit development",
+                "Post-exploitation activities",
+                "Red team exercises",
+                "Security training"
+            ],
+            "bestPractices": [
+                "Always get written permission",
+                "Use in controlled environments",
+                "Keep framework updated",
+                "Understand exploit code before running",
+                "Use Metasploit with other tools",
+                "Document all activities",
+                "Clean up after testing"
+            ],
+            "codeSnippet": {
+                "language": "ruby",
+                "title": "Metasploit Module Example",
+                "code": "require 'msf/core'\n\nclass MetasploitModule < Msf::Exploit::Remote\n  Rank = ExcellentRanking\n\n  include Msf::Exploit::Remote::Tcp\n\n  def initialize(info = {})\n    super(update_info(info,\n      'Name'           => 'Example Exploit',\n      'Description'    => %q{\n        Example Metasploit exploit module.\n        Demonstrates basic structure.\n      },\n      'Author'         => [ 'Security Researcher' ],\n      'References'     => [\n        [ 'URL', 'https://example.com/vuln' ]\n      ],\n      'DisclosureDate' => '2023-01-01',\n      'License'        => MSF_LICENSE,\n      'Platform'       => 'unix',\n      'Arch'           => ARCH_CMD,\n      'Privileged'     => false,\n      'Targets'        => [\n        [ 'Automatic', {} ]\n      ],\n      'DefaultTarget'  => 0\n    ))\n\n    register_options([\n      Opt::RPORT(80)\n    ])\n  end\n\n  def exploit\n    print_status(\"Connecting to #{rhost}:#{rport}\")\n    connect\n    \n    # Exploit code here\n    \n    handler\n    disconnect\n  end\nend"
+            },
+            "pricing": "Free Community Edition",
+            "image": "/images/resources/metasploit.jpg",
+            "alternatives": [
+                "cobalt-strike",
+                "empire",
+                "sliver"
+            ],
+            "relatedResources": [
+                "nmap",
+                "wireshark"
+            ],
+            "tutorials": [
+                {
+                    "title": "Metasploit Documentation",
+                    "url": "https://docs.metasploit.com/"
+                },
+                {
+                    "title": "Metasploit Unleashed",
+                    "url": "https://www.offsec.com/metasploit-unleashed/"
+                },
+                {
+                    "title": "Exploit Database",
+                    "url": "https://www.exploit-db.com/"
+                }
+            ]
+        },
+        {
+            "slug": "wireshark",
+            "name": "Wireshark - Network Protocol Analyzer",
+            "category": "Network Security",
+            "shortDesc": "World's foremost network protocol analyzer for network troubleshooting and security analysis",
+            "fullDescription": "Wireshark is the world's most widely-used network protocol analyzer. It lets you capture and interactively browse the traffic running on a computer network. Used for network troubleshooting, analysis, software and protocol development, and education.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "GPL-2.0",
+                "Operating Systems": "Windows, macOS, Linux, Solaris",
+                "Protocols": "3000+ supported protocols",
+                "Capture Formats": "pcap, pcapng, and many others",
+                "Display Filters": "Powerful filtering language",
+                "Decryption": "SSL/TLS, WPA/WPA2, IPsec support",
+                "Statistics": "Protocol hierarchies, conversations, endpoints",
+                "Command Line": "Tshark for scripting and automation"
+            },
+            "features": {
+                "Packet Capture": "Live capture from network interfaces",
+                "Protocol Dissection": "Deep inspection of 3000+ protocols",
+                "Display Filtering": "Complex filter expressions",
+                "Color Coding": "Visual packet classification",
+                "Statistics": "Network traffic analysis",
+                "Export": "Save filtered packets",
+                "Decryption": "Encrypted traffic analysis",
+                "VoIP Analysis": "Call reconstruction and analysis"
+            },
+            "useCases": [
+                "Network troubleshooting",
+                "Security analysis",
+                "Protocol development",
+                "Network forensics",
+                "Performance analysis",
+                "Education and training",
+                "Malware traffic analysis"
+            ],
+            "bestPractices": [
+                "Use capture filters to reduce data",
+                "Apply display filters for analysis",
+                "Save capture files regularly",
+                "Use color rules for quick identification",
+                "Analyze statistics for patterns",
+                "Follow packet conversations",
+                "Use command-line tools for automation"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Wireshark Command Line Examples",
+                "code": "# Capture traffic on interface eth0\nsudo tshark -i eth0 -w capture.pcap\n\n# Capture only HTTP traffic\nsudo tshark -i eth0 -f 'tcp port 80' -w http_capture.pcap\n\n# Read and filter existing capture\nsudo tshark -r capture.pcap -Y 'http.request.method == GET'\n\n# Extract HTTP URLs from capture\ntshark -r capture.pcap -T fields -e http.request.full_uri | head -10\n\n# DNS query analysis\ntshark -r capture.pcap -Y 'dns.flags.response == 0' \\\n  -T fields -e dns.qry.name -e dns.qry.type\n\n# TCP stream reassembly\ntshark -r capture.pcap -q -z follow,tcp,ascii,0\n\n# Protocol statistics\ntshark -r capture.pcap -q -z io,phs"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/wireshark.jpg",
+            "alternatives": [
+                "tcpdump",
+                "microsoft-message-analyzer",
+                "colasoft-capsa"
+            ],
+            "relatedResources": [
+                "nmap",
+                "burp-suite"
+            ],
+            "tutorials": [
+                {
+                    "title": "Wireshark User Guide",
+                    "url": "https://www.wireshark.org/docs/wsug_html/"
+                },
+                {
+                    "title": "Wireshark Wiki",
+                    "url": "https://wiki.wireshark.org/"
+                },
+                {
+                    "title": "Network Forensics with Wireshark",
+                    "url": "https://www.paloaltonetworks.com/cyberpedia/network-forensics"
+                }
+            ]
+        },
+        {
+            "slug": "nmap",
+            "name": "Nmap - Network Discovery & Security Scanning",
+            "category": "Network Security",
+            "shortDesc": "Powerful network discovery and security auditing tool for mapping networks and identifying vulnerabilities",
+            "fullDescription": "Nmap (Network Mapper) is a free and open-source utility for network discovery and security auditing. It uses raw IP packets to determine what hosts are available on the network, what services they are offering, what operating systems they are running, and what type of packet filters/firewalls are in use.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "Nmap Public Source License",
+                "Operating Systems": "Linux, Windows, macOS, BSD",
+                "Languages": "C, C++, Python (scripts)",
+                "Scan Types": "TCP SYN, TCP connect, UDP, ICMP, etc.",
+                "Scripts": "600+ NSE scripts",
+                "Performance": "Highly optimized for speed",
+                "Output Formats": "Interactive, XML, grepable, script-kiddie",
+                "Host Discovery": "ARP, ICMP, TCP SYN, TCP ACK, UDP, SCTP"
+            },
+            "features": {
+                "Host Discovery": "Find live hosts on networks",
+                "Port Scanning": "TCP/UDP port enumeration",
+                "Service Detection": "Identify running services",
+                "OS Detection": "Fingerprint operating systems",
+                "Scripting Engine": "NSE for custom scans",
+                "Vulnerability Scanning": "With NSE scripts",
+                "Firewall Detection": "Identify filtering rules",
+                "Version Detection": "Service version identification"
+            },
+            "useCases": [
+                "Network inventory and mapping",
+                "Security auditing",
+                "Penetration testing",
+                "Network troubleshooting",
+                "Vulnerability assessment",
+                "Service discovery",
+                "OS fingerprinting"
+            ],
+            "bestPractices": [
+                "Always get permission before scanning",
+                "Start with basic scans (-sV -O)",
+                "Use -T4 for faster scans on good networks",
+                "Use --script for vulnerability checks",
+                "Avoid scanning during business hours",
+                "Document scan results",
+                "Use -oN for readable output"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Nmap Scanning Examples",
+                "code": "# Basic host discovery\nnmap -sn 192.168.1.0/24\n\n# TCP SYN scan (stealth)\nnmap -sS 192.168.1.100\n\n# Service and version detection\nnmap -sV 192.168.1.100\n\n# OS fingerprinting\nnmap -O 192.168.1.100\n\n# Comprehensive scan\nnmap -sS -sV -O -p- 192.168.1.100\n\n# Aggressive scan with scripts\nnmap -A 192.168.1.100\n\n# Scan multiple targets\nnmap 192.168.1.100,101,102\n\n# Scan from file\nnmap -iL targets.txt\n\n# UDP scan\nnmap -sU 192.168.1.100\n\n# Firewall evasion\nnmap -sS -D RND:10 192.168.1.100\n\n# Vulnerability scanning\nnmap --script vuln 192.168.1.100\n\n# Web server enumeration\nnmap --script http-enum 192.168.1.100"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/nmap.jpg",
+            "alternatives": [
+                "masscan",
+                "zmap",
+                "angry-ip-scanner"
+            ],
+            "relatedResources": [
+                "wireshark",
+                "metasploit"
+            ],
+            "tutorials": [
+                {
+                    "title": "Nmap Reference Guide",
+                    "url": "https://nmap.org/book/man.html"
+                },
+                {
+                    "title": "Nmap Scripting Engine",
+                    "url": "https://nmap.org/book/nse.html"
+                },
+                {
+                    "title": "Network Security with Nmap",
+                    "url": "https://www.offsec.com/metasploit-unleashed/nmap/"
+                }
+            ]
+        },
+        {
+            "slug": "kali-linux",
+            "name": "Kali Linux - Penetration Testing Distribution",
+            "category": "Penetration Testing",
+            "shortDesc": "Debian-based Linux distribution for penetration testing, ethical hacking, and digital forensics",
+            "fullDescription": "Kali Linux is a Debian-based Linux distribution designed for digital forensics and penetration testing. It comes pre-installed with hundreds of security tools for various information security tasks such as penetration testing, security research, computer forensics, and reverse engineering.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "Base OS": "Debian GNU/Linux",
+                "Desktop Environments": "KDE, Xfce, GNOME, MATE",
+                "Architecture": "x86, x64, ARM (Raspberry Pi)",
+                "Tools": "600+ pre-installed security tools",
+                "Package Manager": "APT (Advanced Package Tool)",
+                "Live Boot": "USB/DVD boot without installation",
+                "Persistence": "USB with persistent storage",
+                "VM Images": "Ready for VirtualBox, VMware"
+            },
+            "features": {
+                "Penetration Testing": "Web, wireless, forensics, etc.",
+                "Information Gathering": "Reconnaissance tools",
+                "Vulnerability Assessment": "Scanning and analysis",
+                "Web Applications": "SQL injection, XSS tools",
+                "Wireless Networks": "WiFi cracking and analysis",
+                "Forensics": "Digital evidence collection",
+                "Reverse Engineering": "Binary analysis tools",
+                "Password Cracking": "Hashcat, John the Ripper"
+            },
+            "useCases": [
+                "Penetration testing",
+                "Security research",
+                "Digital forensics",
+                "Ethical hacking training",
+                "Vulnerability assessment",
+                "Security auditing",
+                "Red team operations"
+            ],
+            "bestPractices": [
+                "Use in virtual machines for safety",
+                "Keep system updated regularly",
+                "Backup important data before testing",
+                "Use separate network interfaces",
+                "Document all activities",
+                "Obtain proper authorization",
+                "Learn one tool at a time"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Kali Linux Essential Commands",
+                "code": "# Update Kali Linux\nsudo apt update && sudo apt upgrade\n\n# Install additional tools\nsudo apt install nmap wireshark metasploit-framework\n\n# Start Metasploit\nsudo msfdb init\nsudo msfconsole\n\n# Basic Nmap scan\nsudo nmap -sS -A target-ip\n\n# Start Wireshark (GUI)\nsudo wireshark\n\n# Or use tshark (command line)\nsudo tshark -i eth0\n\n# Password cracking with Hashcat\nhashcat -m 0 -a 3 hashes.txt ?a?a?a?a?a?a\n\n# Web application scanning\nnikto -h http://target-website.com\n\n# SQL injection testing\nsqlmap -u 'http://vulnerable-site.com/page?id=1'\n\n# Wireless network scanning\nsudo airodump-ng wlan0\n\n# Forensic image acquisition\ndcfldd if=/dev/sda of=forensic-image.dd hash=md5,sha256"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/kali-linux.jpg",
+            "alternatives": [
+                "parrot-os",
+                "blackarch",
+                "pentoo"
+            ],
+            "relatedResources": [
+                "metasploit",
+                "burp-suite"
+            ],
+            "tutorials": [
+                {
+                    "title": "Kali Linux Documentation",
+                    "url": "https://www.kali.org/docs/"
+                },
+                {
+                    "title": "Kali Tools Documentation",
+                    "url": "https://www.kali.org/tools/"
+                },
+                {
+                    "title": "Offensive Security Learning",
+                    "url": "https://www.offsec.com/"
+                }
+            ]
+        },
+        {
+            "slug": "hashcat",
+            "name": "Hashcat - Advanced Password Recovery",
+            "category": "Digital Forensics",
+            "shortDesc": "World's fastest password cracker supporting multiple hashing algorithms and attack modes",
+            "fullDescription": "Hashcat is the world's fastest and most advanced password recovery utility. It supports five unique attack modes for cracking passwords and can work with hundreds of hashing algorithms. Used by security professionals, penetration testers, and forensic investigators.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "MIT",
+                "Operating Systems": "Linux, Windows, macOS",
+                "GPU Support": "OpenCL for AMD/NVIDIA GPUs",
+                "Algorithms": "300+ supported hash types",
+                "Attack Modes": "Dictionary, Brute-force, Hybrid, Mask, Rule-based",
+                "Performance": "Up to 100s of billions of hashes/second",
+                "Distributed": "Hashcat can be distributed across multiple GPUs",
+                "Hardware": "Supports CPU, GPU, FPGA, ASIC"
+            },
+            "features": {
+                "Dictionary Attack": "Wordlist-based cracking",
+                "Brute Force": "Systematic character combination",
+                "Mask Attack": "Custom pattern matching",
+                "Hybrid Attack": "Dictionary + mask combination",
+                "Rule-based Attack": "Password mutation rules",
+                "GPU Acceleration": "Massive parallel processing",
+                "Distributed Cracking": "Multi-GPU/multi-system support",
+                "Session Management": "Resume interrupted sessions"
+            },
+            "useCases": [
+                "Password recovery",
+                "Security auditing",
+                "Penetration testing",
+                "Digital forensics",
+                "Password policy assessment",
+                "Legacy system migration",
+                "Security research"
+            ],
+            "bestPractices": [
+                "Use strong wordlists (rockyou.txt, etc.)",
+                "Combine attack modes for efficiency",
+                "Use GPU acceleration when possible",
+                "Start with faster attack modes",
+                "Use rules for password variations",
+                "Monitor temperature and system resources",
+                "Document password policies found",
+                "Use in controlled environments only"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "Hashcat Usage Examples",
+                "code": "# Basic dictionary attack\nhashcat -m 0 -a 0 hashes.txt wordlist.txt\n\n# Brute force attack (8 characters)\nhashcat -m 0 -a 3 hashes.txt ?a?a?a?a?a?a?a?a\n\n# Mask attack (password format: Password + 2 digits)\nhashcat -m 0 -a 3 hashes.txt Password?d?d\n\n# Hybrid attack (wordlist + 2 digits)\nhashcat -m 0 -a 6 hashes.txt wordlist.txt ?d?d\n\n# Rule-based attack\nhashcat -m 0 -a 0 hashes.txt wordlist.txt -r rules/best64.rule\n\n# GPU acceleration (device 1)\nhashcat -m 0 -a 0 -d 1 hashes.txt wordlist.txt\n\n# Show cracked passwords\nhashcat -m 0 --show hashes.txt\n\n# Benchmark performance\nhashcat -b\n\n# WPA2 cracking\nhashcat -m 2500 capture.hccapx wordlist.txt\n\n# NTLM cracking\nhashcat -m 1000 ntlm_hashes.txt wordlist.txt\n\n# MD5 cracking\nhashcat -m 0 md5_hashes.txt rockyou.txt"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/hashcat.jpg",
+            "alternatives": [
+                "john-the-ripper",
+                "john-the-ripper",
+                "rainbowcrack"
+            ],
+            "relatedResources": [
+                "john-the-ripper",
+                "kali-linux"
+            ],
+            "tutorials": [
+                {
+                    "title": "Hashcat Documentation",
+                    "url": "https://hashcat.net/wiki/"
+                },
+                {
+                    "title": "Hashcat Examples",
+                    "url": "https://hashcat.net/wiki/doku.php?id=example_hashes"
+                },
+                {
+                    "title": "Password Cracking Guide",
+                    "url": "https://www.netmux.com/blog/how-to-crack-passwords-using-hashcat"
+                }
+            ]
+        },
+        {
+            "slug": "john-the-ripper",
+            "name": "John the Ripper - Password Cracker",
+            "category": "Digital Forensics",
+            "shortDesc": "Fast password cracker supporting hundreds of hash and cipher types for password recovery",
+            "fullDescription": "John the Ripper is a fast password cracker, currently available for many flavors of Unix, Windows, DOS, and OpenVMS. Its primary purpose is to detect weak Unix passwords, but it supports hundreds of hash and cipher types including DES, MD5, Blowfish, Kerberos, and Windows NT/2000/XP/2003 LM hashes.",
+            "specifications": {
+                "Pricing": "100% Free and Open Source",
+                "License": "GPL-2.0",
+                "Operating Systems": "Unix, Linux, Windows, macOS, DOS",
+                "Languages": "C (core), Perl/Python (scripts)",
+                "Hash Types": "400+ supported formats",
+                "Attack Modes": "Dictionary, Brute-force, Incremental",
+                "Modes": "Single crack, wordlist, external, incremental",
+                "Performance": "Optimized for speed",
+                "Scalability": "Multi-core CPU support",
+                "Community": "Active development and contributions"
+            },
+            "features": {
+                "Dictionary Attack": "Wordlist-based cracking",
+                "Brute Force": "Character combination attacks",
+                "Incremental Mode": "Intelligent character progression",
+                "Single Crack Mode": "Uses login/GECOS information",
+                "External Mode": "Custom cracking modes",
+                "Word Mangling": "Password variation rules",
+                "Multi-format Support": "400+ hash types",
+                "Fork Support": "Multi-core processing"
+            },
+            "useCases": [
+                "Password recovery",
+                "Security auditing",
+                "Penetration testing",
+                "Digital forensics",
+                "Password policy assessment",
+                "Legacy system analysis",
+                "Security research"
+            ],
+            "bestPractices": [
+                "Use appropriate wordlists",
+                "Start with faster attack modes",
+                "Use --fork for multi-core systems",
+                "Monitor system resources",
+                "Combine with other tools",
+                "Document findings",
+                "Use in authorized environments only"
+            ],
+            "codeSnippet": {
+                "language": "bash",
+                "title": "John the Ripper Usage Examples",
+                "code": "# Basic password cracking\njohn hashes.txt\n\n# Use specific wordlist\njohn --wordlist=rockyou.txt hashes.txt\n\n# Show cracked passwords\njohn --show hashes.txt\n\n# Single crack mode (uses GECOS info)\njohn --single hashes.txt\n\n# Incremental mode (brute force)\njohn --incremental hashes.txt\n\n# External mode with custom rules\njohn --external=CustomMode hashes.txt\n\n# Multi-core processing\njohn --fork=4 hashes.txt\n\n# Format specification\njohn --format=md5 hashes.txt\n\n# Session management\njohn --session=my_session hashes.txt\njohn --restore=my_session\n\n# Rules for word mangling\njohn --rules --wordlist=wordlist.txt hashes.txt\n\n# Status checking\njohn --status\n\n# Benchmarking\njohn --test"
+            },
+            "pricing": "100% Free",
+            "image": "/images/resources/john-the-ripper.jpg",
+            "alternatives": [
+                "hashcat",
+                "rainbowcrack",
+                "ophcrack"
+            ],
+            "relatedResources": [
+                "hashcat",
+                "kali-linux"
+            ],
+            "tutorials": [
+                {
+                    "title": "John the Ripper Documentation",
+                    "url": "https://www.openwall.com/john/doc/"
+                },
+                {
+                    "title": "John the Ripper Wiki",
+                    "url": "https://openwall.info/wiki/john"
+                },
+                {
+                    "title": "Password Cracking with JtR",
+                    "url": "https://www.alexdelpriore.com/2018/12/11/password-cracking-with-john-the-ripper.html"
+                }
+            ]
+        }
+    ]
+}

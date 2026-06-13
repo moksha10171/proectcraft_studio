@@ -1,0 +1,65 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+**/node_modules/
+.pnpm-store/
+frontend/node_modules/
+
+# ── Next.js / frontend build ──────────────────────────────────────────────────
+frontend/.next/
+frontend/out/
+frontend/build/
+.next/
+out/
+build/
+
+# ── Python backend ────────────────────────────────────────────────────────────
+backend/.venv/
+backend/venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Environment (never commit secrets) ────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.production
+frontend/.env
+frontend/.env.local
+
+# ── Credentials ───────────────────────────────────────────────────────────────
+*.pem
+*.key
+id_rsa
+id_ed25519
+ed3
+ed3.pub
+
+# ── Local user data ───────────────────────────────────────────────────────────
+data/studio/workspaces/*
+!data/studio/workspaces/.gitkeep
+
+# ── Build / cache artifacts ───────────────────────────────────────────────────
+*.tsbuildinfo
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js auto-generated (regenerated on dev/build)
+frontend/next-env.d.ts
+
+# Archives
+*.zip
+*.tar.gz
+
+# ── OS / IDE ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

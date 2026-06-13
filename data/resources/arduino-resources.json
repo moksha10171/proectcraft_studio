@@ -1,0 +1,2130 @@
+{
+    "overview": {
+        "title": "Arduino Resources",
+        "description": "A guide to Arduino boards, sensors, modules, and components for embedded systems and IoT projects",
+        "totalComponents": 50,
+        "categories": [
+            "Board",
+            "Sensor",
+            "Display",
+            "Motors & Drivers",
+            "Communication",
+            "Modules"
+        ]
+    },
+    "boards": [
+        {
+            "slug": "arduino-uno-r4-wifi",
+            "name": "Arduino Uno R4 WiFi",
+            "category": "Board",
+            "shortDesc": "Latest Arduino Uno with WiFi, Bluetooth 5.0, and 32-bit ARM Cortex-M4 processor",
+            "fullDescription": "The Arduino Uno R4 WiFi represents a significant upgrade to the iconic Uno platform, featuring a powerful 32-bit ARM Cortex-M4 microcontroller running at 48 MHz. It includes built-in WiFi and Bluetooth 5.0 connectivity via an ESP32-S3 module, a 12x8 LED matrix, and enhanced memory capacity. Maintains 5V logic for shield compatibility.",
+            "specifications": {
+                "Microcontroller": "Renesas RA4M1 (ARM Cortex-M4)",
+                "Operating Voltage": "5V",
+                "Clock Speed": "48 MHz",
+                "Flash Memory": "256 KB",
+                "SRAM": "32 KB",
+                "EEPROM": "8 KB",
+                "Digital I/O Pins": "14 (6 PWM)",
+                "Analog Input Pins": "6 (14-bit ADC)",
+                "Connectivity": "WiFi 802.11b/g/n, Bluetooth 5.0",
+                "USB": "USB-C",
+                "LED Matrix": "12x8 programmable LEDs",
+                "Dimensions": "68.6 x 53.4 mm"
+            },
+            "useCases": [
+                "IoT projects with WiFi connectivity",
+                "Smart home automation systems",
+                "LED matrix animations and displays",
+                "Educational programming and STEM",
+                "Bluetooth-enabled projects",
+                "Web server and API integration"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Blink LED Example",
+                "code": "// Basic LED blink example for Arduino Uno R4\nvoid setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(1000);\n  digitalWrite(LED_BUILTIN, LOW);\n  delay(1000);\n}"
+            },
+            "pricing": "$27.50 - $30.00",
+            "image": "/images/resources/arduino-uno-r4-wifi.jpg",
+            "relatedComponents": [
+                "dht11-sensor",
+                "servo-motor",
+                "lcd-16x2"
+            ],
+            "tutorials": [
+                {
+                    "title": "Getting Started with Arduino Uno R4 WiFi",
+                    "url": "https://docs.arduino.cc/hardware/uno-r4-wifi/"
+                },
+                {
+                    "title": "WiFi Web Server Tutorial",
+                    "url": "https://docs.arduino.cc/tutorials/uno-r4-wifi/wifi-examples"
+                }
+            ]
+        },
+        {
+            "slug": "arduino-nano-every",
+            "name": "Arduino Nano Every",
+            "category": "Board",
+            "shortDesc": "Compact board with ATMega4809 processor, 50% more memory, perfect for space-constrained projects",
+            "fullDescription": "The Arduino Nano Every is an evolution of the classic Nano, featuring the more powerful ATMega4809 processor with 50% more program memory and 200% more RAM than the standard Uno. Its small footprint (45x18mm) makes it ideal for wearables, compact projects, and embedded applications.",
+            "specifications": {
+                "Microcontroller": "ATMega4809",
+                "Operating Voltage": "5V",
+                "Clock Speed": "20 MHz",
+                "Flash Memory": "48 KB",
+                "SRAM": "6 KB",
+                "EEPROM": "256 bytes",
+                "Digital I/O Pins": "20 (5 PWM)",
+                "Analog Input Pins": "8",
+                "USB": "Micro USB",
+                "Dimensions": "45 x 18 mm"
+            },
+            "useCases": [
+                "Wearable electronics",
+                "Compact robotics projects",
+                "Breadboard prototyping",
+                "Space-constrained installations",
+                "Portable sensor devices"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Analog Read Example",
+                "code": "// Read analog sensor and display on Serial\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int sensorValue = analogRead(A0);\n  Serial.print(\"Sensor: \");\n  Serial.println(sensorValue);\n  delay(100);\n}"
+            },
+            "pricing": "$9.90 - $12.00",
+            "image": "/images/resources/arduino-nano-every.jpg",
+            "relatedComponents": [
+                "ultrasonic-sensor",
+                "pir-sensor"
+            ],
+            "tutorials": [
+                {
+                    "title": "Nano Every Quickstart Guide",
+                    "url": "https://docs.arduino.cc/hardware/nano-every/"
+                }
+            ]
+        },
+        {
+            "slug": "arduino-mega-2560",
+            "name": "Arduino Mega 2560",
+            "category": "Board",
+            "shortDesc": "High I/O count board with 54 digital pins, ideal for complex projects like 3D printers",
+            "fullDescription": "The Arduino Mega 2560 is designed for projects requiring extensive I/O capabilities. With 54 digital I/O pins, 16 analog inputs, and multiple serial ports, it's perfect for complex applications like 3D printers, CNC machines, and automation systems.",
+            "specifications": {
+                "Microcontroller": "ATmega2560",
+                "Operating Voltage": "5V",
+                "Clock Speed": "16 MHz",
+                "Flash Memory": "256 KB",
+                "SRAM": "8 KB",
+                "EEPROM": "4 KB",
+                "Digital I/O Pins": "54 (15 PWM)",
+                "Analog Input Pins": "16",
+                "Serial Ports": "4 (UART)",
+                "USB": "USB-B",
+                "Dimensions": "101.52 x 53.3 mm"
+            },
+            "useCases": [
+                "3D printers and CNC machines",
+                "Home automation hubs",
+                "Multi-sensor data logging",
+                "Robotics with many actuators",
+                "Industrial control systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Multiple Serial Ports",
+                "code": "// Using multiple serial ports on Mega\nvoid setup() {\n  Serial.begin(9600);   // USB serial\n  Serial1.begin(9600);  // Hardware serial 1\n  Serial2.begin(9600);  // Hardware serial 2\n}\n\nvoid loop() {\n  if (Serial1.available()) {\n    char c = Serial1.read();\n    Serial.print(c);\n  }\n}"
+            },
+            "pricing": "$38.00 - $45.00",
+            "image": "/images/resources/arduino-mega-2560.jpg",
+            "relatedComponents": [
+                "stepper-motor",
+                "l298n-driver"
+            ],
+            "tutorials": [
+                {
+                    "title": "Mega 2560 Getting Started",
+                    "url": "https://docs.arduino.cc/hardware/mega-2560/"
+                }
+            ]
+        }
+    ],
+    "components": [
+        {
+            "slug": "dht11-sensor",
+            "name": "DHT11 Temperature & Humidity Sensor",
+            "category": "Sensor",
+            "shortDesc": "Low-cost digital temperature and humidity sensor with ±2°C accuracy",
+            "fullDescription": "The DHT11 is a basic, low-cost digital temperature and humidity sensor. It uses a capacitive humidity sensor and a thermistor to measure the surrounding air, and outputs a digital signal on the data pin. Easy to use with any microcontroller.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Temperature Range": "0-50°C",
+                "Temperature Accuracy": "±2°C",
+                "Humidity Range": "20-90% RH",
+                "Humidity Accuracy": "±5% RH",
+                "Sampling Rate": "1 Hz (once per second)",
+                "Interface": "Digital (Single-wire)",
+                "Dimensions": "15.5 x 12 x 5.5 mm"
+            },
+            "pinout": {
+                "Pin 1 (VCC)": "3.3V or 5V power supply",
+                "Pin 2 (DATA)": "Digital data output (connect to digital pin)",
+                "Pin 3 (NC)": "Not connected",
+                "Pin 4 (GND)": "Ground"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V or 3.3V",
+                "DATA": "Arduino Digital Pin (e.g., D2) with 10kΩ pull-up resistor",
+                "GND": "Arduino GND"
+            },
+            "useCases": [
+                "Weather stations",
+                "Home automation and climate control",
+                "Environmental monitoring systems",
+                "Greenhouse automation",
+                "HVAC control systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "DHT11 Reading Example",
+                "code": "// Requires DHT sensor library\n#include <DHT.h>\n\n#define DHTPIN 2\n#define DHTTYPE DHT11\n\nDHT dht(DHTPIN, DHTTYPE);\n\nvoid setup() {\n  Serial.begin(9600);\n  dht.begin();\n  Serial.println(\"DHT11 Sensor Ready!\");\n}\n\nvoid loop() {\n  delay(2000); // Wait 2 seconds between readings\n  \n  float humidity = dht.readHumidity();\n  float temperature = dht.readTemperature();\n  \n  if (isnan(humidity) || isnan(temperature)) {\n    Serial.println(\"Failed to read from DHT sensor!\");\n    return;\n  }\n  \n  Serial.print(\"Humidity: \");\n  Serial.print(humidity);\n  Serial.print(\"%  Temperature: \");\n  Serial.print(temperature);\n  Serial.println(\"°C\");\n}"
+            },
+            "pricing": "$2.00 - $5.00",
+            "image": "/images/resources/dht11-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno R4",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "dht22-sensor",
+                "lcd-16x2"
+            ],
+            "tutorials": [
+                {
+                    "title": "DHT11 Sensor Tutorial",
+                    "url": "https://create.arduino.cc/projecthub/projects/tags/dht11"
+                },
+                {
+                    "title": "Install DHT Library",
+                    "url": "https://github.com/adafruit/DHT-sensor-library"
+                }
+            ]
+        },
+        {
+            "slug": "ultrasonic-sensor",
+            "name": "HC-SR04 Ultrasonic Distance Sensor",
+            "category": "Sensor",
+            "shortDesc": "Ultrasonic ranging module for distance measurement from 2cm to 400cm",
+            "fullDescription": "The HC-SR04 ultrasonic sensor uses sonar to determine distance to an object. It offers excellent non-contact range detection with high accuracy and stable readings. Perfect for obstacle avoidance, distance measurement, and robotics applications.",
+            "specifications": {
+                "Operating Voltage": "5V DC",
+                "Operating Current": "15mA",
+                "Measuring Range": "2cm - 400cm",
+                "Accuracy": "±3mm",
+                "Measuring Angle": "15 degrees",
+                "Trigger Input": "10µS TTL pulse",
+                "Echo Output": "TTL level signal",
+                "Dimensions": "45 x 20 x 15 mm"
+            },
+            "pinout": {
+                "VCC": "5V power supply",
+                "Trig": "Trigger input pin",
+                "Echo": "Echo output pin",
+                "GND": "Ground"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "Trig": "Arduino Digital Pin (e.g., D9)",
+                "Echo": "Arduino Digital Pin (e.g., D10)",
+                "GND": "Arduino GND"
+            },
+            "useCases": [
+                "Robot obstacle avoidance",
+                "Distance measurement systems",
+                "Parking sensors",
+                "Water level detection",
+                "Security systems",
+                "Motion detection"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Distance Measurement",
+                "code": "// HC-SR04 Ultrasonic Sensor\nconst int trigPin = 9;\nconst int echoPin = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  // Clear trigger pin\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  \n  // Send 10µs pulse\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n  \n  // Read echo pin\n  long duration = pulseIn(echoPin, HIGH);\n  \n  // Calculate distance (cm)\n  float distance = duration * 0.034 / 2;\n  \n  Serial.print(\"Distance: \");\n  Serial.print(distance);\n  Serial.println(\" cm\");\n  \n  delay(100);\n}"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/hc-sr04.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "servo-motor",
+                "l298n-driver"
+            ],
+            "tutorials": [
+                {
+                    "title": "HC-SR04 Complete Guide",
+                    "url": "https://randomnerdtutorials.com/complete-guide-for-ultrasonic-sensor-hc-sr04/"
+                }
+            ]
+        },
+        {
+            "slug": "servo-motor",
+            "name": "SG90 Micro Servo Motor",
+            "category": "Motors & Drivers",
+            "shortDesc": "Compact 9g servo motor with 180° rotation, ideal for robotics and control systems",
+            "fullDescription": "The SG90 is a lightweight, affordable micro servo motor perfect for RC aircraft, robots, and automation projects. It provides precise position control with 180-degree rotation and operates on standard PWM signals from Arduino.",
+            "specifications": {
+                "Operating Voltage": "4.8V - 6V DC",
+                "Stall Torque": "1.8 kg/cm at 4.8V",
+                "Operating Speed": "0.1s/60° at 4.8V",
+                "Rotation": "180 degrees",
+                "Pulse Width": "1000µs - 2000µs",
+                "Weight": "9 grams",
+                "Dimensions": "22 x 11.5 x 27 mm",
+                "Connector Wire": "25cm length"
+            },
+            "pinout": {
+                "Brown Wire": "Ground (GND)",
+                "Red Wire": "Power (VCC, 4.8V-6V)",
+                "Orange Wire": "PWM Signal"
+            },
+            "wiring": {
+                "Brown": "Arduino GND",
+                "Red": "External 5V power supply (recommended for multiple servos)",
+                "Orange": "Arduino PWM Pin (e.g., D9)"
+            },
+            "useCases": [
+                "Robot arms and grippers",
+                "Camera pan-tilt mechanisms",
+                "RC airplane control surfaces",
+                "Door lock mechanisms",
+                "Automated window blinds",
+                "Animatronics"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Servo Sweep Example",
+                "code": "#include <Servo.h>\n\nServo myservo;\nint pos = 0;\n\nvoid setup() {\n  myservo.attach(9);  // Attach servo to pin 9\n}\n\nvoid loop() {\n  // Sweep from 0 to 180 degrees\n  for (pos = 0; pos <= 180; pos += 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n  \n  // Sweep back from 180 to 0 degrees\n  for (pos = 180; pos >= 0; pos -= 1) {\n    myservo.write(pos);\n    delay(15);\n  }\n}"
+            },
+            "pricing": "$2.00 - $4.00",
+            "image": "/images/resources/sg90-servo.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "ultrasonic-sensor",
+                "joystick-module"
+            ],
+            "tutorials": [
+                {
+                    "title": "Arduino Servo Motor Control",
+                    "url": "https://www.arduino.cc/en/Tutorial/LibraryExamples/Sweep"
+                }
+            ]
+        },
+        {
+            "slug": "lcd-16x2",
+            "name": "16x2 LCD Display with I2C",
+            "category": "Display",
+            "shortDesc": "16 character x 2 line LCD display with I2C interface for easy connection",
+            "fullDescription": "The 16x2 LCD display with I2C module is perfect for displaying text data from Arduino projects. The I2C interface reduces wiring from 16 pins to just 4 (VCC, GND, SDA, SCL), making it ideal for projects with limited pins.",
+            "specifications": {
+                "Display": "16 characters x 2 lines",
+                "Backlight": "Blue or Green with adjustable contrast",
+                "Operating Voltage": "5V DC",
+                "Interface": "I2C (PCF8574 or PCF8574A)",
+                "I2C Address": "0x27 or 0x3F (configurable)",
+                "Character Size": "5x8 dots",
+                "Viewing Angle": "160 degrees",
+                "Dimensions": "80 x 36 x 12 mm"
+            },
+            "pinout": {
+                "GND": "Ground",
+                "VCC": "5V power supply",
+                "SDA": "I2C data line",
+                "SCL": "I2C clock line"
+            },
+            "wiring": {
+                "GND": "Arduino GND",
+                "VCC": "Arduino 5V",
+                "SDA": "Arduino A4 (Uno) or Pin 20 (Mega)",
+                "SCL": "Arduino A5 (Uno) or Pin 21 (Mega)"
+            },
+            "useCases": [
+                "Sensor data display",
+                "Menu systems and user interfaces",
+                "Status indicators",
+                "Calculator displays",
+                "Temperature/humidity monitors",
+                "Clock and timer displays"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "LCD Display Example",
+                "code": "// Requires LiquidCrystal_I2C library\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Set LCD address (0x27 or 0x3F)\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n  \n  lcd.setCursor(0, 0);\n  lcd.print(\"Hello, Arduino!\");\n  lcd.setCursor(0, 1);\n  lcd.print(\"LCD I2C Test\");\n}\n\nvoid loop() {\n  // Display sensor data or updates\n  lcd.setCursor(0, 1);\n  lcd.print(\"Count: \");\n  lcd.print(millis() / 1000);\n  delay(1000);\n}"
+            },
+            "pricing": "$3.00 - $6.00",
+            "image": "/images/resources/lcd-16x2-i2c.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "dht11-sensor",
+                "rtc-module"
+            ],
+            "tutorials": [
+                {
+                    "title": "I2C LCD Tutorial",
+                    "url": "https://randomnerdtutorials.com/arduino-i2c-lcd-display/"
+                },
+                {
+                    "title": "Install LiquidCrystal_I2C Library",
+                    "url": "https://github.com/johnrickman/LiquidCrystal_I2C"
+                }
+            ]
+        },
+        {
+            "slug": "pir-sensor",
+            "name": "HC-SR501 PIR Motion Sensor",
+            "category": "Sensor",
+            "shortDesc": "Passive Infrared sensor for detecting motion up to 7 meters away",
+            "fullDescription": "The HC-SR501 PIR sensor detects motion by measuring changes in infrared radiation. It's perfect for security systems, automatic lighting, and presence detection. Features adjustable sensitivity and trigger time delay.",
+            "specifications": {
+                "Operating Voltage": "4.5V - 20V DC",
+                "Current Draw": "< 50µA (standby)",
+                "Detection Range": "3-7 meters (adjustable)",
+                "Detection Angle": "120 degrees",
+                "Output": "Digital HIGH/LOW (3.3V)",
+                "Trigger Modes": "Single or Repeatable",
+                "Delay Time": "0.3s - 200s (adjustable)",
+                "Dimensions": "32 x 24 mm"
+            },
+            "pinout": {
+                "VCC": "4.5V - 20V power supply",
+                "OUT": "Digital output signal",
+                "GND": "Ground"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "OUT": "Arduino Digital Pin (e.g., D2)",
+                "GND": "Arduino GND"
+            },
+            "useCases": [
+                "Security alarm systems",
+                "Automatic lighting control",
+                "Presence detection",
+                "Energy-saving automation",
+                "Wildlife camera triggers",
+                "Smart home automation"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "PIR Motion Detection",
+                "code": "// PIR Motion Sensor Example\nconst int pirPin = 2;\nconst int ledPin = 13;\nint motionState = LOW;\n\nvoid setup() {\n  pinMode(pirPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n  \n  // Wait for sensor to calibrate\n  Serial.println(\"Calibrating sensor...\");\n  delay(30000);\n  Serial.println(\"Sensor ready!\");\n}\n\nvoid loop() {\n  int val = digitalRead(pirPin);\n  \n  if (val == HIGH) {\n    digitalWrite(ledPin, HIGH);\n    if (motionState == LOW) {\n      Serial.println(\"Motion detected!\");\n      motionState = HIGH;\n    }\n  } else {\n    digitalWrite(ledPin, LOW);\n    if (motionState == HIGH) {\n      Serial.println(\"Motion ended.\");\n      motionState = LOW;\n    }\n  }\n}"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/hc-sr501-pir.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "relay-module",
+                "buzzer-module"
+            ],
+            "tutorials": [
+                {
+                    "title": "PIR Sensor Guide",
+                    "url": "https://randomnerdtutorials.com/arduino-pir-motion-sensor/"
+                }
+            ]
+        },
+        {
+            "slug": "oled-ssd1306",
+            "name": "OLED Display SSD1306 128x64",
+            "category": "Display",
+            "shortDesc": "0.96 inch OLED display with 128x64 resolution and I2C interface",
+            "fullDescription": "The SSD1306 OLED display module offers high contrast, self-illuminating pixels, and low power consumption. No backlight required as each pixel emits its own light. Perfect for displaying sensor data, menus, and graphics in compact projects.",
+            "specifications": {
+                "Display Type": "OLED (Organic LED)",
+                "Driver IC": "SSD1306",
+                "Resolution": "128x64 pixels",
+                "Screen Size": "0.96 inch",
+                "Colors": "Monochrome (white, blue, or yellow)",
+                "Operating Voltage": "3.3V - 5V",
+                "Current Consumption": "~20mA",
+                "Interface": "I2C or SPI",
+                "I2C Address": "0x3C or 0x3D",
+                "Dimensions": "27 x 27 x 4 mm"
+            },
+            "pinout": {
+                "GND": "Ground",
+                "VCC": "Power (3.3V-5V)",
+                "SCL": "I2C Serial Clock",
+                "SDA": "I2C Serial Data"
+            },
+            "wiring": {
+                "GND": "Arduino GND",
+                "VCC": "Arduino 5V or 3.3V",
+                "SCL": "Arduino A5 (Uno) or Pin 21 (Mega)",
+                "SDA": "Arduino A4 (Uno) or Pin 20 (Mega)"
+            },
+            "useCases": [
+                "Sensor data visualization",
+                "Menu systems and UIs",
+                "Wearable displays",
+                "Battery powered projects",
+                "Graphics and animations",
+                "Status indicators"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "OLED Hello World",
+                "code": "// Requires Adafruit SSD1306 and GFX libraries\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\n#define OLED_RESET -1\n\nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);\n\nvoid setup() {\n  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {\n    Serial.println(F(\"SSD1306 allocation failed\"));\n    for(;;);\n  }\n  \n  display.clearDisplay();\n  display.setTextSize(2);\n  display.setTextColor(SSD1306_WHITE);\n  display.setCursor(0, 20);\n  display.println(F(\"Hello\"));\n  display.println(F(\"Arduino!\"));\n  display.display();\n}\n\nvoid loop() {}\n"
+            },
+            "pricing": "$3.00 - $7.00",
+            "image": "/images/resources/oled-ssd1306.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "dht11-sensor",
+                "rtc-module"
+            ],
+            "tutorials": [
+                {
+                    "title": "SSD1306 OLED Tutorial",
+                    "url": "https://randomnerdtutorials.com/guide-for-oled-display-with-arduino/"
+                },
+                {
+                    "title": "Adafruit SSD1306 Library",
+                    "url": "https://github.com/adafruit/Adafruit_SSD1306"
+                }
+            ]
+        },
+        {
+            "slug": "stepper-28byj48",
+            "name": "28BYJ-48 Stepper Motor with ULN2003",
+            "category": "Motors & Drivers",
+            "shortDesc": "5V unipolar stepper motor with ULN2003 driver board, 2048 steps per revolution",
+            "fullDescription": "The 28BYJ-48 is an affordable unipolar stepper motor with 64:1 gear reduction. Paired with the ULN2003 driver board, it provides precise position control perfect for robotics, CNC projects, and automated systems.",
+            "specifications": {
+                "Operating Voltage": "5V DC",
+                "Operating Current": "~240mA",
+                "Phases": "4",
+                "Gear Reduction": "64:1 (63.68395:1)",
+                "Step Angle": "5.625°/64",
+                "Steps per Revolution": "2048 (full-step), 4096 (half-step)",
+                "Torque": ">34.3mN·m at 120Hz",
+                "Frequency": "100Hz",
+                "Driver IC": "ULN2003 (Darlington Array)",
+                "Dimensions": "28mm diameter"
+            },
+            "pinout": {
+                "Motor Connector": "5-pin JST connector",
+                "IN1-IN4": "Control inputs from Arduino",
+                "VCC": "5V power",
+                "GND": "Ground"
+            },
+            "wiring": {
+                "Motor": "Plug into ULN2003 white socket",
+                "IN1": "Arduino Digital Pin 8",
+                "IN2": "Arduino Digital Pin 9",
+                "IN3": "Arduino Digital Pin 10",
+                "IN4": "Arduino Digital Pin 11",
+                "VCC": "5V power supply",
+                "GND": "Arduino GND"
+            },
+            "useCases": [
+                "CNC machines and plotters",
+                "Camera sliders",
+                "Robotic arms",
+                "Automated curtains",
+                "3D printer axes",
+                "Precise positioning systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Stepper Motor Control",
+                "code": "#include <Stepper.h>\n\n// 2048 steps per revolution with gear reduction\nconst int stepsPerRevolution = 2048;\n\n// Initialize stepper on pins 8,10,9,11\nStepper myStepper(stepsPerRevolution, 8, 10, 9, 11);\n\nvoid setup() {\n  // Set speed to 10 RPM\n  myStepper.setSpeed(10);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  Serial.println(\"Clockwise\");\n  myStepper.step(stepsPerRevolution);\n  delay(1000);\n  \n  Serial.println(\"Counter-clockwise\");\n  myStepper.step(-stepsPerRevolution);\n  delay(1000);\n}\n"
+            },
+            "pricing": "$2.50 - $5.00",
+            "image": "/images/resources/28byj48-stepper.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "l298n-driver",
+                "joystick-module"
+            ],
+            "tutorials": [
+                {
+                    "title": "28BYJ-48 Complete Guide",
+                    "url": "https://lastminuteengineers.com/28byj48-stepper-motor-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "dht22-sensor",
+            "name": "DHT22 Temperature & Humidity Sensor (AM2302)",
+            "category": "Sensor",
+            "shortDesc": "High-precision digital sensor with ±0.5°C accuracy and ±2% humidity accuracy",
+            "fullDescription": "The DHT22 (AM2302) is an upgraded version of the DHT11, offering significantly better accuracy and wider measurement ranges. Ideal for professional weather stations and precision environmental monitoring applications.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5.5V",
+                "Current Consumption": "2.5mA max",
+                "Temperature Range": "-40°C to +80°C",
+                "Temperature Accuracy": "±0.5°C",
+                "Humidity Range": "0% - 99.9% RH",
+                "Humidity Accuracy": "±2% RH",
+                "Resolution": "16-bit",
+                "Sampling Rate": "0.5 Hz (once every 2 seconds)",
+                "Dimensions": "15.1 x 25 x 7.7 mm"
+            },
+            "pinout": {
+                "Pin 1 (VCC)": "3.3V - 5V power",
+                "Pin 2 (DATA)": "Digital data output",
+                "Pin 3 (NC)": "Not connected",
+                "Pin 4 (GND)": "Ground"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "DATA": "Arduino Digital Pin (e.g., D2) with 10kΩ pull-up",
+                "GND": "Arduino GND"
+            },
+            "useCases": [
+                "Professional weather stations",
+                "HVAC monitoring",
+                "Data logging systems",
+                "Greenhouse climate control",
+                "Incubator monitoring",
+                "Museum environmental control"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "DHT22 Precision Reading",
+                "code": "#include <DHT.h>\n\n#define DHTPIN 2\n#define DHTTYPE DHT22\n\nDHT dht(DHTPIN, DHTTYPE);\n\nvoid setup() {\n  Serial.begin(9600);\n  dht.begin();\n  Serial.println(\"DHT22 Sensor Initialized\");\n}\n\nvoid loop() {\n  delay(2000); // DHT22 samples every 2s\n  \n  float h = dht.readHumidity();\n  float t = dht.readTemperature();\n  float f = dht.readTemperature(true); // Fahrenheit\n  \n  if (isnan(h) || isnan(t) || isnan(f)) {\n    Serial.println(\"Failed to read from DHT22!\");\n    return;\n  }\n  \n  float hif = dht.computeHeatIndex(f, h);\n  float hic = dht.computeHeatIndex(t, h, false);\n  \n  Serial.print(\"Humidity: \");\n  Serial.print(h);\n  Serial.print(\"%  Temperature: \");\n  Serial.print(t);\n  Serial.print(\"°C / \");\n  Serial.print(f);\n  Serial.print(\"°F  Heat Index: \");\n  Serial.print(hic);\n  Serial.println(\"°C\");\n}\n"
+            },
+            "pricing": "$4.00 - $8.00",
+            "image": "/images/resources/dht22-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "dht11-sensor",
+                "oled-ssd1306"
+            ],
+            "tutorials": [
+                {
+                    "title": "DHT22 Tutorial",
+                    "url": "https://lastminuteengineers.com/dht22-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "l298n-driver",
+            "name": "L298N Motor Driver Module",
+            "category": "Motors & Drivers",
+            "shortDesc": "Dual H-bridge driver for controlling 2 DC motors or 1 stepper motor up to 2A",
+            "fullDescription": "The L298N is a versatile motor driver using dual H-bridge circuits to control motor speed and direction. Supports PWM speed control and can drive two DCmotors independently or one bipolar stepper motor. Built-in voltage regulator and protection features.",
+            "specifications": {
+                "Driver Chip": "L298N (Dual H-Bridge)",
+                "Motor Voltage": "5V - 35V DC",
+                "Logic Voltage": "5V",
+                "Peak Current": "2A per channel (3A peak)",
+                "Maximum Power": "25W",
+                "Motor Control": "2 DC motors or 1 stepper",
+                "Protection": "Thermal shutdown, over-current",
+                "Voltage Drop": "~2V across driver",
+                "PWM Frequency": "Up to 40kHz",
+                "Dimensions": "43 x 43 x 27 mm"
+            },
+            "pinout": {
+                "Motor A/B": "Motor terminal blocks",
+                "IN1-IN4": "Direction control inputs",
+                "ENA/ENB": "Enable/Speed control (PWM)",
+                "VCC": "Motor power (5-35V)",
+                "5V Out": "Regulated 5V output",
+                "GND": "Ground"
+            },
+            "wiring": {
+                "Motor A": "Connect DC motor 1",
+                "Motor B": "Connect DC motor 2",
+                "IN1/IN2": "Arduino Pins 7/8",
+                "IN3/IN4": "Arduino Pins 9/10",
+                "ENA": "Arduino PWM Pin 5",
+                "ENB": "Arduino PWM Pin 6",
+                "VCC": "Motor power supply",
+                "GND": "Common ground"
+            },
+            "useCases": [
+                "Robot car chassis control",
+                "Motorized camera sliders",
+                "Conveyor belt systems",
+                "Automated gates and doors",
+                "RC vehicle projects",
+                "Industrial automation"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "DC Motor Speed Control",
+                "code": "// Motor A pins\nconst int IN1 = 7;\nconst int IN2 = 8;\nconst int ENA = 5;\n\nvoid setup() {\n  pinMode(IN1, OUTPUT);\n  pinMode(IN2, OUTPUT);\n  pinMode(ENA, OUTPUT);\n}\n\nvoid loop() {\n  // Forward at full speed\n  digitalWrite(IN1, HIGH);\n  digitalWrite(IN2, LOW);\n  analogWrite(ENA, 255);\n  delay(2000);\n  \n  // Forward at half speed\n  analogWrite(ENA, 128);\n  delay(2000);\n  \n  // Reverse at full speed\n  digitalWrite(IN1, LOW);\n  digitalWrite(IN2, HIGH);\n  analogWrite(ENA, 255);\n  delay(2000);\n  \n  // Stop\n  analogWrite(ENA, 0);\n  delay(2000);\n}\n"
+            },
+            "pricing": "$3.00 - $6.00",
+            "image": "/images/resources/l298n-driver.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "ultrasonic-sensor",
+                "stepper-28byj48"
+            ],
+            "tutorials": [
+                {
+                    "title": "L298N Motor Driver Guide",
+                    "url": "https://howtomechatronics.com/tutorials/arduino/arduino-dc-motor-control-tutorial-l298n-pwm-h-bridge/"
+                }
+            ]
+        },
+        {
+            "slug": "hc-05-bluetooth",
+            "name": "HC-05 Bluetooth Module",
+            "category": "Communication",
+            "shortDesc": "Bluetooth 2.0 SPP module for wireless serial communication with 10m range",
+            "fullDescription": "The HC-05 is a versatile Bluetooth module supporting both master and slave modes. Enables wireless communication between Arduino and smartphones, computers, or other Bluetooth devices. Configurable via AT commands with default 9600 baud rate.",
+            "specifications": {
+                "Bluetooth Version": "2.0 + EDR",
+                "Frequency": "2.4 GHz ISM band",
+                "Transmit Power": "Class 2 (4 dBm)",
+                "Sensitivity": "-80 dBm typical",
+                "Range": "~10 meters",
+                "Operating Voltage": "3.3V - 5V",
+                "Current": "<50mA active, <2.5mA standby",
+                "Interface": "UART (Serial)",
+                "Default Baud": "9600 bps (data), 38400 (AT mode)",
+                "Modes": "Master, Slave, or Both",
+                "Default PIN": "1234 or 0000"
+            },
+            "pinout": {
+                "VCC": "3.3V - 5V power",
+                "GND": "Ground",
+                "TXD": "Transmit data to Arduino RX",
+                "RXD": "Receive data from Arduino TX (needs voltage divider for 5V)",
+                "KEY/EN": "AT command mode enable",
+                "STATE": "Connection status output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "TXD": "Arduino RX (Pin 0) or SoftwareSerial RX",
+                "RXD": "Arduino TX via voltage divider (1kΩ + 2kΩ)",
+                "KEY": "HIGH for AT mode, LOW for data mode"
+            },
+            "useCases": [
+                "Wireless serial communication",
+                "Smartphone-controlled robots",
+                "IoT data transmission",
+                "Bluetooth remote controls",
+                "Sensor data monitoring",
+                "Wireless debugging"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Bluetooth Serial Communication",
+                "code": "#include <SoftwareSerial.h>\n\n// RX, TX\nSoftwareSerial BTSerial(10, 11);\n\nvoid setup() {\n  Serial.begin(9600);\n  BTSerial.begin(9600);\n  Serial.println(\"Bluetooth Ready\");\n}\n\nvoid loop() {\n  // Forward from Bluetooth to Serial\n  if (BTSerial.available()) {\n    char c = BTSerial.read();\n    Serial.write(c);\n  }\n  \n  // Forward from Serial to Bluetooth\n  if (Serial.available()) {\n    char c = Serial.read();\n    BTSerial.write(c);\n  }\n}\n"
+            },
+            "pricing": "$5.00 - $10.00",
+            "image": "/images/resources/hc-05-bluetooth.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "esp8266-wifi",
+                "l298n-driver"
+            ],
+            "tutorials": [
+                {
+                    "title": "HC-05 Complete Tutorial",
+                    "url": "https://lastminuteengineers.com/hc-05-bluetooth-module-arduino-tutorial/"
+                },
+                {
+                    "title": "AT Commands Reference",
+                    "url": "https://www.instructables.com/AT-command-mode-of-HC-05-Bluetooth-module/"
+                }
+            ]
+        },
+        {
+            "slug": "esp8266-wifi",
+            "name": "ESP8266 WiFi Module (NodeMCU)",
+            "category": "Communication",
+            "shortDesc": "WiFi-enabled microcontroller with Arduino IDE support for IoT projects",
+            "fullDescription": "The NodeMCU ESP8266 is a powerful WiFi-enabled development board with integrated TCP/IP stack. Features 80MHz CPU, 4MB flash, and can be programmed directly via Arduino IDE. Perfect for IoT applications requiring internet connectivity.",
+            "specifications": {
+                "Microcontroller": "Tensilica Xtensa LX106",
+                "Operating Voltage": "3.3V",
+                "Input Voltage": "4.5V - 10V (via USB or VIN)",
+                "Clock Speed": "80 MHz (up to 160 MHz)",
+                "Flash Memory": "4 MB",
+                "SRAM": "64 KB + 96 KB data",
+                "Digital I/O": "11-16 pins",
+                "Analog Input": "1 (10-bit ADC)",
+                "WiFi": "802.11 b/g/n 2.4GHz",
+                "USB": "Micro USB with CP2102",
+                "Dimensions": "49 x 25 mm"
+            },
+            "pinout": {
+                "3V3": "3.3V output",
+                "GND": "Ground",
+                "D0-D8": "Digital GPIO pins",
+                "A0": "Analog input (0-3.3V)",
+                "TX/RX": "Serial communication",
+                "RST": "Reset",
+                "EN": "Enable"
+            },
+            "wiring": {
+                "Power": "Micro USB or Vin (5V)",
+                "Sensors": "Connect to 3.3V pins only",
+                "Note": "All GPIO are 3.3V - use level shifters for 5V devices"
+            },
+            "useCases": [
+                "WiFi-enabled IoT devices",
+                "Web servers and APIs",
+                "MQTT clients",
+                "Weather stations with cloud upload",
+                "Home automation nodes",
+                "Remote sensor monitoring"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "WiFi Web Server",
+                "code": "#include <ESP8266WiFi.h>\n#include <ESP8266WebServer.h>\n\nconst char* ssid = \"YourSSID\";\nconst char* password = \"YourPassword\";\n\nESP8266WebServer server(80);\n\nvoid handleRoot() {\n  server.send(200, \"text/html\", \"<h1>ESP8266 WebServer</h1>\");\n}\n\nvoid setup() {\n  Serial.begin(115200);\n  WiFi.begin(ssid, password);\n  \n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  \n  Serial.println(\"\");\n  Serial.print(\"IP: \");\n  Serial.println(WiFi.localIP());\n  \n  server.on(\"/\", handleRoot);\n  server.begin();\n}\n\nvoid loop() {\n  server.handleClient();\n}\n"
+            },
+            "pricing": "$4.00 - $8.00",
+            "image": "/images/resources/esp8266-nodemcu.jpg",
+            "compatibleBoards": [
+                "Standalone (can be programmed via Arduino IDE)"
+            ],
+            "relatedComponents": [
+                "hc-05-bluetooth",
+                "dht22-sensor"
+            ],
+            "tutorials": [
+                {
+                    "title": "ESP8266 Arduino IDE Setup",
+                    "url": "https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/"
+                },
+                {
+                    "title": "ESP8266 Web Server Tutorial",
+                    "url": "https://randomnerdtutorials.com/esp8266-webserver-arduino/"
+                }
+            ]
+        },
+        {
+            "slug": "ds3231-rtc",
+            "name": "DS3231 Real-Time Clock Module",
+            "category": "Modules",
+            "shortDesc": "High-precision I2C RTC with temperature compensation and battery backup",
+            "fullDescription": "The DS3231 is an extremely accurate real-time clock module with integrated temperature-compensated crystal oscillator (TCXO). Maintains accurate time even when main power is off via battery backup. Features two programmable alarms and ±2ppm accuracy.",
+            "specifications": {
+                "Operating Voltage": "2.3V - 5.5V",
+                "Current": "<300µA typical",
+                "Accuracy": "±2ppm (0°C to +40°C), ±3.5ppm (-40°C to +85°C)",
+                "Drift": "~±2 minutes per year",
+                "Interface": "I2C (address 0x68)",
+                "Battery Backup": "CR2032 3V coin cell",
+                "Alarms": "2 programmable time-of-day",
+                "Temperature Sensor": "±3°C accuracy",
+                "EEPROM": "AT24C32 4KB (optional on some modules)",
+                "Dimensions": "38 x 22 x 14 mm"
+            },
+            "pinout": {
+                "VCC": "2.3V - 5.5V power",
+                "GND": "Ground",
+                "SDA": "I2C data line",
+                "SCL": "I2C clock line",
+                "SQW": "Square wave output",
+                "32K": "32.768kHz output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V or 3.3V",
+                "GND": "Arduino GND",
+                "SDA": "Arduino A4 (Uno) or Pin 20 (Mega)",
+                "SCL": "Arduino A5 (Uno) or Pin 21 (Mega)"
+            },
+            "useCases": [
+                "Precision timekeeping",
+                "Data logging with timestamps",
+                "Alarm clocks",
+                "Scheduled automation",
+                "Event scheduling",
+                "Time-based security systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "RTC Read Time and Temperature",
+                "code": "#include <Wire.h>\n#include <RTClib.h>\n\nRTC_DS3231 rtc;\n\nvoid setup() {\n  Serial.begin(9600);\n  \n  if (!rtc.begin()) {\n    Serial.println(\"Couldn't find RTC\");\n    while (1);\n  }\n  \n  // Uncomment to set time (only needed once)\n  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));\n  \n  Serial.println(\"DS3231 RTC Initialized\");\n}\n\nvoid loop() {\n  DateTime now = rtc.now();\n  \n  Serial.print(now.year());\n  Serial.print('/');\n  Serial.print(now.month());\n  Serial.print('/');\n  Serial.print(now.day());\n  Serial.print(\" \");\n  Serial.print(now.hour());\n  Serial.print(':');\n  Serial.print(now.minute());\n  Serial.print(':');\n  Serial.print(now.second());\n  \n  Serial.print(\"  Temp: \");\n  Serial.print(rtc.getTemperature());\n  Serial.println(\"°C\");\n  \n  delay(1000);\n}\n"
+            },
+            "pricing": "$3.00 - $6.00",
+            "image": "/images/resources/ds3231-rtc.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "oled-ssd1306",
+                "lcd-16x2"
+            ],
+            "tutorials": [
+                {
+                    "title": "DS3231 RTC Tutorial",
+                    "url": "https://github.com/adafruit/RTClib"
+                }
+            ]
+        },
+        {
+            "slug": "relay-module-5v",
+            "name": "5V Relay Module",
+            "category": "Modules",
+            "shortDesc": "Electrically operated switch for controlling AC/DC loads up to 10A at 250V",
+            "fullDescription": "The 5V relay module acts as an electronically controlled switch, allowing Arduino to safely control high-voltage AC or DC appliances. Features optoisolation for protection, LED indicators, and supports both normally open (NO) and normally closed (NC) configurations.",
+            "specifications": {
+                "Operating Voltage": "5V DC",
+                "Contact Rating": "10A at 250V AC, 10A at 30V DC",
+                "Activation Voltage": "2.5V - 5V",
+                "Driver Current": "15-20mA per channel",
+                "Isolation": "Opto-isolated",
+                "Logic": "Active Low (typically)",
+                "Response Time": "<10ms",
+                "LED Indicators": "Power and relay status",
+                "Dimensions": "50 x 26 x 18 mm"
+            },
+            "pinout": {
+                "VCC": "5V power supply",
+                "GND": "Ground",
+                "IN": "Control signal input",
+                "JD-VCC": "Relay coil power (optional isolation)",
+                "COM": "Common terminal for load",
+                "NO": "Normally Open contact",
+                "NC": "Normally Closed contact"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "IN": "Arduino Digital Pin (e.g., D7)",
+                "Load COM": "One side of AC/DC load",
+                "Load NO/NC": "Other side based on default state"
+            },
+            "useCases": [
+                "Home automation control",
+                "AC appliance switching",
+                "Motor control circuits",
+                "Lighting automation",
+                "Smart power strips",
+                "Industrial control systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Relay Control Example",
+                "code": "// Control relay module (active LOW)\nconst int relayPin = 7;\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n  digitalWrite(relayPin, HIGH); // Relay OFF initially\n}\n\nvoid loop() {\n  // Turn relay ON (activate load)\n  digitalWrite(relayPin, LOW);\n  delay(2000); // On for 2 seconds\n  \n  // Turn relay OFF (deactivate load)\n  digitalWrite(relayPin, HIGH);\n  delay(2000); // Off for 2 seconds\n}\n"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/relay-module.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "pir-sensor",
+                "soil-moisture"
+            ],
+            "tutorials": [
+                {
+                    "title": "Relay Module Tutorial",
+                    "url": "https://randomnerdtutorials.com/guide-for-relay-module-with-arduino/"
+                }
+            ]
+        },
+        {
+            "slug": "rfid-rc522",
+            "name": "RFID RC522 Module",
+            "category": "Communication",
+            "shortDesc": "13.56MHz RFID reader/writer for M IFARE cards and tags with SPI interface",
+            "fullDescription": "The RC522 RFID module enables reading and writing MIFARE cards and tags that comply with ISO 14443A standard. Operating at 13.56MHz with SPI communication, it's perfect for access control, attendance systems, and smart card applications.",
+            "specifications": {
+                "Operating Frequency": "13.56 MHz",
+                "Operating Voltage": "2.5V - 3.3V",
+                "Current": "13-26mA (active), <80µA (sleep)",
+                "Read Range": "~5 cm",
+                "Interface": "SPI (up to 10Mbps)",
+                "Supported Cards": "MIFARE Classic, UltraLight, NTAG",
+                "Data Rate": "Up to 424 kbit/s",
+                "Operating Temp": "-25°C to +85°C",
+                "Dimensions": "40 x 60 mm"
+            },
+            "pinout": {
+                "VCC": "3.3V power (NOT 5V!)",
+                "GND": "Ground",
+                "RST": "Reset pin",
+                "SDA (SS)": "SPI Slave Select",
+                "MOSI": "SPI Master Out Slave In",
+                "MISO": "SPI Master In Slave Out",
+                "SCK": "SPI Clock"
+            },
+            "wiring": {
+                "VCC": "Arduino 3.3V",
+                "GND": "Arduino GND",
+                "RST": "Arduino Digital Pin 9",
+                "SDA": "Arduino Digital Pin 10 (SS)",
+                "MOSI": "Arduino Digital Pin 11",
+                "MISO": "Arduino Digital Pin 12",
+                "SCK": "Arduino Digital Pin 13"
+            },
+            "useCases": [
+                "Access control systems",
+                "Attendance tracking",
+                "Smart locks",
+                "Payment systems",
+                "Inventory management",
+                "Library checkout systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "RFID Card Read Example",
+                "code": "// Requires MFRC522 library\n#include <SPI.h>\n#include <MFRC522.h>\n\n#define RST_PIN 9\n#define SS_PIN 10\n\nMFRC522 mfrc522(SS_PIN, RST_PIN);\n\nvoid setup() {\n  Serial.begin(9600);\n  SPI.begin();\n  mfrc522.PCD_Init();\n  Serial.println(\"Scan RFID card...\");\n}\n\nvoid loop() {\n  // Look for new cards\n  if (!mfrc522.PICC_IsNewCardPresent()) {\n    return;\n  }\n  \n  // Select one of the cards\n  if (!mfrc522.PICC_ReadCardSerial()) {\n    return;\n  }\n  \n  // Show UID\n  Serial.print(\"Card UID:\");\n  for (byte i = 0; i < mfrc522.uid.size; i++) {\n    Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? \" 0\" : \" \");\n    Serial.print(mfrc522.uid.uidByte[i], HEX);\n  }\n  Serial.println();\n  \n  mfrc522.PICC_HaltA();\n}\n"
+            },
+            "pricing": "$2.00 - $5.00",
+            "image": "/images/resources/rfid-rc522.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "hc-05-bluetooth",
+                "relay-module-5v"
+            ],
+            "tutorials": [
+                {
+                    "title": "RC522 RFID Tutorial",
+                    "url": "https://lastminuteengineers.com/how-rfid-works-rc522-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "joystick-module",
+            "name": "Analog Joystick Module (KY-023)",
+            "category": "Modules",
+            "shortDesc": "Dual-axis XY joystick with pushbutton, outputs 0-1023 analog values",
+            "fullDescription": "The analog joystick module features two 10kΩ potentiometers for X and Y axis control plus an integrated pushbutton. Perfect for gaming, robotics control, and menu navigation with smooth analog input.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V",
+                "Output Range": "0 - 1023 (10-bit ADC)",
+                "Center Position": "~512 (2.5V at 5V supply)",
+                "Potentiometer": "10kΩ dual-axis",
+                "Switch": "Momentary pushbutton",
+                "Rotation": "360° continuous",
+                "Dimensions": "34 x 26 x 32 mm"
+            },
+            "pinout": {
+                "GND": "Ground",
+                "VCC": "Power supply (3.3V - 5V)",
+                "VRX": "X-axis analog output",
+                "VRY": "Y-axis analog output",
+                "SW": "Switch/button digital output"
+            },
+            "wiring": {
+                "GND": "Arduino GND",
+                "VCC": "Arduino 5V",
+                "VRX": "Arduino Analog Pin A0",
+                "VRY": "Arduino Analog Pin A1",
+                "SW": "Arduino Digital Pin 2 (with pull-up)"
+            },
+            "useCases": [
+                "Game controllers",
+                "Robot arm control",
+                "Camera gimbal control",
+                "Menu navigation systems",
+                "RC vehicle steering",
+                "Interactive installations"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Joystick Read Example",
+                "code": "// Joystick pins\nconst int VRX_PIN = A0;\nconst int VRY_PIN = A1;\nconst int SW_PIN = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(SW_PIN, INPUT_PULLUP);\n}\n\nvoid loop() {\n  int xValue = analogRead(VRX_PIN);\n  int yValue = analogRead(VRY_PIN);\n  int swState = digitalRead(SW_PIN);\n  \n  Serial.print(\"X: \");\n  Serial.print(xValue);\n  Serial.print(\" | Y: \");\n  Serial.print(yValue);\n  Serial.print(\" | Button: \");\n  Serial.println(swState == LOW ? \"Pressed\" : \"Released\");\n  \n  delay(200);\n}\n"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/joystick-module.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "servo-motor",
+                "oled-ssd1306"
+            ],
+            "tutorials": [
+                {
+                    "title": "Joystick Module Tutorial",
+                    "url": "https://arduinogetstarted.com/tutorials/arduino-joystick"
+                }
+            ]
+        },
+        {
+            "slug": "rotary-encoder-ky040",
+            "name": "Rotary Encoder Module (KY-040)",
+            "category": "Modules",
+            "shortDesc": "360° rotary encoder with pushbutton, 20 pulses per rotation for precise control",
+            "fullDescription": "The KY-040 rotary encoder provides precise rotational input with 20 detents per full rotation. Generates 2-bit gray code signals for direction detection. Ideal for menu navigation, volume control, and parameter adjustment.",
+            "specifications": {
+                "Operating Voltage": "5V DC",
+                "Resolution": "20 pulses per rotation",
+                "Output": "2-bit gray code",
+                "Rotation": "360° continuous",
+                "Pushbutton": "Integrated momentary switch",
+                "Operating Temp": "-20°C to +70°C",
+                "Dimensions": "30 x 18 x 30 mm"
+            },
+            "pinout": {
+                "GND": "Ground",
+                "VCC": "5V power",
+                "SW": "Pushbutton switch output",
+                "DT": "Data/Output B",
+                "CLK": "Clock/Output A"
+            },
+            "wiring": {
+                "GND": "Arduino GND",
+                "VCC": "Arduino 5V",
+                "SW": "Arduino Digital Pin 4",
+                "DT": "Arduino Digital Pin 3 (interrupt capable)",
+                "CLK": "Arduino Digital Pin 2 (interrupt capable)"
+            },
+            "useCases": [
+                "Menu navigation systems",
+                "Volume and brightness control",
+                "Parameter adjustment",
+                "CNC machine control",
+                "Audio equipment interfaces",
+                "Settings adjustment"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Rotary Encoder with Interrupts",
+                "code": "// Encoder pins\nconst int CLK_PIN = 2;\nconst int DT_PIN = 3;\nconst int SW_PIN = 4;\n\nvolatile int counter = 0;\nint lastCLK;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(CLK_PIN, INPUT);\n  pinMode(DT_PIN, INPUT);\n  pinMode(SW_PIN, INPUT_PULLUP);\n  \n  lastCLK = digitalRead(CLK_PIN);\n  attachInterrupt(digitalPinToInterrupt(CLK_PIN), encoderISR, CHANGE);\n}\n\nvoid encoderISR() {\n  int clkState = digitalRead(CLK_PIN);\n  int dtState = digitalRead(DT_PIN);\n  \n  if (clkState != lastCLK) {\n    if (dtState != clkState) {\n      counter++; // Clockwise\n    } else {\n      counter--; // Counter-clockwise\n    }\n  }\n  lastCLK = clkState;\n}\n\nvoid loop() {\n  static int lastCounter = 0;\n  if (counter != lastCounter) {\n    Serial.print(\"Position: \");\n    Serial.println(counter);\n    lastCounter = counter;\n  }\n  \n  if (digitalRead(SW_PIN) == LOW) {\n    Serial.println(\"Button Pressed!\");\n    delay(200);\n  }\n}\n"
+            },
+            "pricing": "$1.00 - $2.50",
+            "image": "/images/resources/rotary-encoder.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "oled-ssd1306",
+                "lcd-16x2"
+            ],
+            "tutorials": [
+                {
+                    "title": "Rotary Encoder Tutorial",
+                    "url": "https://www.instructables.com/Rotary-Encoder-With-Arduino-and-LCD/"
+                }
+            ]
+        },
+        {
+            "slug": "mq2-gas-sensor",
+            "name": "MQ-2 Gas Sensor Module",
+            "category": "Sensor",
+            "shortDesc": "Detects LPG, smoke, alcohol, propane, hydrogen, methane, and CO with analog/digital output",
+            "fullDescription": "The MQ-2 gas sensor uses a tin dioxide (SnO2) sensing element that changes resistance when exposed to combustible gases. Features adjustable sensitivity threshold and both analog and digital outputs for versatile gas detection applications.",
+            "specifications": {
+                "Operating Voltage": "5V DC",
+                "Power Consumption": "~800mW",
+                "Detectable Gases": "LPG, smoke, alcohol, propane, hydrogen, methane, CO",
+                "Detection Range": "200-10,000 ppm",
+                "Preheat Time": "20 seconds minimum (24 hours optimal)",
+                "Analog Output": "0V - 5V",
+                "Digital Output": "TTL (LOW when threshold reached)",
+                "Dimensions": "32 x 20 x 22 mm"
+            },
+            "pinout": {
+                "VCC": "5V power",
+                "GND": "Ground",
+                "AO": "Analog output",
+                "DO": "Digital output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "AO": "Arduino Analog Pin A0",
+                "DO": "Arduino Digital Pin (e.g., D8)"
+            },
+            "useCases": [
+                "Gas leak detection",
+                "Smoke alarms",
+                "Air quality monitoring",
+                "Kitchen safety systems",
+                "Industrial gas detection",
+                "Vehicle emission monitoring"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Gas Sensor Monitoring",
+                "code": "// MQ-2 Gas Sensor\nconst int AO_PIN = A0;\nconst int DO_PIN = 8;\nconst int BUZZER_PIN = 9;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(DO_PIN, INPUT);\n  pinMode(BUZZER_PIN, OUTPUT);\n  \n  Serial.println(\"MQ-2 warming up...\");\n  delay(20000); // 20 second preheat\n  Serial.println(\"Ready!\");\n}\n\nvoid loop() {\n  int analogValue = analogRead(AO_PIN);\n  int digitalValue = digitalRead(DO_PIN);\n  \n  Serial.print(\"Gas Level: \");\n  Serial.print(analogValue);\n  \n  if (digitalValue == LOW) {\n    Serial.println(\" - GAS DETECTED!\");\n    digitalWrite(BUZZER_PIN, HIGH);\n  } else {\n    Serial.println(\" - Normal\");\n    digitalWrite(BUZZER_PIN, LOW);\n  }\n  \n  delay(1000);\n}\n"
+            },
+            "pricing": "$2.00 - $5.00",
+            "image": "/images/resources/mq2-gas-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "relay-module-5v",
+                "buzzer-module"
+            ],
+            "tutorials": [
+                {
+                    "title": "MQ-2 Gas Sensor Tutorial",
+                    "url": "https://lastminuteengineers.com/mq2-gas-senser-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "soil-moisture-yl69",
+            "name": "Soil Moisture Sensor (YL-69)",
+            "category": "Sensor",
+            "shortDesc": "Resistive soil moisture sensor with analog/digital output for irrigation automation",
+            "fullDescription": "The YL-69 soil moisture sensor measures soil water content using two probes that measure electrical conductivity. Features adjustable threshold potentiometer and dual output modes. Essential for smart irrigation and plant monitoring systems.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Output": "Analog (0-1023) and Digital (HIGH/LOW)",
+                "Probe Dimensions": "60 x 20 mm",
+                "PCB Dimensions": "30 x 15 mm",
+                "Comparator": "LM393",
+                "Sensitivity": "Adjustable via potentiometer",
+                "Indicators": "Power LED, Digital output LED"
+            },
+            "pinout": {
+                "VCC": "Power supply",
+                "GND": "Ground",
+                "AO": "Analog output",
+                "DO": "Digital output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "AO": "Arduino Analog Pin A0",
+                "DO": "Arduino Digital Pin 7"
+            },
+            "useCases": [
+                "Automated irrigation systems",
+                "Plant monitoring",
+                "Garden automation",
+                "Greenhouse management",
+                "Smart agriculture",
+                "Water conservation systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Soil Moisture Irrigation Control",
+                "code": "// Soil Moisture Sensor\nconst int SENSOR_PIN = A0;\nconst int PUMP_PIN = 8;\nconst int DRY_THRESHOLD = 700; // Adjust based on soil\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(PUMP_PIN, OUTPUT);\n  digitalWrite(PUMP_PIN, LOW);\n}\n\nvoid loop() {\n  int moistureValue = analogRead(SENSOR_PIN);\n  \n  Serial.print(\"Moisture Level: \");\n  Serial.print(moistureValue);\n  \n  if (moistureValue > DRY_THRESHOLD) {\n    Serial.println(\" - Soil is DRY, watering...\");\n    digitalWrite(PUMP_PIN, HIGH); // Turn on pump\n  } else {\n    Serial.println(\" - Soil is WET enough\");\n    digitalWrite(PUMP_PIN, LOW); // Turn off pump\n  }\n  \n  delay(2000);\n}\n"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/soil-moisture.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "relay-module-5v",
+                "dht11-sensor"
+            ],
+            "tutorials": [
+                {
+                    "title": "Soil Moisture Sensor Guide",
+                    "url": "https://randomnerdtutorials.com/guide-for-soil-moisture-sensor-fc-28-arduino/"
+                }
+            ]
+        },
+        {
+            "slug": "ir-receiver-vs1838b",
+            "name": "IR Receiver Module (VS1838B)",
+            "category": "Communication",
+            "shortDesc": "38kHz infrared receiver for remote control projects, supports NEC protocol",
+            "fullDescription": "The VS1838B infrared receiver module decodes 38kHz IR signals from remote controls. Features built-in signal amplification, carrier demodulation, and EMI shielding. Compatible with NEC, RC5, and other common IR protocols.",
+            "specifications": {
+                "Operating Voltage": "2.7V - 5.5V",
+                "Operating Current": "0.4mA - 1.5mA",
+                "Carrier Frequency": "38 kHz",
+                "Reception Distance": "Up to 18 meters",
+                "Reception Angle": "±45° (up to 90°)",
+                "Output": "Active LOW digital signal",
+                "Operating Temp": "-25°C to +85°C",
+                "Dimensions": "7 x 6 x 5 mm"
+            },
+            "pinout": {
+                "OUT": "Signal output",
+                "GND": "Ground",
+                "VCC": "Power supply (3.3V - 5V)"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "OUT": "Arduino Digital Pin 11"
+            },
+            "useCases": [
+                "TV/Media remote control",
+                "Home automation via IR",
+                "Wireless robot control",
+                "Interactive displays",
+                "Presentation clickers",
+                "IR-based communication"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "IR Remote Decoder",
+                "code": "// Requires IRremote library\n#include <IRremote.h>\n\nconst int IR_PIN = 11;\nIRrecv irrecv(IR_PIN);\ndecode_results results;\n\nvoid setup() {\n  Serial.begin(9600);\n  irrecv.enableIRIn(); // Start the receiver\n  Serial.println(\"IR Receiver ready\");\n}\n\nvoid loop() {\n  if (irrecv.decode(&results)) {\n    Serial.print(\"IR Code: 0x\");\n    Serial.println(results.value, HEX);\n    \n    // Take action based on button\n    switch(results.value) {\n      case 0xFF30CF: // Example: Button 1\n        Serial.println(\"Button 1 pressed\");\n        break;\n      case 0xFF18E7: // Example: Button 2\n        Serial.println(\"Button 2 pressed\");\n        break;\n      default:\n        Serial.println(\"Unknown button\");\n    }\n    \n    irrecv.resume(); // Receive next value\n  }\n}\n"
+            },
+            "pricing": "$0.50 - $1.50",
+            "image": "/images/resources/ir-receiver.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "relay-module-5v",
+                "servo-motor"
+            ],
+            "tutorials": [
+                {
+                    "title": "IR Receiver Tutorial",
+                    "url": "https://www.instructables.com/Arduino-Ir-Remote-Control/"
+                }
+            ]
+        },
+        {
+            "slug": "sound-sensor-ky-037",
+            "name": "KY-037 Sound Sensor Module",
+            "category": "Sensor",
+            "shortDesc": "Microphone sound detection sensor with analog and digital output for sound-activated projects",
+            "fullDescription": "The KY-037 is a high-sensitivity microphone sound sensor that detects sound intensity. Features both analog output for measuring sound levels and digital output with adjustable threshold for sound-activated triggering. Perfect for voice-controlled devices, sound-reactive LEDs, and clap switches.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Microphone": "High-sensitivity electret condenser microphone",
+                "Output": "Analog (0-5V) and Digital (HIGH/LOW)",
+                "Sensitivity": "Adjustable via potentiometer",
+                "Detection Range": "~50cm - 1m (varies with sensitivity)",
+                "Indicators": "Power LED, Status LED",
+                "Operating Current": "<5mA",
+                "Dimensions": "30 x 15 mm"
+            },
+            "pinout": {
+                "VCC": "Power (3.3V - 5V)",
+                "GND": "Ground",
+                "AO": "Analog output",
+                "DO": "Digital output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "AO": "Arduino Analog Pin A0",
+                "DO": "Arduino Digital Pin D7"
+            },
+            "useCases": [
+                "Sound-activated lighting",
+                "Clap switches",
+                "Voice-controlled devices",
+                "Noise level monitoring",
+                "Sound-reactive LED strips",
+                "Security alarm systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Sound Detection Example",
+                "code": "// Sound Sensor - Clap Switch Example\nconst int soundAnalog = A0;\nconst int soundDigital = 7;\nconst int ledPin = 13;\nboolean ledState = false;\n\nvoid setup() {\n  pinMode(soundDigital, INPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"Sound Sensor Ready - Clap to toggle LED\");\n}\n\nvoid loop() {\n  // Read analog sound level\n  int soundLevel = analogRead(soundAnalog);\n  Serial.print(\"Sound Level: \");\n  Serial.println(soundLevel);\n  \n  // Check digital trigger\n  if (digitalRead(soundDigital) == LOW) {\n    ledState = !ledState;\n    digitalWrite(ledPin, ledState);\n    Serial.println(ledState ? \"LED ON\" : \"LED OFF\");\n    delay(500); // Debounce\n  }\n  \n  delay(100);\n}\n"
+            },
+            "pricing": "$1.00 - $2.50",
+            "image": "/images/resources/sound-sensor-ky037.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "relay-module-5v",
+                "standard-led-5mm"
+            ],
+            "tutorials": [
+                {
+                    "title": "Sound Sensor Tutorial",
+                    "url": "https://arduinogetstarted.com/tutorials/arduino-sound-sensor"
+                }
+            ]
+        },
+        {
+            "slug": "ldr-light-sensor",
+            "name": "LDR (Light Dependent Resistor) Module",
+            "category": "Sensor",
+            "shortDesc": "Photoresistor light sensor for detecting ambient light levels and day/night sensing",
+            "fullDescription": "The LDR module uses a photoresistor to detect ambient light levels. Resistance decreases with increasing light intensity, making it perfect for automatic lighting systems, solar tracking, and day/night detection. Features adjustable sensitivity and both analog and digital outputs.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Photoresistor": "GL5528 or similar",
+                "Resistance Range": "1MΩ (darkness) to 10kΩ (bright light)",
+                "Detection Range": "Lux measurement capability",
+                "Output": "Analog (varying voltage) and Digital (threshold)",
+                "Comparator": "LM393",
+                "Response Time": "<20ms",
+                "Dimensions": "30 x 15 mm"
+            },
+            "pinout": {
+                "VCC": "Power (3.3V - 5V)",
+                "GND": "Ground",
+                "AO": "Analog output",
+                "DO": "Digital output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "AO": "Arduino Analog Pin A0",
+                "DO": "Arduino Digital Pin D8"
+            },
+            "useCases": [
+                "Automatic streetlights",
+                "Solar panel tracking",
+                "Light-sensitive alarms",
+                "Camera auto-brightness",
+                "Plant growth monitoring",
+                "Smart window blinds"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Auto Light Control",
+                "code": "// LDR-based Automatic Light Control\nconst int ldrPin = A0;\nconst int lightPin = 9;\nconst int threshold = 400; // Adjust based on environment\n\nvoid setup() {\n  pinMode(lightPin, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"Auto Light Control Active\");\n}\n\nvoid loop() {\n  int lightLevel = analogRead(ldrPin);\n  \n  Serial.print(\"Light Level: \");\n  Serial.print(lightLevel);\n  \n  if (lightLevel < threshold) {\n    // Dark - turn light ON\n    digitalWrite(lightPin, HIGH);\n    Serial.println(\" - DARK (Light ON)\");\n  } else {\n    // Bright - turn light OFF\n    digitalWrite(lightPin, LOW);\n    Serial.println(\" - BRIGHT (Light OFF)\");\n  }\n  \n  delay(500);\n}\n"
+            },
+            "pricing": "$0.50 - $2.00",
+            "image": "/images/resources/ldr-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "relay-module-5v",
+                "servo-motor"
+            ],
+            "tutorials": [
+                {
+                    "title": "LDR Sensor Guide",
+                    "url": "https://www.arduino.cc/en/Tutorial/BuiltInExamples/AnalogInput"
+                }
+            ]
+        },
+        {
+            "slug": "bh1750-light-sensor",
+            "name": "BH1750 Digital Light Sensor",
+            "category": "Sensor",
+            "shortDesc": "16-bit digital ambient light sensor with I2C interface for precise lux measurement",
+            "fullDescription": "The BH1750 is a digital ambient light sensor that directly outputs a digital value in lux (light intensity) via I2C communication. Unlike analog LDRs, it provides accurate, calibrated light measurements from 1-65535 lux, making it ideal for professional light metering and display brightness control.",
+            "specifications": {
+                "Operating Voltage": "2.4V - 3.6V (3.3V recommended)",
+                "Interface": "I2C (SCL, SDA)",
+                "I2C Address": "0x23 (default) or 0x5C (alternate)",
+                "Light Range": "1 - 65535 lux",
+                "Resolution": "0.5 - 4 lux (mode dependent)",
+                "Spectral Response": "Close to human eye",
+                "Measurement Accuracy": "±20%",
+                "Power Consumption": "0.12mA (active), 0.01µA (power down)",
+                "Operating Temperature": "-40°C to +85°C",
+                "Dimensions": "Small module (varies)"
+            },
+            "pinout": {
+                "VCC": "3.3V power",
+                "GND": "Ground",
+                "SCL": "I2C clock",
+                "SDA": "I2C data",
+                "ADDR": "Address select (optional)"
+            },
+            "wiring": {
+                "VCC": "Arduino 3.3V",
+                "GND": "Arduino GND",
+                "SCL": "Arduino A5 (Uno) or Pin 21 (Mega)",
+                "SDA": "Arduino A4 (Uno) or Pin 20 (Mega)"
+            },
+            "useCases": [
+                "Display auto-brightness control",
+                "Professional light metering",
+                "Photography light measurement",
+                "Greenhouse light monitoring",
+                "Circadian rhythm lighting",
+                "Solar panel efficiency monitoring"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "BH1750 Light Measurement",
+                "code": "// Requires BH1750 library\n#include <Wire.h>\n#include <BH1750.h>\n\nBH1750 lightMeter;\n\nvoid setup() {\n  Serial.begin(9600);\n  Wire.begin();\n  \n  if (lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE)) {\n    Serial.println(\"BH1750 initialized\");\n  } else {\n    Serial.println(\"Error initializing BH1750\");\n  }\n}\n\nvoid loop() {\n  float lux = lightMeter.readLightLevel();\n  \n  Serial.print(\"Light: \");\n  Serial.print(lux);\n  Serial.print(\" lux\");\n  \n  // Classify light conditions\n  if (lux < 10) {\n    Serial.println(\" - Dark\");\n  } else if (lux < 100) {\n    Serial.println(\" - Dim\");\n  } else if (lux < 1000) {\n    Serial.println(\" - Room Light\");\n  } else {\n    Serial.println(\" - Bright\");\n  }\n  \n  delay(1000);\n}\n"
+            },
+            "pricing": "$2.00 - $4.00",
+            "image": "/images/resources/bh1750-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "oled-ssd1306",
+                "dht22-sensor"
+            ],
+            "tutorials": [
+                {
+                    "title": "BH1750 Tutorial",
+                    "url": "https://randomnerdtutorials.com/arduino-bh1750-ambient-light-sensor/"
+                },
+                {
+                    "title": "BH1750 Library",
+                    "url": "https://github.com/claws/BH1750"
+                }
+            ]
+        },
+        {
+            "slug": "tcs3200-color-sensor",
+            "name": "TCS3200 Color Recognition Sensor",
+            "category": "Sensor",
+            "shortDesc": "RGB color sensor for detecting and identifying colors in robotics and sorting applications",
+            "fullDescription": "The TCS3200 color sensor converts light-to-frequency and outputs a square wave with frequency proportional to light intensity. Features programmable color and full-scale output frequency, 8 LEDs for illumination, and can detect RGB values for color identification. Perfect for color sorting, line following robots, and quality control.",
+            "specifications": {
+                "Operating Voltage": "2.7V - 5.5V",
+                "Photodiodes": "8x8 array (64 photodiodes)",
+                "Output": "Square wave (50% duty cycle)",
+                "Frequency Range": "2Hz - 500kHz",
+                "Color Filters": "Red, Green, Blue, Clear",
+                "White LEDs": "4 white LEDs for illumination",
+                "Sensing Distance": "10mm (optimal)",
+                "Output Type": "Digital frequency output",
+                "Power Consumption": "Typical 2mA",
+                "Dimensions": "30 x 30 mm"
+            },
+            "pinout": {
+                "VCC": "3.3V - 5V power",
+                "GND": "Ground",
+                "S0, S1": "Output frequency scaling",
+                "S2, S3": "Photodiode type selection (RGB/Clear)",
+                "OUT": "Output frequency signal",
+                "LED": "LED control (optional)"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "S0": "Arduino Pin 4 (HIGH)",
+                "S1": "Arduino Pin 5 (HIGH)",
+                "S2": "Arduino Pin 6",
+                "S3": "Arduino Pin 7",
+                "OUT": "Arduino Pin 8"
+            },
+            "useCases": [
+                "Color sorting machines",
+                "Product quality inspection",
+                "Color-based line following robots",
+                "Paint color matching",
+                "Fruit ripeness detection",
+                "LED color calibration"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "RGB Color Reading",
+                "code": "// TCS3200 Color Sensor\n#define S0 4\n#define S1 5\n#define S2 6\n#define S3 7\n#define sensorOut 8\n\nint redFreq = 0;\nint greenFreq = 0;\nint blueFreq = 0;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(S0, OUTPUT);\n  pinMode(S1, OUTPUT);\n  pinMode(S2, OUTPUT);\n  pinMode(S3, OUTPUT);\n  pinMode(sensorOut, INPUT);\n  \n  // Set frequency scaling to 20%\n  digitalWrite(S0, HIGH);\n  digitalWrite(S1, LOW);\n}\n\nvoid loop() {\n  // Read Red\n  digitalWrite(S2, LOW);\n  digitalWrite(S3, LOW);\n  redFreq = pulseIn(sensorOut, LOW);\n  \n  // Read Green\n  digitalWrite(S2, HIGH);\n  digitalWrite(S3, HIGH);\n  greenFreq = pulseIn(sensorOut, LOW);\n  \n  // Read Blue\n  digitalWrite(S2, LOW);\n  digitalWrite(S3, HIGH);\n  blueFreq = pulseIn(sensorOut, LOW);\n  \n  Serial.print(\"R=\");\n  Serial.print(redFreq);\n  Serial.print(\" G=\");\n  Serial.print(greenFreq);\n  Serial.print(\" B=\");\n  Serial.println(blueFreq);\n  \n  // Identify dominant color\n  if (redFreq < greenFreq && redFreq < blueFreq) {\n    Serial.println(\"RED detected\");\n  } else if (greenFreq < redFreq && greenFreq < blueFreq) {\n    Serial.println(\"GREEN detected\");\n  } else if (blueFreq < redFreq && blueFreq < greenFreq) {\n    Serial.println(\"BLUE detected\");\n  }\n  \n  delay(1000);\n}\n"
+            },
+            "pricing": "$3.00 - $6.00",
+            "image": "/images/resources/tcs3200-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "servo-motor",
+                "l298n-driver"
+            ],
+            "tutorials": [
+                {
+                    "title": "TCS3200 Color Sensor Guide",
+                    "url": "https://howtomechatronics.com/tutorials/arduino/arduino-color-sensing-tutorial-tcs230-tcs3200-color-sensor/"
+                }
+            ]
+        },
+        {
+            "slug": "acs712-current-sensor",
+            "name": "ACS712 Current Sensor Module",
+            "category": "Sensor",
+            "shortDesc": "Hall effect current sensor for measuring AC/DC current up to 5A, 20A, or 30A",
+            "fullDescription": "The ACS712 is a Hall effect-based linear current sensor that provides economical and precise AC or DC current sensing. Available in 5A, 20A, and 30A variants, it outputs an analog voltage proportional to the measured current. Perfect for power monitoring, motor control, and energy management systems.",
+            "specifications": {
+                "Operating Voltage": "5V DC",
+                "Measurement Type": "AC or DC current",
+                "Current Range": "±5A, ±20A, or ±30A (model dependent)",
+                "Sensitivity": "185mV/A (5A), 100mV/A (20A), 66mV/A (30A)",
+                "Output Voltage": "2.5V at 0A (midpoint)",
+                "Bandwidth": "80 kHz",
+                "Accuracy": "±1.5% at 25°C",
+                "Isolation Voltage": "2.1 kV RMS",
+                "Response Time": "5µs",
+                "Dimensions": "31 x 13 mm"
+            },
+            "pinout": {
+                "VCC": "5V power",
+                "GND": "Ground",
+                "OUT": "Analog output (0-5V)"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "OUT": "Arduino Analog Pin A0",
+                "Terminal": "Wire to be measured passes through sensor"
+            },
+            "useCases": [
+                "Power consumption monitoring",
+                "Battery management systems",
+                "Motor current monitoring",
+                "Solar panel monitoring",
+                "Over-current protection",
+                "Energy usage tracking"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Current Measurement Example",
+                "code": "// ACS712 Current Sensor (5A model)\nconst int sensorPin = A0;\nconst float sensitivity = 0.185; // 185mV/A for 5A model\nconst float vRef = 5.0;\nconst int zeroCurrentVoltage = 512; // 2.5V = 512 ADC value\n\nvoid setup() {\n  Serial.begin(9600);\n  Serial.println(\"ACS712 Current Sensor\");\n}\n\nvoid loop() {\n  // Read sensor\n  int sensorValue = analogRead(sensorPin);\n  \n  // Convert to voltage\n  float voltage = (sensorValue / 1024.0) * vRef;\n  \n  // Calculate current\n  float current = (voltage - 2.5) / sensitivity;\n  \n  Serial.print(\"Voltage: \");\n  Serial.print(voltage, 3);\n  Serial.print(\"V | Current: \");\n  Serial.print(current, 3);\n  Serial.println(\"A\");\n  \n  // Check for over-current\n  if (abs(current) > 4.5) {\n    Serial.println(\"WARNING: Over-current detected!\");\n  }\n  \n  delay(500);\n}\n"
+            },
+            "pricing": "$2.00 - $5.00",
+            "image": "/images/resources/acs712-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "oled-ssd1306",
+                "relay-module-5v"
+            ],
+            "tutorials": [
+                {
+                    "title": "ACS712 Current Sensor Tutorial",
+                    "url": "https://how2electronics.com/interfacing-acs712-current-sensor-with-arduino/"
+                }
+            ]
+        },
+        {
+            "slug": "sw420-vibration-sensor",
+            "name": "SW-420 Vibration Sensor Module",
+            "category": "Sensor",
+            "shortDesc": "Motion vibration sensor for detecting shock, movement, and vibrations in alarm systems",
+            "fullDescription": "The SW-420 vibration sensor module detects vibrations, shocks, and movements using a spring-type vibration switch. Features adjustable sensitivity and digital output that triggers when vibration is detected. Perfect for anti-theft alarms, earthquake detectors, and impact sensing applications.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Sensor Type": "Spring-type vibration switch",
+                "Output": "Digital (HIGH/LOW)",
+                "Sensitivity": "Adjustable via potentiometer",
+                "Detection Range": "Depends on sensitivity setting",
+                "Response Time": "<50ms",
+                "Indicators": "Power LED, Status LED",
+                "Operating Temperature": "-10°C to +70°C",
+                "Dimensions": "30 x 15 mm"
+            },
+            "pinout": {
+                "VCC": "Power (3.3V - 5V)",
+                "GND": "Ground",
+                "DO": "Digital output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "DO": "Arduino Digital Pin D2"
+            },
+            "useCases": [
+                "Anti-theft alarm systems",
+                "Earthquake early warning",
+                "Impact detection devices",
+                "Machinery vibration monitoring",
+                "Package tampering detection",
+                "Vehicle security alarms"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Vibration Alarm System",
+                "code": "// SW-420 Vibration Sensor Alarm\nconst int vibrationPin = 2;\nconst int alarmPin = 9;\nconst int ledPin = 13;\n\nvolatile boolean vibrationDetected = false;\n\nvoid setup() {\n  pinMode(vibrationPin, INPUT);\n  pinMode(alarmPin, OUTPUT);\n  pinMode(ledPin, OUTPUT);\n  \n  Serial.begin(9600);\n  Serial.println(\"Vibration Alarm System Active\");\n  \n  // Attach interrupt\n  attachInterrupt(digitalPinToInterrupt(vibrationPin), vibrationISR, RISING);\n}\n\nvoid vibrationISR() {\n  vibrationDetected = true;\n}\n\nvoid loop() {\n  if (vibrationDetected) {\n    Serial.println(\"VIBRATION DETECTED!\");\n    \n    // Activate alarm\n    for (int i = 0; i < 10; i++) {\n      digitalWrite(alarmPin, HIGH);\n      digitalWrite(ledPin, HIGH);\n      delay(100);\n      digitalWrite(alarmPin, LOW);\n      digitalWrite(ledPin, LOW);\n      delay(100);\n    }\n    \n    vibrationDetected = false;\n    Serial.println(\"System reset\");\n  }\n  \n  delay(100);\n}\n"
+            },
+            "pricing": "$1.00 - $2.50",
+            "image": "/images/resources/sw420-vibration.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "pir-sensor",
+                "relay-module-5v"
+            ],
+            "tutorials": [
+                {
+                    "title": "SW-420 Vibration Sensor Guide",
+                    "url": "https://arduinogetstarted.com/tutorials/arduino-vibration-sensor"
+                }
+            ]
+        },
+        {
+            "slug": "rain-sensor-module",
+            "name": "Rain Sensor Module (FC-37 / YL-83)",
+            "category": "Sensor",
+            "shortDesc": "Water detection sensor for rain detection, irrigation control, and moisture sensing",
+            "fullDescription": "The rain sensor module detects water droplets and moisture levels on its sensing board. Features both analog output (intensity of rain) and digital output (threshold detection) with adjustable sensitivity. Essential for automatic window closers, irrigation systems, and weather monitoring.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Sensing Board": "Nickel-plated PCB with conductive traces",
+                "Output": "Analog (0-5V) and Digital (HIGH/LOW)",
+                "Sensitivity": "Adjustable via potentiometer",
+                "Module Size": "30 x 16 mm",
+                "Sensing Board": "60 x 25 mm",
+                "Operating Temperature": "-10°C to +70°C",
+                "Comparator": "LM393"
+            },
+            "pinout": {
+                "VCC": "Power (3.3V - 5V)",
+                "GND": "Ground",
+                "AO": "Analog output",
+                "DO": "Digital output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "AO": "Arduino Analog Pin A0",
+                "DO": "Arduino Digital Pin D3",
+                "Sensor": "Connect to module via 3.5mm jack or wire"
+            },
+            "useCases": [
+                "Automatic window closers",
+                "Smart irrigation systems",
+                "Roof leak detection",
+                "Weather monitoring stations",
+                "Car automatic sunroof closer",
+                "Outdoor equipment protection"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Rain Detection System",
+                "code": "// Rain Sensor Module\nconst int rainAnalog = A0;\nconst int rainDigital = 3;\nconst int alertPin = 8;\n\nvoid setup() {\n  pinMode(rainDigital, INPUT);\n  pinMode(alertPin, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"Rain Detection System Active\");\n}\n\nvoid loop() {\n  int rainValue = analogRead(rainAnalog);\n  int rainDetected = digitalRead(rainDigital);\n  \n  // Convert analog to percentage (inversed: less resistance = more water)\n  int wetness = map(rainValue, 1023, 0, 0, 100);\n  wetness = constrain(wetness, 0, 100);\n  \n  Serial.print(\"Rain Intensity: \");\n  Serial.print(wetness);\n  Serial.print(\"%\");\n  \n  if (rainDetected == LOW) {\n    Serial.println(\" - RAIN DETECTED!\");\n    digitalWrite(alertPin, HIGH);\n    // Trigger actions: close windows, stop irrigation, etc.\n  } else {\n    Serial.println(\" - DRY\");\n    digitalWrite(alertPin, LOW);\n  }\n  \n  delay(1000);\n}\n"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/rain-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "soil-moisture-yl69",
+                "relay-module-5v"
+            ],
+            "tutorials": [
+                {
+                    "title": "Rain Sensor Tutorial",
+                    "url": "https://lastminuteengineers.com/rain-sensor-arduino-tutorial/"
+                }
+            ]
+        },
+        {
+            "slug": "flame-sensor-module",
+            "name": "Flame Sensor Module (IR-based)",
+            "category": "Sensor",
+            "shortDesc": "Infrared flame detection sensor for fire alarm systems and safety applications",
+            "fullDescription": "The flame sensor module uses an infrared photodiode to detect flames by sensing the specific wavelengths emitted by fire (760nm-1100nm). Features adjustable sensitivity and can detect flames up to 1 meter away. Essential for fire alarm systems, robot firefighting, and industrial safety applications.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Detection Method": "Infrared (IR) photodiode",
+                "Detection Range": "760nm - 1100nm wavelength",
+                "Distance": "Up to 1 meter (depends on flame size)",
+                "Detection Angle": "~60 degrees",
+                "Output": "Analog and Digital",
+                "Sensitivity": "Adjustable via potentiometer",
+                "Response Time": "<15ms",
+                "Indicators": "Power LED, Detection LED",
+                "Dimensions": "30 x 15 mm"
+            },
+            "pinout": {
+                "VCC": "Power (3.3V - 5V)",
+                "GND": "Ground",
+                "AO": "Analog output",
+                "DO": "Digital output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "AO": "Arduino Analog Pin A0",
+                "DO": "Arduino Digital Pin D4"
+            },
+            "useCases": [
+                "Fire alarm and detection systems",
+                "Robot firefighting competitions",
+                "Industrial safety monitoring",
+                "Gas burner flame monitoring",
+                "Automatic fire extinguisher trigger",
+                "Warehouse fire detection"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Fire Alarm System",
+                "code": "// Flame Sensor Fire Alarm\nconst int flameAnalog = A0;\nconst int flameDigital = 4;\nconst int buzzerPin = 9;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(flameDigital, INPUT);\n  pinMode(buzzerPin, OUTPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"Fire Alarm System Active\");\n}\n\nvoid loop() {\n  int flameValue = analogRead(flameAnalog);\n  int flameDetected = digitalRead(flameDigital);\n  \n  Serial.print(\"Flame Intensity: \");\n  Serial.print(flameValue);\n  \n  if (flameDetected == LOW) {\n    // Flame detected!\n    Serial.println(\" - FIRE DETECTED!\");\n    \n    // Activate alarm\n    for (int i = 0; i < 20; i++) {\n      digitalWrite(buzzerPin, HIGH);\n      digitalWrite(ledPin, HIGH);\n      delay(50);\n      digitalWrite(buzzerPin, LOW);\n      digitalWrite(ledPin, LOW);\n      delay(50);\n    }\n  } else {\n    Serial.println(\" - Normal\");\n    digitalWrite(buzzerPin, LOW);\n    digitalWrite(ledPin, LOW);\n  }\n  \n  delay(500);\n}\n"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/flame-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "mq2-gas-sensor",
+                "relay-module-5v"
+            ],
+            "tutorials": [
+                {
+                    "title": "Flame Sensor Tutorial",
+                    "url": "https://arduinogetstarted.com/tutorials/arduino-flame-sensor"
+                }
+            ]
+        },
+        {
+            "slug": "max30102-heart-rate",
+            "name": "MAX30102 Heart Rate & SpO2 Sensor",
+            "category": "Sensor",
+            "shortDesc": "Pulse oximeter sensor for measuring heart rate and blood oxygen saturation levels",
+            "fullDescription": "The MAX30102 is an integrated pulse oximetry and heart-rate monitor module. It combines red and IR LEDs with a photodetector to measure heart rate and blood oxygen saturation (SpO2) by detecting subtle changes in blood volume. Perfect for fitness wearables, medical monitoring, and health tracking devices.",
+            "specifications": {
+                "Operating Voltage": "1.8V - 5V (module usually 3.3V/5V compatible)",
+                "Interface": "I2C (SCL, SDA)",
+                "I2C Address": "0x57",
+                "LEDs": "Red (660nm) and IR (880nm)",
+                "Photodetector": "High sensitivity photodiode",
+                "Heart Rate Range": "30-240 BPM",
+                "SpO2 Range": "0-100%",
+                "Resolution": "16-bit ADC",
+                "Sample Rate": "Up to 3200 samples/second",
+                "Power Consumption": "Typical <1mW (ultra-low power)",
+                "Dimensions": "14 x 10 mm (module)"
+            },
+            "pinout": {
+                "VIN": "3.3V - 5V power",
+                "GND": "Ground",
+                "SCL": "I2C clock",
+                "SDA": "I2C data",
+                "INT": "Interrupt (optional)"
+            },
+            "wiring": {
+                "VIN": "Arduino 5V or 3.3V",
+                "GND": "Arduino GND",
+                "SCL": "Arduino A5 (Uno) or Pin 21 (Mega)",
+                "SDA": "Arduino A4 (Uno) or Pin 20 (Mega)"
+            },
+            "useCases": [
+                "Fitness trackers and smartwatches",
+                "Medical heart rate monitors",
+                "SpO2 blood oxygen measurement",
+                "Sleep tracking devices",
+                "Stress level monitoring",
+                "Pulse detection systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Heart Rate & SpO2 Reading",
+                "code": "// Requires MAX30105 library (works with MAX30102)\n#include <Wire.h>\n#include <MAX30105.h>\n#include <heartRate.h>\n\nMAX30105 particleSensor;\n\nconst byte RATE_SIZE = 4;\nbyte rates[RATE_SIZE];\nbyte rateSpot = 0;\nlong lastBeat = 0;\nfloat beatsPerMinute;\nint beatAvg;\n\nvoid setup() {\n  Serial.begin(115200);\n  \n  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {\n    Serial.println(\"MAX30102 not found!\");\n    while (1);\n  }\n  \n  particleSensor.setup();\n  particleSensor.setPulseAmplitudeRed(0x0A);\n  particleSensor.setPulseAmplitudeGreen(0);\n}\n\nvoid loop() {\n  long irValue = particleSensor.getIR();\n  \n  if (checkForBeat(irValue) == true) {\n    long delta = millis() - lastBeat;\n    lastBeat = millis();\n    \n    beatsPerMinute = 60 / (delta / 1000.0);\n    \n    if (beatsPerMinute < 255 && beatsPerMinute > 20) {\n      rates[rateSpot++] = (byte)beatsPerMinute;\n      rateSpot %= RATE_SIZE;\n      \n      beatAvg = 0;\n      for (byte x = 0; x < RATE_SIZE; x++)\n        beatAvg += rates[x];\n      beatAvg /= RATE_SIZE;\n    }\n  }\n  \n  Serial.print(\"IR=\");\n  Serial.print(irValue);\n  Serial.print(\" BPM=\");\n  Serial.print(beatsPerMinute);\n  Serial.print(\" Avg BPM=\");\n  Serial.println(beatAvg);\n  \n  if (irValue < 50000)\n    Serial.println(\" No finger detected\");\n}\n"
+            },
+            "pricing": "$4.00 - $8.00",
+            "image": "/images/resources/max30102-sensor.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "oled-ssd1306",
+                "mpu6050-imu"
+            ],
+            "tutorials": [
+                {
+                    "title": "MAX30102 Tutorial",
+                    "url": "https://lastminuteengineers.com/max30102-pulse-oximeter-heart-rate-sensor-arduino-tutorial/"
+                },
+                {
+                    "title": "SparkFun MAX30105 Library",
+                    "url": "https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library"
+                }
+            ]
+        },
+        {
+            "slug": "r307-fingerprint",
+            "name": "R307 Optical Fingerprint Scanner",
+            "category": "Sensor",
+            "shortDesc": "Optical fingerprint recognition module for biometric security and access control",
+            "fullDescription": "The R307 is an optical fingerprint scanner module with built-in image processing and template matching. Can store up to 1000 fingerprints in internal flash memory with fast recognition speed (<0.5s). Features UART communication and is perfect for door locks, safes, and biometric attendance systems.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5V DC",
+                "Interface": "UART (TTL serial)",
+                "Baud Rate": "9600 - 115200 bps (default 57600)",
+                "Fingerprint Capacity": "1000 fingerprints",
+                "False Accept Rate (FAR)": "<0.001%",
+                "False Reject Rate (FRR)": "<1%",
+                "Search Time": "<0.5 seconds",
+                "Image Capture Time": "<0.3 seconds",
+                "Resolution": "500 DPI",
+                "Sensor Type": "Optical",
+                "Operating Temperature": "-20°C to +60°C",
+                "Dimensions": "56 x 20 x 21 mm"
+            },
+            "pinout": {
+                "VCC": "3.3V - 5V power",
+                "GND": "Ground",
+                "TX": "Serial transmit",
+                "RX": "Serial receive",
+                "TOUCH": "Touch detection output (optional)",
+                "3.3V": "3.3V output (optional)"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "TX": "Arduino RX (Pin 2 with SoftwareSerial)",
+                "RX": "Arduino TX (Pin 3 with SoftwareSerial)"
+            },
+            "useCases": [
+                "Biometric door locks",
+                "Safe and vault access control",
+                "Attendance systems",
+                "Computer login authentication",
+                "Payment verification",
+                "Smart home security"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Fingerprint Enrollment & Verification",
+                "code": "// Requires Adafruit_Fingerprint library\n#include <Adafruit_Fingerprint.h>\n#include <SoftwareSerial.h>\n\nSoftwareSerial mySerial(2, 3); // RX, TX\nAdafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);\n\nvoid setup() {\n  Serial.begin(9600);\n  finger.begin(57600);\n  \n  if (finger.verifyPassword()) {\n    Serial.println(\"Fingerprint sensor found!\");\n  } else {\n    Serial.println(\"Sensor not found!\");\n    while (1);\n  }\n  \n  Serial.print(\"Sensor contains \");\n  Serial.print(finger.templateCount);\n  Serial.println(\" templates\");\n}\n\nvoid loop() {\n  Serial.println(\"Place finger...\");\n  int p = finger.getImage();\n  \n  if (p != FINGERPRINT_OK) {\n    delay(50);\n    return;\n  }\n  \n  p = finger.image2Tz();\n  if (p != FINGERPRINT_OK) return;\n  \n  p = finger.fingerFastSearch();\n  if (p == FINGERPRINT_OK) {\n    Serial.print(\"Found ID #\");\n    Serial.print(finger.fingerID);\n    Serial.print(\" with confidence \");\n    Serial.println(finger.confidence);\n    Serial.println(\"ACCESS GRANTED!\");\n  } else {\n    Serial.println(\"ACCESS DENIED!\");\n  }\n  \n  delay(1000);\n}\n"
+            },
+            "pricing": "$8.00 - $15.00",
+            "image": "/images/resources/r307-fingerprint.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "oled-ssd1306",
+                "relay-module-5v"
+            ],
+            "tutorials": [
+                {
+                    "title": "R307 Fingerprint Module Tutorial",
+                    "url": "https://lastminuteengineers.com/optical-fingerprint-sensor-arduino-tutorial/"
+                },
+                {
+                    "title": "Adafruit Fingerprint Library",
+                    "url": "https://github.com/adafruit/Adafruit-Fingerprint-Sensor-Library"
+                }
+            ]
+        },
+        {
+            "slug": "hx711-load-cell",
+            "name": "HX711 Load Cell Amplifier + Load Cell",
+            "category": "Sensor",
+            "shortDesc": "24-bit ADC for precision weight measurement with strain gauge load cells",
+            "fullDescription": "The HX711 is a precision 24-bit analog-to-digital converter designed specifically for weighing scales and load cell amplification. When combined with a strain gauge load cell (available in 1kg, 5kg, 10kg, 20kg, 50kg variants), it provides accurate weight measurements. Perfect for digital scales, force measurement, and industrial weighing applications.",
+            "specifications": {
+                "ADC Resolution": "24-bit",
+                "Channels": "2 differential inputs",
+                "Gain": "32, 64, or 128 (selectable)",
+                "Output Data Rate": "10Hz or 80Hz",
+                "Operating Voltage": "2.6V - 5.5V",
+                "Interface": "2-wire (CLK, DOUT)",
+                "Load Cell Input": "Differential (E+, E-, A+, A-, B+, B-)",
+                "Power-down Mode": "<1µA",
+                "Load Cell Types": "Compatible with 1kg to 200kg+ load cells",
+                "Dimensions": "33 x 13 mm (module)"
+            },
+            "pinout": {
+                "VCC": "2.6V - 5V power",
+                "GND": "Ground",
+                "DT (DOUT)": "Data output",
+                "SCK": "Clock input",
+                "E+": "Excitation positive (to load cell red)",
+                "E-": "Excitation negative (to load cell black)",
+                "A+": "Signal positive (to load cell white)",
+                "A-": "Signal negative (to load cell green/blue)"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "DT": "Arduino Digital Pin 3",
+                "SCK": "Arduino Digital Pin 2",
+                "Load Cell": "Red->E+, Black->E-, White->A+, Green->A-"
+            },
+            "useCases": [
+                "Digital weighing scales",
+                "Industrial weight measurement",
+                "Force and pressure sensing",
+                "Silo and tank level monitoring",
+                "Agricultural yield monitoring",
+                "Package sorting systems"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Digital Scale Example",
+                "code": "// Requires HX711 library\n#include <HX711.h>\n\n#define DOUT_PIN 3\n#define SCK_PIN 2\n\nHX711 scale;\n\n// Calibration factor (adjust after calibration)\nfloat calibration_factor = -7050;\n\nvoid setup() {\n  Serial.begin(9600);\n  Serial.println(\"HX711 Digital Scale\");\n  \n  scale.begin(DOUT_PIN, SCK_PIN);\n  \n  Serial.println(\"Calibrating...\");\n  scale.set_scale(calibration_factor);\n  scale.tare(); // Reset scale to 0\n  \n  Serial.println(\"Place known weight for calibration\");\n}\n\nvoid loop() {\n  Serial.print(\"Weight: \");\n  Serial.print(scale.get_units(10), 2); // Average of 10 readings\n  Serial.println(\" grams\");\n  \n  // Tare when 't' is pressed\n  if (Serial.available()) {\n    char command = Serial.read();\n    if (command == 't' || command == 'T') {\n      scale.tare();\n      Serial.println(\"Scale tared\");\n    }\n  }\n  \n  delay(500);\n}\n\n/* Calibration Process:\n1. Place empty container and tare\n2. Place known weight (e.g., 100g)\n3. Adjust calibration_factor until reading is correct\n4. Save calibration_factor for future use\n*/\n"
+            },
+            "pricing": "$3.00 - $10.00 (depends on load cell capacity)",
+            "image": "/images/resources/hx711-loadcell.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32",
+                "Raspberry Pi"
+            ],
+            "relatedComponents": [
+                "oled-ssd1306",
+                "lcd-16x2"
+            ],
+            "tutorials": [
+                {
+                    "title": "HX711 Load Cell Tutorial",
+                    "url": "https://randomnerdtutorials.com/arduino-load-cell-hx711/"
+                },
+                {
+                    "title": "HX711 Library",
+                    "url": "https://github.com/bogde/HX711"
+                }
+            ]
+        },
+        {
+            "slug": "ky-026-flame-digital",
+            "name": "KY-026 Flame Sensor Module",
+            "category": "Sensor",
+            "shortDesc": "IR flame detection sensor with both analog and digital output for fire safety",
+            "fullDescription": "The KY-026 is an infrared-based flame detection sensor module that can detect flames and light sources within the infrared spectrum (760-1100nm). Features adjustable sensitivity potentiometer, dual output modes, and can detect flames up to 80cm away. Ideal for robot firefighting and fire alarm applications.",
+            "specifications": {
+                "Operating Voltage": "3.3V - 5.5V DC",
+                "Detection Wavelength": "760nm - 1100nm (IR)",
+                "Detection Range": "20cm - 80cm (adjustable)",
+                "Detection Angle": "Approximately 60°",
+                "Output": "Analog (0-5V) and Digital (HIGH/LOW)",
+                "Sensitivity": "Adjustable via trim potentiometer",
+                "Indicators": "Power LED, Detection LED",
+                "Operating Temperature": "−25°C to +85°C",
+                "Dimensions": "38 x 15 mm"
+            },
+            "pinout": {
+                "VCC": "Power (3.3V - 5V)",
+                "GND": "Ground",
+                "DO": "Digital output",
+                "AO": "Analog output"
+            },
+            "wiring": {
+                "VCC": "Arduino 5V",
+                "GND": "Arduino GND",
+                "DO": "Arduino Digital Pin D5",
+                "AO": "Arduino Analog Pin A1"
+            },
+            "useCases": [
+                "Fire detection and alarm systems",
+                "Robot firefighting competitions",
+                "Flame monitoring in industrial burners",
+                "Automatic fire extinguisher activation",
+                "Safety systems for workshops",
+                "Smart home fire protection"
+            ],
+            "codeSnippet": {
+                "language": "cpp",
+                "title": "Advanced Flame Detection",
+                "code": "// KY-026 Flame Sensor Module\nconst int flameAnalog = A1;\nconst int flameDigital = 5;\nconst int alarmPin = 9;\nconst int ledPin = 13;\n\nint threshold = 600; // Analog threshold\n\nvoid setup() {\n  pinMode(flameDigital, INPUT);\n  pinMode(alarmPin, OUTPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"KY-026 Flame Detection System\");\n}\n\nvoid loop() {\n  int analogValue = analogRead(flameAnalog);\n  int digitalValue = digitalRead(flameDigital);\n  \n  Serial.print(\"Analog: \");\n  Serial.print(analogValue);\n  Serial.print(\" | Digital: \");\n  Serial.print(digitalValue);\n  \n  // Flame detection logic\n  if (digitalValue == LOW || analogValue > threshold) {\n    Serial.println(\" - FLAME DETECTED!\");\n    digitalWrite(ledPin, HIGH);\n    \n    // Sound alarm\n    tone(alarmPin, 1000, 200);\n    delay(300);\n    tone(alarmPin, 1500, 200);\n    delay(300);\n  } else {\n    Serial.println(\" - Normal\");\n    digitalWrite(ledPin, LOW);\n    noTone(alarmPin);\n  }\n  \n  delay(500);\n}\n"
+            },
+            "pricing": "$1.50 - $3.00",
+            "image": "/images/resources/ky026-flame.jpg",
+            "compatibleBoards": [
+                "Arduino Uno",
+                "Arduino Nano",
+                "Arduino Mega",
+                "ESP32"
+            ],
+            "relatedComponents": [
+                "mq2-gas-sensor",
+                "relay-module-5v"
+            ],
+            "tutorials": [
+                {
+                    "title": "KY-026 Flame Sensor Guide",
+                    "url": "https://sensorkit.joy-it.net/en/sensors/ky-026"
+                }
+            ]
+        }
+    ]
+}
