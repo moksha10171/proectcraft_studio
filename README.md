@@ -122,3 +122,10 @@ docs/          Setup, AI, hosting, architecture and validation
 [Security](SECURITY.md) · [Related tools and scope](docs/PROJECT_SCOPE.md)
 
 Licensed under [MIT](LICENSE). Maintained by B Mokshagna Reddy and contributors.
+
+## Proposed product direction
+
+The [research and UX brief](docs/PRODUCT_DIRECTION.md) and
+[delivery plan](docs/STUDIO_ROADMAP.md) describe a proposed path toward
+reproducible embedded experiments. These are design proposals, not shipped
+capabilities.
