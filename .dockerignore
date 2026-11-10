@@ -6,7 +6,8 @@
 **/.pytest_cache
 **/*.tsbuildinfo
 **/.env*
-*.db*
+**/*.db*
+**/*.sqlite*
 data/uploads
 data/studio/workspaces
 playwright-report
