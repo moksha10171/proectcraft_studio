@@ -6,7 +6,8 @@ import os
 from dotenv import load_dotenv
 
 # Repo root: backend/app -> backend -> repo
-REPO_ROOT = Path(__file__).resolve().parents[2]
+PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = PACKAGE_ROOT.parent if PACKAGE_ROOT.name == "backend" else PACKAGE_ROOT
 
 # Load env from frontend/.env.local then repo root .env.local
 for env_file in (REPO_ROOT / "frontend" / ".env.local", REPO_ROOT / ".env.local"):

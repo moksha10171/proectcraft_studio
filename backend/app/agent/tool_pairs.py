@@ -44,7 +44,7 @@ def flatten_tool_results_for_api(messages: list[AgentMessage]) -> list[dict]:
     for m in messages:
         role = m.get("role", "user")
         content = m.get("content") or ""
-        if role == "tool_result":
+        if role in ("tool_result", "tool"):
             result.append({"role": "user", "content": f"[Tool {m.get('tool', 'result')}]: {content}"})
         elif role == "tool_use":
             result.append({"role": "assistant", "content": content})

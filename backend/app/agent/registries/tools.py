@@ -25,3 +25,15 @@ INTERACTIVE_TOOLS = {t["name"] for t in TOOL_REGISTRY if t.get("interactive")}
 
 def list_tool_names() -> List[str]:
     return [t["name"] for t in TOOL_REGISTRY]
+
+_TOOL_ARGUMENTS = {
+    "GENERATE_ARDUINO": {"prompt": {"type": "string", "description": "Project requirements, board and components"}},
+    "GENERATE_RPI": {"prompt": {"type": "string", "description": "Project requirements, Pi model and GPIO components"}},
+    "FETCH_PROMPTS": {"prompt_names": {"type": "array", "items": {"type": "string"}}},
+    "READ_FILE": {"path": {"type": "string"}},
+    "WRITE_FILE": {"path": {"type": "string"}, "content": {"type": "string"}},
+    "WEB_SEARCH": {"query": {"type": "string"}},
+}
+for _tool in TOOL_REGISTRY:
+    _properties = _TOOL_ARGUMENTS.get(_tool["name"], {})
+    _tool["input_schema"] = {"type": "object", "properties": _properties, "required": list(_properties)}

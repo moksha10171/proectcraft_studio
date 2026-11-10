@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import time
 import uuid
+import re
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -40,7 +42,10 @@ def _now_ms() -> int:
 
 
 def _ws_id(raw: str | None) -> str:
-    return raw or "default"
+    value = raw or "default"
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", value):
+        raise HTTPException(400, "Workspace ID must use 1–64 letters, numbers, underscores or hyphens")
+    return value
 
 
 # ── /workspace — backward-compatible envelope ──────────────────────────────────
@@ -93,14 +98,18 @@ def put_workspace(body: WorkspacePutBody, db: Session = Depends(get_db)):
                     ws_id,
                     role="assistant" if role == "model" else role,
                     content=msg.get("text", msg.get("content", "")),
-                    type="text",
+                    type=msg.get("type", "text"),
                 )
         db.commit()
         return {"success": True}
 
     if body.section == "codebase":
-        # Persist files
+        # PUT represents a snapshot: deleted/renamed files must not reappear.
         files = data.get("files", [])
+        incoming_names = {f.get("name") for f in files}
+        for existing in repo.list_files(db, ws_id):
+            if existing.name not in incoming_names:
+                db.delete(existing)
         for f in files:
             repo.upsert_file(
                 db,
@@ -111,12 +120,19 @@ def put_workspace(body: WorkspacePutBody, db: Session = Depends(get_db)):
             )
         # Persist wiring
         wiring = data.get("wiring")
-        if wiring:
-            repo.upsert_wiring(db, ws_id, wiring)
+        if "wiring" in data:
+            if wiring:
+                repo.upsert_wiring(db, ws_id, wiring)
+            else:
+                from app.db.models import Wiring
+                existing = db.get(Wiring, ws_id)
+                if existing:
+                    db.delete(existing)
         # Persist mode
-        mode = data.get("mode")
-        if mode:
-            repo.update_workspace(db, ws_id, mode=mode)
+        mode = data.get("deviceMode", data.get("mode"))
+        if mode and mode not in ("arduino", "raspberry-pi"):
+            raise HTTPException(400, "Unsupported device mode")
+        repo.update_workspace(db, ws_id, updated_at=datetime.now(timezone.utc), **({"mode": mode} if mode else {}))
         db.commit()
         return {"success": True}
 
@@ -251,7 +267,9 @@ async def upload_file(
     dest_dir = UPLOADS_DIR / ws_id
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest_path = dest_dir / f"{uid}_{safe_name}"
-    content = await file.read()
+    content = await file.read(10 * 1024 * 1024 + 1)
+    if len(content) > 10 * 1024 * 1024:
+        raise HTTPException(413, "Uploads are limited to 10 MB")
     dest_path.write_bytes(content)
 
     # Relative path from DATA_ROOT
@@ -339,8 +357,12 @@ def _load_chat(db: Session, ws_id: str) -> dict:
     return {
         "messages": [
             {
-                "role": "model" if m.role == "assistant" else m.role,
+                "id": m.id,
+                "role": m.role,
+                "type": m.type,
+                "content": m.content,
                 "text": m.content,
+                "timestamp": int(m.created_at.replace(tzinfo=timezone.utc).timestamp() * 1000),
                 "isError": m.type == "error",
             }
             for m in msgs
@@ -356,6 +378,11 @@ def _load_chat(db: Session, ws_id: str) -> dict:
             {
                 "id": tc.id,
                 "action": tc.tool,
+                "tool": tc.tool,
+                "args": json.loads(tc.args_json or "{}"),
+                "elapsedMs": tc.elapsed_ms,
+                "result": tc.result,
+                "startedAt": int(tc.started_at.replace(tzinfo=timezone.utc).timestamp() * 1000),
                 "label": tc.label,
                 "emoji": tc.emoji,
                 "status": tc.status,
@@ -372,7 +399,7 @@ def _load_chat(db: Session, ws_id: str) -> dict:
             }
             for tc in tool_calls
         ],
-        "updatedAt": _now_ms(),
+        "updatedAt": max((int(m.created_at.replace(tzinfo=timezone.utc).timestamp() * 1000) for m in msgs), default=0),
     }
 
 
@@ -386,6 +413,8 @@ def _load_codebase(db: Session, ws_id: str, ws) -> dict:
         ],
         "wiring": wiring,
         "mode": ws.mode,
+        "deviceMode": ws.mode,
         "name": ws.name,
-        "updatedAt": _now_ms(),
+        "activeFileName": files[0].name if files else None,
+        "updatedAt": int(ws.updated_at.replace(tzinfo=timezone.utc).timestamp() * 1000) if files else 0,
     }

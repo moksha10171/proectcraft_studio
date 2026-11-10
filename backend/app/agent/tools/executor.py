@@ -231,6 +231,7 @@ async def execute_tool(
             db.commit()
             return ToolResult(
                 text=f"Wrote {name} ({len(content)} chars).",
+                files=[{"name": name, "content": content, "type": "code"}],
                 files_modified=[name],
             )
 
@@ -238,5 +239,5 @@ async def execute_tool(
             return ToolResult(text=f"Unknown tool: {tool_name}")
 
     except Exception as exc:
-        log.exception("Tool execution failed: %s %s", tool_name, exc)
-        return ToolResult(text=f"ERROR: {exc}")
+        log.warning("Tool execution failed: %s (%s)", tool_name, type(exc).__name__)
+        return ToolResult(text="ERROR: Tool failed. Check its arguments and provider configuration.")

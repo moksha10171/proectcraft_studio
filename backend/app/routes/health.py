@@ -30,7 +30,7 @@ def _has_key(name: str) -> bool:
 
 @router.get("/health")
 def health():
-    has_gemini = _has_key("GEMINI_API_KEY") or _has_key("NEXT_PUBLIC_GEMINI_API_KEY")
+    has_gemini = _has_key("GEMINI_API_KEY")
     has_groq = _has_key("GROQ_API_KEY")
     has_ai = has_gemini or has_groq
 

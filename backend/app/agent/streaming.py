@@ -9,6 +9,8 @@ from typing import Any, AsyncIterator, Dict, List, Optional
 
 import httpx
 
+from app.agent.providers import resolve_provider
+
 TEXT_FALLBACK_SUFFIX = """
 
 When native tools are unavailable, emit tool calls as:
@@ -23,7 +25,7 @@ def _encode(event: dict) -> bytes:
 
 
 def _env_gemini_key() -> str:
-    key = (os.environ.get("GEMINI_API_KEY") or os.environ.get("NEXT_PUBLIC_GEMINI_API_KEY") or "").strip()
+    key = (os.environ.get("GEMINI_API_KEY") or "").strip()
     if not key:
         raise ValueError("GEMINI_API_KEY not set in environment")
     return key
@@ -154,7 +156,7 @@ async def _stream_openai_compatible(
             "POST",
             url,
             json=payload,
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            headers={"Content-Type": "application/json", **({"Authorization": f"Bearer {api_key}"} if api_key else {})},
         ) as resp:
             if resp.status_code >= 400:
                 err = (await resp.aread()).decode("utf-8", errors="replace")[:300]
@@ -338,33 +340,17 @@ async def stream_agent(body: dict) -> AsyncIterator[bytes]:
     temperature = model_config.get("temperature", 0.2)
     max_tokens = model_config.get("maxTokens", 8192)
 
-    api_key = (model_config.get("apiKey") or "").strip()
-    has_custom = len(api_key) > 10
-
     try:
-        if has_custom:
-            provider = model_config.get("provider", "gemini")
-            model = model_config.get("model", "")
-            base_url = model_config.get("baseUrl")
-            if provider == "gemini":
-                gen = _stream_gemini(api_key, model, messages, sys_prompt, temperature, max_tokens, base_url, active_tools)
-            elif provider == "anthropic":
-                gen = _stream_anthropic(api_key, model, messages, sys_prompt, temperature, max_tokens, active_tools)
-            else:
-                default_base = (
-                    "https://api.groq.com/openai/v1"
-                    if provider == "groq"
-                    else "https://api.openai.com/v1"
-                )
-                gen = _stream_openai_compatible(
-                    api_key, model, messages, base_url or default_base, provider, temperature, max_tokens, active_tools
-                )
+        provider, api_key, model, base_url = resolve_provider(model_config)
+        if provider == "gemini":
+            gen = _stream_gemini(api_key, model, messages, sys_prompt, temperature, max_tokens, base_url, active_tools)
+        elif provider == "anthropic":
+            gen = _stream_anthropic(api_key, model, messages, sys_prompt, temperature, max_tokens, active_tools)
         else:
-            gemini_key = _env_gemini_key()
-            model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
-            gen = _stream_gemini(gemini_key, model, messages, sys_prompt, temperature, max_tokens, None, active_tools)
+            default_base = "https://api.groq.com/openai/v1" if provider == "groq" else "https://api.openai.com/v1"
+            gen = _stream_openai_compatible(api_key, model, messages, base_url or default_base, provider, temperature, max_tokens, active_tools)
 
         async for chunk in gen:
             yield chunk
     except Exception as exc:
-        yield _encode({"type": "error", "message": str(exc)})
+        yield _encode({"type": "error", "message": str(exc) if isinstance(exc, ValueError) else "AI provider connection failed. Check the URL, credentials and model."})

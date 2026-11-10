@@ -46,8 +46,8 @@ def list_projects(
     project_type: Optional[str] = None,
     featured: Optional[str] = None,
     search: Optional[str] = None,
-    limit: int = 20,
-    offset: int = 0,
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
 ):
     projects = _get_projects()
     if category:

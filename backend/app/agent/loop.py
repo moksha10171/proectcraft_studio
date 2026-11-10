@@ -7,7 +7,6 @@ everything to the DB, and streams expanded SSE events to the client.
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 import time
@@ -19,7 +18,6 @@ from sqlalchemy.orm import Session
 from app.agent.context_compressor import (
     AgentMessage,
     compress_context,
-    sanitize_and_compress,
 )
 from app.agent.device_tools import (
     DeviceMode,
@@ -33,15 +31,17 @@ from app.agent.streaming import (
     _stream_anthropic,
     _stream_gemini,
     _stream_openai_compatible,
-    _env_gemini_key,
 )
+from app.agent.providers import resolve_provider
+from app.agent.settings import AGENT_MAX_TURNS
+from app.agent.streaming import TEXT_FALLBACK_SUFFIX
 from app.agent.tool_pairs import flatten_tool_results_for_api, sanitize_tool_pairs
 from app.agent.tools.executor import INTERACTIVE_TOOLS, execute_tool
 from app.db import repo
 
 log = logging.getLogger(__name__)
 
-MAX_TURNS = 20
+MAX_TURNS = AGENT_MAX_TURNS
 AGENT_MAX_CONTEXT = 128_000
 
 
@@ -61,21 +61,10 @@ def _build_tool_specs(tool_names: list[str], provider: str) -> list[dict]:
         if name not in tool_map:
             continue
         t = tool_map[name]
-        # Build a minimal input_schema
-        properties = {}
-        for tool_full in (t,):
-            pass  # TOOL_REGISTRY already has basic metadata; use simple open schemas
         specs.append({
             "name": t["name"],
-            "description": f"{t.get('emoji', '')} {t.get('label', t['name'])}",
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "_summary": {"type": "string", "description": "Short present-tense description of what this call does"},
-                },
-                "required": ["_summary"],
-                "additionalProperties": True,
-            },
+            "description": t.get("description", t["label"]),
+            "input_schema": t["input_schema"],
         })
     return specs
 
@@ -94,21 +83,7 @@ def _build_system_prompt(device_mode: DeviceMode, override: str | None = None) -
 
 # ── Provider selection ────────────────────────────────────────────────────────
 
-def _resolve_provider(model_config: dict) -> tuple[str, str, str, str | None]:
-    """Returns (provider, api_key, model, base_url)."""
-    import os
-    api_key = (model_config.get("apiKey") or "").strip()
-    has_custom = len(api_key) > 10
-    if has_custom:
-        provider = model_config.get("provider", "gemini")
-        model = model_config.get("model", "")
-        base_url = model_config.get("baseUrl")
-        return provider, api_key, model, base_url
-    # Env key fallback
-    key = _env_gemini_key()
-    model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
-    return "gemini", key, model, None
-
+_resolve_provider = resolve_provider
 
 async def _call_provider_turn(
     provider: str,
@@ -174,14 +149,21 @@ async def run_agent_loop(
 
     history.append({"role": "user", "content": user_message})
 
-    provider, api_key, model, base_url = _resolve_provider(model_config)
-    temperature = float(model_config.get("temperature") or 0.2)
+    try:
+        provider, api_key, model, base_url = _resolve_provider(model_config)
+    except ValueError as exc:
+        yield _sse({"type": "error", "message": str(exc)})
+        return
+    temperature = float(model_config.get("temperature", 0.2))
     max_tokens = int(model_config.get("maxTokens") or 8192)
     system_override = (model_config.get("systemPromptOverride") or "").strip() or None
 
     system_prompt = _build_system_prompt(device_mode, system_override)
     tool_names = get_tools_for_device_mode(device_mode)
-    tool_specs = _build_tool_specs(tool_names, provider)
+    use_native = model_config.get("supportsNativeTools", provider != "custom")
+    tool_specs = _build_tool_specs(tool_names, provider) if use_native else None
+    if not use_native:
+        system_prompt += TEXT_FALLBACK_SUFFIX
 
     # Track pending files/wiring across turns for APPLY_CHANGES
     pending_files: list[dict] | None = None
@@ -240,12 +222,22 @@ async def run_agent_loop(
                     yield _sse(chunk)
                     return
                 elif ctype == "done":
-                    break
+                    pass  # Consume usage events emitted after a finish reason.
 
         except Exception as exc:
             log.exception("Provider stream failed on turn %d", turn_num + 1)
-            yield _sse({"type": "error", "message": str(exc)})
+            yield _sse({"type": "error", "message": "AI provider request failed. Check the provider URL, credentials and model."})
             return
+
+        if not use_native:
+            import re
+            for match in re.finditer(r"```tool_call\s*(.*?)```", streaming_text, re.DOTALL):
+                try:
+                    call = json.loads(match.group(1))
+                    if isinstance(call, dict) and call.get("tool") in tool_names and isinstance(call.get("args", {}), dict):
+                        native_tool_calls.append({"tool": call["tool"], "args": call.get("args", {}), "call_id": str(uuid.uuid4())})
+                except (ValueError, TypeError):
+                    continue
 
         # Persist assistant text turn to DB
         if streaming_text or thinking_text:
@@ -271,9 +263,6 @@ async def run_agent_loop(
             break  # Model is done
 
         # ── Execute tools ─────────────────────────────────────────────────────
-        interactive = [tc for tc in native_tool_calls if tc["tool"] in INTERACTIVE_TOOLS]
-        parallel = [tc for tc in native_tool_calls if tc["tool"] not in INTERACTIVE_TOOLS][:8]
-
         tool_result_parts: list[str] = []
 
         async def _run_one_tool(tc: dict) -> None:
@@ -350,24 +339,17 @@ async def run_agent_loop(
 
             except Exception as exc:
                 elapsed_ms = int((time.time() - started) * 1000)
-                err_text = f"ERROR: {exc}"
+                err_text = "ERROR: Tool execution failed. Check the tool arguments and provider configuration."
                 repo.finish_tool_call(db, call_id, status="error", result=err_text[:500], elapsed_ms=elapsed_ms)
                 db.commit()
                 tool_result_parts.append(err_text)
                 yield _sse({"type": "tool_call_end", "id": call_id, "tool": tool_name, "status": "error",
                             "result_preview": err_text[:200], "elapsed_ms": elapsed_ms})
 
-        # Run interactive tools serially, parallel tools concurrently
-        if interactive:
-            async for chunk in _run_one_tool(interactive[0]):
+        # A SQLAlchemy Session and pending project state must be used serially.
+        for tc in native_tool_calls[:8]:
+            async for chunk in _run_one_tool(tc):
                 yield chunk
-
-        if parallel:
-            tasks = [_collect_tool_chunks(_run_one_tool(tc)) for tc in parallel]
-            results_with_chunks = await asyncio.gather(*tasks)
-            for chunks in results_with_chunks:
-                for chunk in chunks:
-                    yield chunk
 
         # Append tool results to history
         combined = "\n\n".join(tool_result_parts)
@@ -377,11 +359,3 @@ async def run_agent_loop(
         db.commit()
 
     yield _sse({"type": "done", "stop_reason": "stop"})
-
-
-async def _collect_tool_chunks(agen: AsyncIterator[bytes]) -> list[bytes]:
-    """Collect all chunks from an async generator into a list (for parallel execution)."""
-    chunks = []
-    async for chunk in agen:
-        chunks.append(chunk)
-    return chunks

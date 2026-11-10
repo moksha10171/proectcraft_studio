@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
+from typing import Literal
+from app.routes.studio import _ws_id
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
@@ -39,8 +42,19 @@ def agent_info():
     }
 
 
+class AgentRequest(BaseModel):
+    workspaceId: str = "default"
+    message: str | None = Field(default=None, max_length=50_000)
+    modelConfig: dict = Field(default_factory=dict)
+    mode: Literal["arduino", "raspberry-pi"] = "arduino"
+    messages: list[dict] = Field(default_factory=list, max_length=500)
+    systemPrompt: str = ""
+    tools: list[dict] | None = None
+    useNativeTools: bool = False
+
+
 @router.post("")
-async def agent_post(request: Request, db: Session = Depends(get_db)):
+async def agent_post(request: AgentRequest, db: Session = Depends(get_db)):
     """Full backend agent loop — streams SSE events.
 
     New body shape (backend-owned loop):
@@ -50,7 +64,8 @@ async def agent_post(request: Request, db: Session = Depends(get_db)):
     accepted while the frontend migration completes:
       { messages, modelConfig, systemPrompt, tools, useNativeTools }
     """
-    body = await request.json()
+    body = request.model_dump()
+    _ws_id(request.workspaceId)
 
     workspace_id: str = body.get("workspaceId") or "default"
     user_message: str | None = body.get("message")

@@ -14,6 +14,8 @@ from typing import Any
 
 import httpx
 
+from app.agent.providers import resolve_provider
+
 from app.agent.registries.prompts import (
     ARDUINO_GENERATION_SCHEMA,
     DERIVE_WIRING_SCHEMA,
@@ -39,7 +41,7 @@ GenerateAction = str  # GENERATE_ARDUINO | GENERATE_RPI | VERIFY_ARDUINO | VERIF
 
 
 def _env_gemini_key() -> str:
-    key = (os.environ.get("GEMINI_API_KEY") or os.environ.get("NEXT_PUBLIC_GEMINI_API_KEY") or "").strip()
+    key = (os.environ.get("GEMINI_API_KEY") or "").strip()
     if not key:
         raise ValueError("GEMINI_API_KEY not set")
     return key
@@ -115,7 +117,7 @@ async def _call_openai_compatible(
         resp = await client.post(
             url,
             json=payload,
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            headers={"Content-Type": "application/json", **({"Authorization": f"Bearer {api_key}"} if api_key else {})},
         )
         resp.raise_for_status()
     data = resp.json()
@@ -184,7 +186,7 @@ def _basic_regex_wiring(files: list[dict]) -> dict:
 
     def _find_pin(pattern: str) -> str:
         m = re.search(pattern, code)
-        return m.group(1) if m else "2"
+        return next((g for g in m.groups() if g), "2") if m else "2"
 
     if "Servo.h" in code:
         pin = _find_pin(r'\.attach\s*\(\s*(\d+)\s*\)')
@@ -230,8 +232,6 @@ def _basic_regex_wiring(files: list[dict]) -> dict:
                 comp_type, label = "GENERIC", "Input Sensor"
         components.append({"id": _id("io"), "type": comp_type, "pin": pin_val, "label": label})
 
-    if not components:
-        components.append({"id": "def_led", "type": "LED", "pin": "13", "label": "Built-in LED"})
 
     return {"board": "Arduino Uno", "components": components}
 
@@ -247,13 +247,10 @@ async def run_generate(
 ) -> dict:
     """Run a structured generation action and return parsed JSON + usage info."""
     mc = model_config or {}
-    api_key = (mc.get("apiKey") or "").strip()
-    has_custom = len(api_key) > 10
-    provider = mc.get("provider", "gemini")
-    model = mc.get("model", "")
-    base_url = mc.get("baseUrl")
-    temperature = float(mc.get("temperature") or 0.2)
-    max_tokens = int(mc.get("maxTokens") or 8192)
+    provider, api_key, model, base_url = resolve_provider(mc)
+    has_custom = bool(mc.get("provider"))
+    temperature = float(mc.get("temperature", 0.2))
+    max_tokens = int(mc.get("maxTokens", 8192))
 
     file_ctx = build_file_context(files)
 
@@ -296,19 +293,13 @@ async def run_generate(
 
     for attempt in range(MAX_RETRIES + 1):
         try:
-            if has_custom:
-                if provider == "gemini":
-                    gemini_model = model or os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
-                    result = await _call_gemini(api_key, gemini_model, system, user_prompt, schema, base_url, temperature, max_tokens)
-                elif provider == "anthropic":
-                    result = await _call_anthropic(api_key, model, system, user_prompt, schema, temperature, max_tokens)
-                else:
-                    openai_url = base_url or ("https://api.groq.com/openai/v1" if provider == "groq" else "https://api.openai.com/v1")
-                    result = await _call_openai_compatible(api_key, model, system, user_prompt, schema, openai_url, temperature, max_tokens)
+            if provider == "gemini":
+                result = await _call_gemini(api_key, model, system, user_prompt, schema, base_url, temperature, max_tokens)
+            elif provider == "anthropic":
+                result = await _call_anthropic(api_key, model, system, user_prompt, schema, temperature, max_tokens)
             else:
-                gemini_key = _env_gemini_key()
-                gemini_model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
-                result = await _call_gemini(gemini_key, gemini_model, system, user_prompt, schema)
+                openai_url = base_url or ("https://api.groq.com/openai/v1" if provider == "groq" else "https://api.openai.com/v1")
+                result = await _call_openai_compatible(api_key, model, system, user_prompt, schema, openai_url, temperature, max_tokens)
 
             # Parse JSON response
             text = result["text"]
@@ -318,8 +309,8 @@ async def run_generate(
             parsed = json.loads(text.strip())
             return {
                 "data": parsed,
-                "provider": provider if has_custom else "gemini",
-                "model": model or gemini_model if has_custom else gemini_model,
+                "provider": provider,
+                "model": model,
                 "prompt_tokens": result.get("prompt_tokens", 0),
                 "completion_tokens": result.get("completion_tokens", 0),
                 "total_tokens": result.get("total_tokens", 0),
@@ -327,7 +318,7 @@ async def run_generate(
 
         except Exception as exc:
             last_error = exc
-            log.warning("generate attempt %d/%d failed: %s", attempt + 1, MAX_RETRIES + 1, exc)
+            log.warning("generate attempt %d/%d failed: %s", attempt + 1, MAX_RETRIES + 1, type(exc).__name__)
 
             if attempt == MAX_RETRIES:
                 # Try Groq fallback
@@ -349,7 +340,7 @@ async def run_generate(
                             "total_tokens": result.get("total_tokens", 0),
                         }
                     except Exception as groq_exc:
-                        log.warning("Groq fallback failed: %s", groq_exc)
+                        log.warning("Groq fallback failed: %s", type(groq_exc).__name__)
 
                 # Regex fallback for DERIVE_WIRING only
                 if action == "DERIVE_WIRING" and device_mode != "raspberry-pi":
@@ -357,4 +348,4 @@ async def run_generate(
                     return {"data": fallback, "provider": "fallback_regex", "model": None,
                             "prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
-                raise RuntimeError(f"All providers failed for {action}: {last_error}") from last_error
+                raise RuntimeError(f"AI generation failed for {action}. Check the provider credentials, model and response format.") from last_error
