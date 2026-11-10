@@ -1,119 +1,59 @@
 # Architecture
 
-Logen-inspired agent registries, adapted for **local-first embedded development** (Arduino / Raspberry Pi).
-
-## Comparison to Logen
-
-| Logen | ProjectCraft |
-|-------|--------------|
-| Elixir/Phoenix + Postgres | Python FastAPI + JSON files |
-| Google OAuth required | **No auth** |
-| Admin-configured models | **BYOK** in browser or `.env.local` |
-| Docker sidecar for files | Browser tool executor + local filesystem |
-| Billing / credits | None |
-
-## Repository layout
-
-```
-projectcraft/
-├── frontend/                    # Next.js 16
-│   ├── app/
-│   │   ├── studio/              # AI IDE
-│   │   └── api/
-│   │       ├── generate/        # Tool execution (generate, verify, wiring)
-│   │       ├── search/          # WEB_SEARCH
-│   │       └── chat/
-│   ├── components/studio/       # AgentPanel, ModelManager, Terminal
-│   ├── hooks/
-│   │   ├── useAgentEngine.ts    # Multi-turn agent loop (client)
-│   │   └── useStudioPersistence.ts
-│   └── lib/
-│       ├── agent/               # Tool executor, prompts, workspace-agent
-│       └── arduino-studio/      # Tool registry, types, templates
-├── backend/                     # Python FastAPI
-│   └── app/
-│       ├── agent/
-│       │   ├── streaming.py     # SSE → Gemini / OpenAI / Anthropic
-│       │   ├── settings.py
-│       │   └── registries/      # agents, tools, prompts (Logen-style)
-│       ├── persistence/         # data/studio filesystem
-│       └── routes/
-│           ├── agent.py         # POST /api/agent, GET /api/agent/info
-│           ├── studio.py        # Workspace CRUD
-│           ├── projects.py      # Project catalog
-│           └── health.py
-└── data/
-    ├── projects/
-    ├── resources/
-    └── studio/workspaces/{id}/
-        ├── chat/
-        ├── input/
-        └── codebase/
+```text
+Browser (Monaco editor, wiring preview, Models)
+  → Next.js :3000
+      → rewrites /api/agent, /api/generate, /api/compile,
+                 /api/studio/*, /api/projects/*, /api/health
+          → FastAPI :8000
+              ├─ shared AI provider selection + streaming adapters
+              ├─ agent loop → tool registry → generation/file tools
+              ├─ compiler → Arduino CLI / Python AST parser
+              └─ SQLite repository + upload files
 ```
 
-## Request flow
+The backend owns agent turns, tool execution and workspace records. Browser
+localStorage keeps model cards, drafts and fallback snapshots. BYOK credentials
+travel from the browser through the instance backend to the chosen provider;
+environment keys remain server-side. Provider credentials are not workspace data.
 
-```
-Browser (Studio)
-    │
-    ├─► POST /api/agent ──rewrite──► Python :8000/api/agent (SSE stream)
-    │       useAgentEngine parses tool_call events
-    │
-    ├─► executeTool() ──► POST /api/generate (Next.js, same origin)
-    │       returns files, wiring, verification
-    │
-    └─► PUT /api/studio/workspace ──rewrite──► Python persistence
-            + localStorage cache in browser
-```
+## AI flow
 
-## API routes (accurate)
+`POST /api/agent` accepts a workspace ID, message, mode and optional model config.
+The backend assembles domain instructions, loads saved history, streams provider
+responses and executes structured tool calls. Tool arguments are defined by the
+server registry. Tools sharing a SQLAlchemy session execute serially to preserve
+file/pending-state order. Custom models can use native tools or fenced JSON calls.
+SSE events include text deltas, tool start/end, file/wiring updates, usage and done.
 
-### Proxied to Python (`frontend/next.config.mjs` rewrites)
+`POST /api/generate` calls the same backend generation implementation for direct
+Studio actions. This avoids a second provider implementation in Next.js. Existing
+`/api/chat` and `/api/search` are legacy catalog helpers; the Studio agent does not
+use them for its provider lifecycle.
 
-| Method | Path | Handler |
-|--------|------|---------|
-| GET | `/api/health` | `routes/health.py` |
-| GET | `/api/agent/info` | Agent registry metadata |
-| POST | `/api/agent` | SSE streaming |
-| GET/PUT/DELETE | `/api/studio/workspace` | Studio persistence |
-| GET | `/api/projects/list` | Project list |
-| GET | `/api/projects/get?slug=` | Single project |
-| GET | `/api/projects/categories` | Categories |
-| GET | `/api/projects/download?slug=` | File download |
+## Compiler and visualizer
 
-### Next.js (frontend only)
+`POST /api/compile` validates source filenames and uses a temporary sketch folder
+for an allowlisted AVR board. It invokes Arduino CLI without a shell and returns
+real process status/output. Python uses AST parsing only. Neither path runs the
+uploaded program or flashes hardware. These checks require a trusted instance;
+the local compiler is not a multi-tenant execution sandbox.
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/api/generate` | GENERATE_*, VERIFY_*, DERIVE_WIRING, OPTIMIZE |
-| POST | `/api/search` | WEB_SEARCH (Serper/Brave) |
-| POST | `/api/chat` | Project chat |
-
-## Agent loop (client-side)
-
-Mirrors Logen `Logen.Logens.Registry.Logen`:
-
-1. User message → `useAgentEngine.sendMessage`
-2. `buildApiMessages` + context compression (`tool-pairs.ts`)
-3. POST `/api/agent` with tools JSON schema
-4. Stream: text_delta, tool_call, thinking, usage, done
-5. `executeTool` for each tool call (parallel non-interactive, max 8)
-6. Tool results appended → next LLM turn until no tools or max turns
-
-Workspace agent name: `projectcraft__workspace_agent`
+The visualizer is an illustrative component renderer. It is not connected to a
+CPU emulator or an electrical solver. See [scope](PROJECT_SCOPE.md).
 
 ## Persistence
 
-| Data | Browser | Server |
-|------|---------|--------|
-| Chat messages | localStorage | `data/studio/.../chat/` |
-| Input draft | localStorage | `data/studio/.../input/` |
-| Codebase | localStorage | `data/studio/.../codebase/` |
-| Model API keys (BYOK) | localStorage only | Never stored |
-| Server env keys | — | `frontend/.env.local` |
+- `data/projectcraft.db`: SQLAlchemy/SQLite workspaces, files, messages, tool calls,
+  wiring and usage records.
+- `data/uploads/`: user attachments tracked in SQLite.
+- `data/studio/workspaces/`: legacy JSON migration source, not the active store.
+- `data/projects/`: versioned example catalog; downloads reference actual source.
 
-## Future (optional)
+`PROJECTCRAFT_DATA_PATH` selects the studio location and its parent data root;
+project catalog lookup remains tied to repository source. Tests set this path to
+a temporary directory before importing the app.
 
-- Move `/api/generate` to Python backend
-- Full agent loop server-side (Logen Session GenServer equivalent)
-- Native Ollama adapter in Python
+The backend persists agent chat. Browser fallback saves do not replace the
+backend transcript on every UI update. Codebase PUT is a complete snapshot:
+removed files stay removed and null wiring clears old diagrams.

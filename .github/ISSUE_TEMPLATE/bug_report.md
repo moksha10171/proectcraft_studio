@@ -17,7 +17,7 @@ What you expected to happen.
 
 **Environment**
 - OS: [e.g. macOS 15, Ubuntu 24.04]
-- Node version: [e.g. 20.x]
+- Node version: [e.g. 22.x]
 - Browser: [e.g. Chrome 125]
 - AI provider configured: [Gemini / Groq / OpenAI / Anthropic / Ollama / BYOK]
 

@@ -1,163 +1,124 @@
-# ProjectCraft
+# ProjectCraft Studio
 
-**Open-source AI Studio for building Arduino & Raspberry Pi projects.**
+[![CI](https://github.com/moksha10171/proectcraft_studio/actions/workflows/ci.yml/badge.svg)](https://github.com/moksha10171/proectcraft_studio/actions/workflows/ci.yml)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Describe what you want to build. The AI agent generates the code, derives the wiring, verifies it,
-and shows you an interactive circuit simulation — all running locally with your own API keys.
+A self-hosted, open-source workbench for **Arduino, Raspberry Pi and IoT learning**.
+Edit embedded code, check it with local tools, visualize wiring, and ask an AI
+assistant to generate or explain a project. Designed for students, educators and
+makers who want source code, local workspaces and a choice of AI providers.
 
-No accounts. No cloud backend. No usage bills. You bring the key; you own the session.
+## What works
 
----
+- **Code editor:** Monaco editor, multiple project files and Arduino/Python modes.
+- **Compiler checks:** Arduino CLI compilation for Uno, classic Nano and Mega;
+  Python syntax checking without executing submitted scripts.
+- **AI assistance:** generate sketches/Python, explain code, review it and derive
+  wiring using Gemini, Groq, OpenAI, Anthropic or an OpenAI-compatible local server.
+- **Wiring visualization:** interactive component diagrams and illustrative animations.
+- **Local storage:** SQLite workspaces plus a browser fallback; no account required.
+- **Hardware examples:** downloadable [Arduino and Raspberry Pi sources](examples/README.md).
 
-## What it does
+**Current limits:** the visualizer is not a CPU emulator or an electrical circuit
+solver. Animations do not prove code behavior. AI review is separate from compiler
+checks. The compiler endpoint currently targets AVR boards; ESP32 references are
+available, but ESP32 builds require an external toolchain. Linux Raspberry Pi
+Python and Pico/MicroPython are different targets. Flashing, electrical validation
+and real hardware testing remain external steps.
 
-- **AI Studio** — Chat with an agent that writes, verifies, and explains embedded code (Arduino C++ / Raspberry Pi Python). Supports multi-turn tool calls: generate → verify → derive wiring → apply changes.
-- **Interactive Wiring Simulation** — Live breadboard view driven by the AI-generated wiring manifest. Components update in real time when the simulation runs.
-- **Model Manager (BYOK)** — Use any AI provider: Gemini, Groq, OpenAI, Anthropic, or a local Ollama/LM Studio instance. Keys stay in your browser.
-- **Resources** — Guides and references for Arduino, Raspberry Pi, ESP32, components, and more.
-- **Projects** — Browse and download community project templates (local JSON, no database).
+## Quick start
 
----
-
-## Quick Start
+Use Node.js 22 LTS, pnpm 10.13.1 and Python 3.12. Native development works on Linux,
+macOS and Windows with these installed. Docker is an alternative.
 
 ```bash
-git clone https://github.com/your-org/projectcraft
-cd projectcraft
-cp .env.local.example frontend/.env.local
-# Add GEMINI_API_KEY and/or GROQ_API_KEY to frontend/.env.local
-pnpm install
+git clone https://github.com/moksha10171/proectcraft_studio.git
+cd proectcraft_studio
+corepack enable
+corepack prepare pnpm@10.13.1 --activate
+pnpm install --frozen-lockfile
+pnpm setup:backend
+pnpm env:init
 pnpm dev
 ```
 
-Open http://localhost:3000 · Studio: http://localhost:3000/studio · Health: http://localhost:3000/api/health
+Open [Studio](http://localhost:3000/studio). Configure **Studio → Models** or set
+`GEMINI_API_KEY` / `GROQ_API_KEY` in `frontend/.env.local` and restart the backend.
+Editing, examples and Python syntax checks work without AI credentials. Cloud
+providers may charge for usage. Local models need their model files downloaded first.
 
-**Requirements:** Node 20+, pnpm, Python 3.12+ (for backend).
-
-`pnpm dev` starts both **frontend** (:3000) and **Python backend** (:8000).
-
-### Docker
-
-```bash
-GEMINI_API_KEY=your-key docker compose up
-```
-
-Runs `frontend` + `backend` containers. Studio data persists in `./data`.
-
----
-
-## Environment Variables
-
-| Variable | Required | Description |
-|---|---|---|
-| `GEMINI_API_KEY` | Yes* | [Get one](https://aistudio.google.com/apikey) |
-| `GROQ_API_KEY` | Yes* | [Get one](https://console.groq.com/keys) — fast, generous free tier |
-| `GEMINI_MODEL` | No | Override model (default: `gemini-2.5-flash-lite`) |
-| `GROQ_MODEL` | No | Override model (default: `llama-3.3-70b-versatile`) |
-| `NEXT_PUBLIC_APP_URL` | No | Public URL (default: `http://localhost:3000`) |
-| `NEXT_PUBLIC_APP_NAME` | No | Display name |
-| `NEXT_PUBLIC_GITHUB_URL` | No | Repo link in footer |
-| `BACKEND_URL` | No | Python API URL (default: `http://localhost:8000`) |
-| `PROJECTCRAFT_DATA_PATH` | No | Studio persistence root (default: `data/studio`) |
-| `AGENT_MAX_TURNS` | No | Max agent loop turns (default: `20`) |
-| `SERPER_API_KEY` / `BRAVE_SEARCH_API_KEY` | No | Optional WEB_SEARCH tool |
-
-\* At least one required — or configure BYOK in the in-app Model Manager without any env vars.
-
-See [.env.local.example](.env.local.example) for the full template.
-
-**Documentation:** [Setup](docs/SETUP.md) · [Deploy](docs/DEPLOY.md) · [Architecture](docs/ARCHITECTURE.md) · [Design standards](docs/DESIGN_STANDARDS.md)
-
----
-
-## Supported AI Providers
-
-Configure in **Studio → Models** tab (BYOK) or via env keys:
-
-| Provider | Model examples | Notes |
-|---|---|---|
-| **Gemini** | `gemini-2.5-flash-lite`, `gemini-2.5-pro` | Default; great code quality |
-| **Groq** | `llama-3.3-70b-versatile`, `llama-3.1-8b-instant` | Very fast, free tier |
-| **OpenAI** | `gpt-4o`, `gpt-4o-mini` | BYOK |
-| **Anthropic** | `claude-sonnet-4-6`, `claude-haiku-4-5` | Best reasoning; supports extended thinking |
-| **Ollama / local** | `qwen2.5-coder:7b`, `deepseek-coder:6.7b` | 100% offline, use custom base URL |
-
----
-
-## Architecture
-
-```
-projectcraft/
-├── frontend/          Next.js UI + AI routes (agent, generate, search)
-├── backend/           Python FastAPI (studio persistence, projects, health)
-├── data/              Shared local data
-│   ├── projects/      Project catalog JSON
-│   ├── resources/     Resource guides
-│   └── studio/        Workspace folders (chat / input / codebase)
-└── docs/              SETUP, DEPLOY, ARCHITECTURE, design standards
-```
-
-```
-Browser → Next.js :3000
-            ├── /api/generate, /api/search, …     (Next.js — tool execution)
-            └── /api/agent, /api/agent/info, /api/studio, …  (rewrite → Python :8000)
-
-Python :8000
-  ├── POST /api/agent          SSE streaming to AI providers
-  └── data/studio/workspaces/{id}/
-        ├── chat/messages.json
-        ├── input/draft.json
-        └── codebase/meta.json + wiring.json
-```
-
-Studio state is saved in **browser localStorage** and synced to **Python filesystem** under `data/studio/`.
-
-### Agent Tool Calls
-
-The agent emits structured tool calls in its responses. The frontend parses and executes them:
-
-| Tool | Action |
-|---|---|
-| `GENERATE_ARDUINO` | Generate Arduino C++ sketch + wiring manifest |
-| `GENERATE_RPI` | Generate Raspberry Pi Python script + GPIO wiring |
-| `VERIFY_ARDUINO` | Verify Arduino code quality |
-| `VERIFY_PYTHON` | Verify Python/GPIO code |
-| `DERIVE_WIRING` | Extract wiring from existing code |
-| `OPTIMIZE_CODE` | Suggest + apply optimizations |
-| `APPLY_CHANGES` | Apply pending AI-suggested edits |
-| `FETCH_PROMPTS` | Lazy-load domain prompt templates |
-| `READ_FILE` / `WRITE_FILE` / `LIST_FILES` | Project file operations |
-| `WEB_SEARCH` | Search component docs (optional Serper/Brave key) |
-
----
-
-## Adding Projects
-
-Edit `data/projects/projects.json`. Schema: `frontend/lib/projectcraft-api-types.ts`.
-Categories: `data/projects/categories.json`.
-
----
-
-## Scripts
+For real Arduino compilation, install [Arduino CLI](https://docs.arduino.cc/arduino-cli/installation/),
+put `arduino-cli` on the backend process's `PATH`, then run:
 
 ```bash
-pnpm dev              # Frontend + Python backend
-pnpm dev:frontend     # Next.js only (:3000)
-pnpm dev:backend      # Python FastAPI only (:8000)
-pnpm build            # Production frontend build
-pnpm type-check       # TypeScript check
-pnpm env:init         # Copy .env.local.example → frontend/.env.local
+arduino-cli core update-index
+arduino-cli core install arduino:avr
 ```
 
----
+The Studio Compile/Check button uses `/api/compile`. Missing tools or board cores
+produce actionable errors. See [setup](docs/SETUP.md) for board selection, libraries
+and troubleshooting.
 
-## Contributing
+## AI configuration
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
-Security issues: [SECURITY.md](SECURITY.md).
+| Provider | Configuration |
+| --- | --- |
+| Gemini | Studio → Models; or server `GEMINI_API_KEY`, optional `GEMINI_MODEL` |
+| Groq | Studio → Models; or server `GROQ_API_KEY`, optional `GROQ_MODEL` |
+| OpenAI | Studio → Models; enter your API key and an available model ID |
+| Anthropic | Studio → Models; enter your API key and an available model ID |
+| Ollama / LM Studio / compatible servers | Custom provider; base URL including `/v1`, downloaded model ID; key optional for local servers |
 
----
+Choose a model your account/server actually provides. Hosted providers require
+credentials. Custom servers can use native tools or the documented text tool-call
+fallback; model support varies. See [AI setup](docs/AI_SETUP.md).
 
-## License
+Browser-entered keys are stored in localStorage and sent to **your backend**, which
+makes provider requests. They are not confined to the browser during use. Server
+keys stay on the server; never put them in `NEXT_PUBLIC_*` variables or commit them.
+Workspace code and prompts go to the chosen provider when AI features are used.
 
-[MIT](LICENSE)
+## Self-hosting and customization
+
+```bash
+docker compose up --build
+```
+
+The UI listens at `http://localhost:3000`; Python runs on the private Compose
+network. The optional `frontend/.env.local` supplies backend credentials. Data
+persists under `./data`. The base backend image does not include Arduino CLI;
+[deployment instructions](docs/DEPLOY.md) explain how to add it.
+
+Configure the app name, public URL and repository link with build-time
+`NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_GITHUB_URL`. Theme tokens
+live in `frontend/app/globals.css`. See [deployment](docs/DEPLOY.md) for Docker,
+separate-process hosting, backups and remote model servers.
+
+This is a trusted single-user/local-network application without built-in login.
+Use authentication at your reverse proxy or a VPN for remote access.
+
+## Development
+
+```bash
+pnpm type-check
+pnpm lint
+pnpm test
+pnpm test:backend
+pnpm build
+```
+
+Tests use temporary databases and controlled provider responses; they do not spend
+API credits. See [validation](docs/VALIDATION.md) for live compiler and browser checks.
+
+```text
+frontend/      Next.js UI, browser persistence, metadata and search
+backend/       FastAPI, AI providers and tools, compiler API, SQLite persistence
+examples/      Downloadable hardware source files
+data/          Hardware references and project catalog (runtime data ignored)
+docs/          Setup, AI, hosting, architecture and validation
+```
+
+[Architecture](docs/ARCHITECTURE.md) · [Contributing](CONTRIBUTING.md) ·
+[Security](SECURITY.md) · [Related tools and scope](docs/PROJECT_SCOPE.md)
+
+Licensed under [MIT](LICENSE). Maintained by B Mokshagna Reddy and contributors.

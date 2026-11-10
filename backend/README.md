@@ -1,59 +1,25 @@
-# ProjectCraft Python Backend
+# Backend
 
-FastAPI service for **studio persistence**, **projects catalog**, **health**, and **AI agent streaming**.
+FastAPI service for AI agent/tool execution, structured generation, compiler
+checks, SQLite workspaces, attachments, project examples and health.
 
-AI tool execution (`/api/generate`, etc.) remains in the Next.js frontend for now.
-
-## Layout
-
-```
-backend/
-├── app/
-│   ├── main.py              FastAPI entry
-│   ├── config.py            Paths & CORS
-│   ├── persistence/         Studio workspace filesystem store
-│   └── routes/
-│       ├── health.py
-│       ├── studio.py        GET/PUT/DELETE /api/studio/workspace
-│       ├── projects.py      /api/projects/*
-│       └── agent.py         POST /api/agent (SSE streaming)
-├── agent/
-│   └── streaming.py         Gemini, OpenAI/Groq, Anthropic SSE
-├── requirements.txt
-└── README.md
-```
-
-## Data folders (repo root)
-
-```
-data/
-├── projects/          Project catalog JSON
-├── resources/         Resource guide JSON + images refs
-└── studio/
-    └── workspaces/
-        └── default/
-            ├── chat/
-            ├── input/
-            └── codebase/
-```
-
-## Run locally
+From the repository root:
 
 ```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+pnpm setup:backend
+pnpm dev:backend
+pnpm test:backend
 ```
 
-From repo root: `pnpm dev:backend`
+Or create `backend/.venv`, install `requirements-dev.txt`, and run
+`python -m uvicorn app.main:app --host 127.0.0.1 --port 8000` from `backend/`.
 
-API docs: http://localhost:8000/docs
+API docs: http://localhost:8000/docs. AI credentials load from
+`frontend/.env.local`, root `.env.local` or process environment. Model Manager
+can send per-request credentials instead.
 
-## Environment
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PROJECTCRAFT_DATA_PATH` | `../data/studio` | Studio persistence root |
-| `CORS_ORIGINS` | `http://localhost:3000` | Comma-separated origins |
+Data lives in `data/projectcraft.db` and `data/uploads/` (gitignored).
+`PROJECTCRAFT_DATA_PATH` overrides the studio location and parent runtime data
+root. Tests use a temporary root. Legacy JSON workspaces migrate on initial DB
+creation. See [architecture](../docs/ARCHITECTURE.md), [AI](../docs/AI_SETUP.md)
+and [deployment](../docs/DEPLOY.md).

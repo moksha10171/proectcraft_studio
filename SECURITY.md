@@ -1,43 +1,35 @@
-# Security Policy
+# Security policy
 
-## Supported Versions
+Security fixes target `main`; there are no independently supported release lines.
 
-ProjectCraft is open-source and self-hosted. Security fixes are applied to the `main` branch.
-There are no versioned releases with independent support windows — always run the latest commit.
+## Trust model
 
-## Architecture & Security Model
+ProjectCraft is a self-hosted, single-user workbench without built-in login.
+Keep the backend private and protect remote UI access with an authenticated TLS
+reverse proxy or VPN. Anyone who can reach the API can access workspaces and use
+server-configured AI credits. The compiler is a local build tool, not a sandbox
+for hostile multi-tenant submissions.
 
-ProjectCraft is a **local-first, self-hosted tool with no backend accounts**:
+API keys live in server environment variables or browser localStorage. Browser
+keys are sent to the instance backend and then the selected provider. Prompts and
+source code are sent to that provider during AI use. Do not configure provider
+URLs you do not trust. Never use `NEXT_PUBLIC_*` variables for credentials.
 
-- **No authentication** — the app is intended for local/private-network use.
-- **No stored credentials** — API keys are either in your `.env.local` (never committed) or entered
-  in the in-browser Model Manager and stored in `localStorage` on your device only.
-- **No external data collection** — your prompts, code, and API keys never leave your machine except
-  for the direct calls you make to your chosen AI provider (Gemini, Groq, OpenAI, Anthropic, or a
-  local Ollama instance).
-- **No database** — project data lives in `data/` JSON files you own.
+Workspace records use SQLite; attachments live on disk. These runtime files,
+credentials and local validation reports are ignored by Git and Docker build
+contexts. There is no built-in authentication, quota enforcement or automatic
+public-deployment isolation. No analytics integration is enabled by default.
 
-## Responsible Use
+## Reporting a vulnerability
 
-Because ProjectCraft runs locally and calls AI APIs with your own keys:
-- Protect your `.env.local` — never commit it.
-- If you deploy to a public URL (Vercel, Railway, etc.), treat the deployment as a private tool or
-  add your own access controls (e.g. Vercel password protection, network ACLs).
+Contact the maintainer at **moksha10171@gmail.com** with reproduction steps,
+affected commit and sanitized logs. Do not include keys or private workspace
+contents. Avoid public issues containing exploit details or secrets. GitHub's
+private reporting feature may also be used if enabled for this repository.
+There is no guaranteed response-time SLA.
 
-## Reporting a Vulnerability
+## Credentials and backups
 
-If you discover a security issue in this codebase (e.g. XSS, injection, data leakage), please
-report it responsibly:
-
-1. **Do not** open a public GitHub issue for security vulnerabilities.
-2. Email: **security@projectcraft.dev** (or open a [GitHub private vulnerability report](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability)
-   if that is configured for this repo).
-3. Include: a description of the issue, steps to reproduce, and any relevant code references.
-4. We will respond within 72 hours and coordinate a fix before public disclosure.
-
-## What is Out of Scope
-
-- Issues that require physical access to the machine running the app.
-- Rate-limiting bypass on a local (non-public) install — by design, rate limiting only applies when
-  you expose the app publicly.
-- Issues in AI provider APIs themselves (report those to the respective provider).
+Rotate exposed provider keys, remove them from browser storage and environment
+files, and restart the backend. Keep database/attachment backups private. See
+[deployment](docs/DEPLOY.md) for SQLite backup guidance.

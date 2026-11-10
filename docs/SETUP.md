@@ -1,108 +1,105 @@
-# Local Setup
-
-ProjectCraft is **local-first**: no accounts, no cloud auth. You run the frontend and Python backend on your machine and bring your own API keys (or use Ollama via Model Manager).
+# Local setup
 
 ## Requirements
 
-| Tool | Version |
-|------|---------|
-| Node.js | 20+ |
-| pnpm | 9+ |
-| Python | 3.10+ (3.12 recommended) |
+- Node.js 22 LTS (see `.nvmrc`) and pnpm 10.13.1 (see `packageManager`).
+- Python 3.12 with venv support.
+- Optional: Arduino CLI and `arduino:avr` core for firmware compilation.
+- Optional: an AI provider account or a local compatible model server.
 
-## 1. Clone and install
+Linux, macOS and Windows can run the frontend and backend as separate processes.
+On Debian/Ubuntu, install `python3-venv` if venv creation fails. Windows should
+have `python` on PATH; POSIX systems should have `python3`.
 
 ```bash
-git clone https://github.com/your-org/projectcraft
-cd projectcraft
-pnpm install
+git clone https://github.com/moksha10171/proectcraft_studio.git
+cd proectcraft_studio
+corepack enable
+corepack prepare pnpm@10.13.1 --activate
+pnpm install --frozen-lockfile
+pnpm setup:backend
 pnpm env:init
-```
-
-This copies `.env.local.example` → `frontend/.env.local`.
-
-## 2. Configure API keys
-
-Edit `frontend/.env.local`:
-
-```bash
-GEMINI_API_KEY=your-key-here
-# optional
-GROQ_API_KEY=your-groq-key
-```
-
-The **Python backend** reads the same file automatically (via `python-dotenv`).
-
-**Alternative — no env file:** open Studio → **Models** tab → paste your key. Keys stay in **browser localStorage** only (BYOK).
-
-**Fully offline:** Model Manager → Custom provider → Base URL `http://localhost:11434/v1`, model `qwen2.5-coder:7b` (Ollama).
-
-## 3. Start dev servers
-
-```bash
 pnpm dev
 ```
 
-| Service | URL | Role |
-|---------|-----|------|
-| Frontend (Next.js) | http://localhost:3000 | UI, tool execution (`/api/generate`) |
-| Backend (Python) | http://localhost:8000 | Agent SSE, studio persistence, projects |
+`pnpm setup:backend` creates `backend/.venv` and installs runtime plus test
+dependencies. `pnpm env:init` preserves an existing `frontend/.env.local`.
+`pnpm dev` starts both services and stops the other if one fails.
 
-Verify:
+| Service | URL |
+| --- | --- |
+| Studio | http://localhost:3000/studio |
+| Health through frontend | http://localhost:3000/api/health |
+| Backend API docs | http://localhost:8000/docs |
+
+Run only one service with `pnpm dev:frontend` or `pnpm dev:backend`. The frontend
+uses `BACKEND_URL` (default `http://localhost:8000`) for API rewrites.
+
+## Compiler and libraries
+
+Install [Arduino CLI](https://docs.arduino.cc/arduino-cli/installation/) for your
+OS/CPU, place it on the backend process's PATH and run:
 
 ```bash
-curl http://localhost:3000/api/health
-curl http://localhost:8000/api/health
-curl http://localhost:8000/api/agent/info
+arduino-cli core update-index
+arduino-cli core install arduino:avr
 ```
 
-## 4. Open Studio
+Open Studio in Arduino mode. Select Uno, classic Nano or Mega 2560 in the header.
+The Compile/Check button sends project sources to the local CLI with that FQBN.
+Compilation happens in a temporary directory. No sketch is flashed or run.
+Install any needed libraries explicitly, for example:
 
-http://localhost:3000/studio
-
-- Chat uses `/api/agent` (proxied to Python)
-- Tool calls (generate, verify, wiring) use `/api/generate` (Next.js)
-- Workspace state saves to `data/studio/workspaces/default/` + browser localStorage
-
-## Folder layout
-
-```
-projectcraft/
-├── frontend/              Next.js app
-│   ├── app/               Pages + remaining API routes
-│   ├── lib/agent/         Tool executor, prompts (client-side loop)
-│   └── .env.local         Your API keys (gitignored)
-├── backend/               Python FastAPI
-│   └── app/
-│       ├── agent/         Streaming + registries (Logen-style)
-│       ├── persistence/   Studio filesystem store
-│       └── routes/        HTTP handlers
-└── data/
-    ├── projects/          Project catalog JSON
-    ├── resources/         Learning resources
-    └── studio/            Chat, input, codebase persistence
+```bash
+arduino-cli lib install Servo
 ```
 
-## Environment variables
+The compiler never auto-installs dependencies. Missing cores and libraries are
+reported in compiler output. `GET /api/compile/info` reports CLI availability,
+Python syntax support and the supported board IDs. CLI availability alone does
+not prove cores are installed. See Arduino's
+[build process](https://docs.arduino.cc/arduino-cli/sketch-build-process/).
 
-See [.env.local.example](../.env.local.example). Key variables:
+Python mode uses Python's actual parser (`ast.parse`). It detects syntax errors
+without importing libraries or running GPIO code. Install device libraries on
+the physical Raspberry Pi before running an exported script. This mode is for
+Linux Raspberry Pi, not a claim of Pico/MicroPython emulation.
 
-| Variable | Used by | Description |
-|----------|---------|-------------|
-| `GEMINI_API_KEY` | Backend agent | Default provider when BYOK not set |
-| `GROQ_API_KEY` | Backend agent | Optional fallback |
-| `GEMINI_MODEL` | Backend | Default model name |
-| `BACKEND_URL` | Frontend rewrites | Default `http://localhost:8000` |
-| `PROJECTCRAFT_DATA_PATH` | Backend | Override studio data root |
-| `SERPER_API_KEY` / `BRAVE_SEARCH_API_KEY` | Frontend | Optional WEB_SEARCH tool |
-| `AGENT_MAX_TURNS` | Backend | Agent loop limit (default 20) |
+## AI and persistence
+
+Follow [AI setup](AI_SETUP.md). Use Studio → Models for hosted/custom providers,
+or set `GEMINI_API_KEY` / `GROQ_API_KEY` in `frontend/.env.local`. Restart the
+backend after env edits. No key is required for editing or compiler checks.
+
+SQLite stores workspaces in `data/projectcraft.db`; attachments are under
+`data/uploads/`. Browser localStorage is a fallback for drafts and snapshots.
+Older `data/studio/workspaces/` JSON is migrated on first database initialization.
+These runtime files are ignored by Git. Set `PROJECTCRAFT_DATA_PATH` to an
+absolute `.../studio` directory to place the database in its parent directory;
+project catalog JSON stays in the repository's `data/projects/`.
+
+## Checks
+
+```bash
+pnpm type-check
+pnpm lint
+pnpm test
+pnpm test:backend
+pnpm build
+```
+
+On Windows, run backend tests directly as
+`backend\.venv\Scripts\python.exe -m pytest backend/tests -q`.
+See [validation](VALIDATION.md) for integration checks.
 
 ## Troubleshooting
 
-**Health shows `needs_config`** — add `GEMINI_API_KEY` or `GROQ_API_KEY` to `frontend/.env.local`, restart `pnpm dev`.
-
-**Agent errors / connection refused** — ensure backend is running on port 8000 (`pnpm dev:backend`).
-
-**Studio state not persisting** — check `data/studio/workspaces/default/` is writable.
-
-**CORS errors** — set `CORS_ORIGINS=http://localhost:3000` in backend env (default).
+- **503 from compiler:** install Arduino CLI and restart with the right PATH.
+- **Platform not installed:** install `arduino:avr` as above.
+- **Backend connection refused:** run `pnpm setup:backend`, then `pnpm dev:backend`.
+- **Health `needs_config`:** AI env keys are absent; browser-configured/local models
+  may still work. This is not an editing/compiler failure.
+- **Model errors:** check the selected model ID and URL from the backend network.
+- **Port in use:** stop the previous dev process or configure a separate frontend
+  port, backend port and `BACKEND_URL` consistently.
+- **Local storage:** changing origin/port uses a separate browser storage namespace.

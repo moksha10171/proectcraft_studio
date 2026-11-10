@@ -1,82 +1,61 @@
-# Contributing to ProjectCraft
+# Contributing
 
-Thanks for contributing! This guide gets you set up and explains how the project works.
+ProjectCraft focuses on the embedded workflow: code editor, compiler checks,
+wiring visualization and optional AI for Arduino, Raspberry Pi and IoT devices.
+Read [scope](docs/PROJECT_SCOPE.md), [architecture](docs/ARCHITECTURE.md),
+[setup](docs/SETUP.md) and the [code of conduct](CODE_OF_CONDUCT.md).
 
-## Dev Setup
+## Setup and checks
 
 ```bash
-git clone https://github.com/your-org/projectcraft
-cd projectcraft
-cp .env.local.example .env.local
-# Add at least one AI key to .env.local (GEMINI_API_KEY or GROQ_API_KEY)
-pnpm install
+git clone https://github.com/moksha10171/proectcraft_studio.git
+cd proectcraft_studio
+pnpm install --frozen-lockfile
+pnpm setup:backend
+pnpm env:init
 pnpm dev
 ```
 
-Requires Node 20+ and pnpm. Check `.nvmrc` if you use nvm.
+Use Node.js 22, pnpm 10.13.1 and Python 3.12. Configure your own AI models only
+when needed; regression tests do not require live credentials.
 
-Health check: http://localhost:3000/api/health
+Before a pull request:
 
-## Project Structure
-
-```
-app/            Next.js App Router pages + API routes
-  api/
-    agent/      Streaming multi-turn agent endpoint (the core)
-    generate/   Single-shot generate/verify/wiring endpoint
-    chat/       Simple project chat endpoint
-components/
-  arduino-studio/   Studio IDE sub-components (editor, terminal, simulation)
-  studio/           Agent panel, Model Manager, Model Card
-lib/
-  agent/            Agent loop support (executor, prompts registry, tool-pairs, workspace-agent)
-  arduino-studio/   Types, tool registry, prompt templates, stream parser, gemini-service
-  ai-providers.ts   Gemini + Groq helpers (env-key path)
-data/
-  projects/     JSON project definitions (edit to add your own)
-  resources/    Resource metadata (hardware/software guides)
-public/         Static assets
+```bash
+pnpm type-check
+pnpm lint
+pnpm test
+pnpm test:backend
+pnpm build
 ```
 
-## How the Agent Works
+Lint reports existing warnings while blocking errors; the ESLint config documents
+the incremental adoption of newer React compiler rules. Do not add broad ignores
+to hide new correctness failures. ESLint 9 is retained for compatibility with the
+Next.js React/import plugins; test plugin compatibility before a major upgrade.
 
-The agent loop is a TypeScript port of [Logen](https://github.com/your-org/logen)'s workspace agent pattern:
+## Changes
 
-1. User types a message in the Studio Terminal.
-2. `useAgentEngine` streams from `/api/agent` (SSE) — proxied to the **Python backend**.
-3. Python `/api/agent` calls Gemini, Groq, OpenAI, or Anthropic with native **tool_use** when enabled, with text ` ```tool_call` fallback for local models.
-4. Tool definitions live in `lib/arduino-studio/tool-registry.ts`; execution in `lib/agent/tools/executor.ts`.
-5. Domain prompts are lazy-loaded via `FETCH_PROMPTS` from `lib/agent/prompts/registry.ts`.
-6. Agent config and instructions: `lib/agent/workspace-agent.ts`.
-7. Message history is sanitized via `lib/agent/tool-pairs.ts` before each LLM call.
-8. Tool results auto-apply code and wiring to the Studio editor/visualizer.
+- Branch from `main` and use concise commit messages describing the behavior.
+- Keep PRs focused. Describe the bug/feature, the result and checks actually run.
+- Test provider selection and tool argument contracts when changing AI code.
+- Check compiler exit status, not AI assertions, when claiming a build works.
+- Describe which hardware and libraries you actually tested. Do not claim
+  emulation or physical hardware validation from visual animation.
+- Add real downloadable source for catalog examples. Do not invent ratings,
+  popularity, benchmark results, URLs or community adoption.
+- Keep `.env*`, keys, databases, uploads, virtualenvs, node_modules, build output,
+  screenshots and local test reports out of commits. Source tests belong in Git.
 
-## Adding a Tool
+## Adding an AI tool
 
-1. Add it to `lib/arduino-studio/tool-registry.ts` (name, purpose, input schema, tags).
-2. Add a case in `lib/agent/tools/executor.ts`.
-3. If it needs a new prompt template, add to `lib/agent/prompts/registry.ts` and `lib/arduino-studio/prompt-templates.ts`.
-4. For generate-style tools, add an `action` in `app/api/generate/route.ts` using prompt-templates.
+Add its metadata and JSON input schema to
+`backend/app/agent/registries/tools.py`, implement it in
+`backend/app/agent/tools/executor.py`, include any device mapping and add a
+regression test. Provider calls belong in backend adapters, not UI components.
 
-## Adding a Project
+## Reporting issues
 
-Edit `data/projects/projects.json`. Schema is in `lib/projectcraft-api-types.ts`.
-
-## Code Style
-
-- TypeScript strict mode is on. `pnpm type-check` must pass.
-- No auth, no billing, no external user-data calls — keep it local-first.
-- Prefer editing existing files to adding new ones.
-- Comments only when the WHY is non-obvious.
-
-## Pull Requests
-
-1. Fork → branch from `main` → PR against `main`.
-2. Keep PRs focused — one feature or fix per PR.
-3. `pnpm build` must succeed (no type errors, no lint errors).
-4. Describe *why* in the PR description, not just what changed.
-
-## Reporting Issues
-
-Use [GitHub Issues](https://github.com/your-org/projectcraft/issues).
-For security issues, see [SECURITY.md](SECURITY.md).
+Use [GitHub Issues](https://github.com/moksha10171/proectcraft_studio/issues).
+Include reproduction steps, OS, Node/Python versions and sanitized errors.
+Follow [SECURITY.md](SECURITY.md) for private vulnerability reports.

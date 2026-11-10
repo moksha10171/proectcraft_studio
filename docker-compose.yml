@@ -1,36 +1,35 @@
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - path: frontend/.env.local
+        required: false
     environment:
-      - CORS_ORIGINS=http://localhost:3000
-      - PROJECTCRAFT_DATA_PATH=/app/data/studio
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - GROQ_API_KEY=${GROQ_API_KEY:-}
-      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash-lite}
+      PROJECTCRAFT_DATA_PATH: /app/data/studio
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
     volumes:
       - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
 
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-ProjectCraft}
+        NEXT_PUBLIC_GITHUB_URL: ${NEXT_PUBLIC_GITHUB_URL:-https://github.com/moksha10171/proectcraft_studio}
     ports:
-      - "3000:3000"
+      - "127.0.0.1:${PROJECTCRAFT_PORT:-3000}:3000"
     environment:
-      - BACKEND_URL=http://backend:8000
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - GROQ_API_KEY=${GROQ_API_KEY:-}
-      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash-lite}
-      - GROQ_MODEL=${GROQ_MODEL:-llama-3.3-70b-versatile}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME:-ProjectCraft}
-      - NEXT_PUBLIC_GITHUB_URL=${NEXT_PUBLIC_GITHUB_URL:-}
-      - NEXT_OUTPUT=standalone
+      BACKEND_URL: http://backend:8000
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
