@@ -17,7 +17,7 @@ export function Footer() {
               <Logo />
             </Link>
             <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
-              Open-source learning hub you self-host. Projects, AI Studio, and virtual testing — powered by your own API keys.
+              Self-hosted Arduino and IoT workbench. Edit code, check it locally and explore wiring with optional AI assistance.
             </p>
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
               <p className="text-sm font-medium text-foreground flex items-center gap-2">
@@ -60,11 +60,11 @@ export function Footer() {
               Self-Host
             </h3>
             <ul className="space-y-3 text-sm">
-              <li><a href="/#setup-guide" className="text-muted-foreground transition-colors hover:text-primary">Setup Guide</a></li>
+              <li><Link href="/#setup-guide" className="text-muted-foreground transition-colors hover:text-primary">Setup Guide</Link></li>
               <li><Link href="/api/health" className="text-muted-foreground transition-colors hover:text-primary">Health Check</Link></li>
               <li><Link href="/faq" className="text-muted-foreground transition-colors hover:text-primary">FAQ</Link></li>
               <li>
-                <Link href={APP_CONFIG.githubUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link href={`${APP_CONFIG.githubUrl}/issues`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground transition-colors hover:text-primary">
                   GitHub Issues
                 </Link>
               </li>

@@ -6,7 +6,7 @@
 export const APP_CONFIG = {
   name: process.env.NEXT_PUBLIC_APP_NAME || 'ProjectCraft',
   url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-  githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/projectcraft',
+  githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/moksha10171/proectcraft_studio',
 } as const
 
 export const AI_CONFIG = {

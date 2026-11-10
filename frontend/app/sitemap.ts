@@ -11,7 +11,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${baseUrl}/projects`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.9 },
         { url: `${baseUrl}/categories`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
         { url: `${baseUrl}/studio`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-        { url: `${baseUrl}/build`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
         { url: `${baseUrl}/cost-calculator`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
         { url: `${baseUrl}/search`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.6 },
         { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.3 },
@@ -19,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${baseUrl}/cookies`, lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.3 },
     ]
 
-    const resourceCategories = ['arduino', 'raspberry-pi', 'esp32', 'web-development', 'ai-development', 'components', 'hosting-deployment']
+    const resourceCategories = ['arduino', 'raspberry-pi', 'esp32', 'components']
     const resourcePages = [
         { url: `${baseUrl}/resources`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
         ...resourceCategories.map((category) => ({

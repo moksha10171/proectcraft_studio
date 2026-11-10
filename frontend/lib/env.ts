@@ -16,8 +16,7 @@ export interface EnvStatus {
 
 export function getServerEnvStatus(): EnvStatus {
   const hasGeminiKey = !!(
-    process.env.GEMINI_API_KEY?.trim() ||
-    process.env.NEXT_PUBLIC_GEMINI_API_KEY?.trim()
+    process.env.GEMINI_API_KEY?.trim()
   )
   const hasGroqKey = !!process.env.GROQ_API_KEY?.trim()
 
@@ -27,7 +26,7 @@ export function getServerEnvStatus(): EnvStatus {
     hasAiProvider: hasGeminiKey || hasGroqKey,
     appUrl: process.env.NEXT_PUBLIC_APP_URL?.trim() || 'http://localhost:3000',
     appName: process.env.NEXT_PUBLIC_APP_NAME?.trim() || 'ProjectCraft',
-    githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL?.trim() || 'https://github.com/projectcraft',
+    githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL?.trim() || 'https://github.com/moksha10171/proectcraft_studio',
     geminiModel: process.env.GEMINI_MODEL?.trim() || 'gemini-2.5-flash-lite',
     groqModel: process.env.GROQ_MODEL?.trim() || 'llama-3.3-70b-versatile',
     nodeEnv: process.env.NODE_ENV || 'development',

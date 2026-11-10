@@ -173,6 +173,15 @@ export function useAgentEngine(_systemPrompt?: string, options?: AgentEngineOpti
     const deviceMode = ctx?.deviceMode ?? 'arduino';
 
     try {
+      if (ctx) {
+        const saved = await fetch('/api/studio/workspace', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workspaceId, section: 'codebase', data: { files: ctx.files, deviceMode } }),
+          signal: abortRef.current.signal,
+        });
+        if (!saved.ok) throw new Error('Could not sync editor files to the agent workspace');
+      }
       const resp = await fetch('/api/agent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

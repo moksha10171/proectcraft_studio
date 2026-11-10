@@ -63,3 +63,21 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Runtime databases, user uploads and validation artifacts
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+data/uploads/
+coverage/
+htmlcov/
+.coverage
+playwright-report/
+test-results/
+.env.*
+!.env.local.example
+
+# Copied from the installed Monaco package before dev/build
+frontend/public/monaco/

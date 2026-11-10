@@ -110,7 +110,7 @@ export default function FAQPage() {
               <p className="text-muted-foreground">Still have questions?</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Button asChild variant="outline" className="rounded-xl">
-                  <a href="/#setup-guide">Setup Guide</a>
+                  <Link href="/#setup-guide">Setup Guide</Link>
                 </Button>
                 <Button asChild className="rounded-xl">
                   <Link href="/studio">Open Studio</Link>

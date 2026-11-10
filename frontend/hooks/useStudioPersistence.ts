@@ -109,9 +109,9 @@ export function useStudioPersistence(
         });
       }
 
-      if (codebase) {
+      if (codebase && (codebase.updatedAt ?? 0) > 0) {
         setInitialCodebase({
-          deviceMode: codebase.deviceMode as DeviceMode,
+          deviceMode: (codebase.deviceMode || 'arduino') as DeviceMode,
           activeFileName: codebase.activeFileName ?? null,
           files: (codebase.files ?? []) as ProjectFile[],
           wiring: (codebase.wiring ?? null) as WiringManifest | RaspberryPiWiringManifest,
@@ -152,7 +152,7 @@ export function useStudioPersistence(
         toolCalls: data.toolCalls,
       };
       await storeRef.current.saveChat(snapshot);
-      await syncToServer(workspaceId, 'chat', snapshot);
+      // The agent persists chat server-side; this is the browser fallback only.
     }, SAVE_DEBOUNCE_MS);
   }, [workspaceId]);
 
@@ -176,6 +176,7 @@ export function useStudioPersistence(
   }, [workspaceId]);
 
   const clearChatPersistence = useCallback(async () => {
+    if (chatTimerRef.current) clearTimeout(chatTimerRef.current);
     await storeRef.current.clearChat();
     try {
       await fetch(

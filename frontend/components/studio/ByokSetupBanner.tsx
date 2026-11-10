@@ -26,7 +26,7 @@ export default function ByokSetupBanner({
           <div className="flex-1 min-w-0">
             <p className="text-[11px] font-medium text-amber-200">Configure a model to use the agent</p>
             <p className="text-[10px] text-gray-500 mt-0.5">
-              Keys stay in your browser or server env — never sent to ProjectCraft.
+              Keys are stored in your browser or server env. Requests pass through your instance backend.
             </p>
           </div>
           {onOpenModelManager && (

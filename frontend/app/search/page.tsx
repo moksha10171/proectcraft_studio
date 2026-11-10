@@ -376,7 +376,7 @@ export default function SearchPage() {
                         <span className="font-semibold text-foreground">
                           {searchResults.length + matchedCategories.length}
                         </span>{" "}
-                        results for "{query}"
+                        results for &quot;{query}&quot;
                       </>
                     )}
                   </p>

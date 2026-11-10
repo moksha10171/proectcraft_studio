@@ -30,7 +30,7 @@ const localVerifyPythonSyntax = (code: string): { valid: boolean; errors: string
     const lines = code.split('\n');
 
     // Track indentation
-    let expectedIndent = 0;
+    const expectedIndent = 0;
     let inMultilineString = false;
 
     // Check for common Python patterns
@@ -108,8 +108,8 @@ const localVerifyArduinoSyntax = (code: string): { valid: boolean; errors: strin
     let parenCount = 0;
     let bracketCount = 0;
     let inMultiLineComment = false;
-    let inString = false;
-    let stringChar = '';
+    const inString = false;
+    const stringChar = '';
 
     // Check for required functions
     const hasSetup = /void\s+setup\s*\(\s*\)/.test(code);
@@ -901,7 +901,7 @@ const basicRegexWiring = (files: ProjectFile[]): WiringManifest => {
         components.push({ id: `ana_${idCounter++}`, type, pin: pinVal, label });
     }
 
-    if (components.length === 0) components.push({ id: 'def_led', type: ComponentType.LED, pin: 13, label: 'Built-in LED' });
+
 
     return { board: 'Arduino Uno', components };
 };
@@ -932,11 +932,11 @@ function getActiveModelConfigFromStorage(): ModelConfigPayload | undefined {
       temperature?: number;
       maxTokens?: number;
     }>;
-    const active = sections.find(s => s.isActive && s.apiKey && s.apiKey.length > 10);
-    if (!active?.apiKey) return undefined;
+    const active = sections.find(s => s.isActive && (s.provider === 'custom' ? s.baseUrl && s.model : s.apiKey?.trim()));
+    if (!active) return undefined;
     return {
       provider: active.provider || 'gemini',
-      apiKey: active.apiKey,
+      apiKey: active.apiKey || '',
       model: active.model || 'gemini-2.5-flash-lite',
       baseUrl: active.baseUrl,
       temperature: active.temperature,
@@ -961,13 +961,13 @@ const callAPI = async (payload: {
             'Content-Type': 'application/json',
             ...(payload.token ? { 'Authorization': `Bearer ${payload.token}` } : {})
         },
-        body: JSON.stringify({ ...payload, modelConfig })
+        body: JSON.stringify({ ...payload, modelConfig, deviceMode: payload.files?.some(f => f.name.endsWith('.py')) ? 'raspberry-pi' : 'arduino' })
     });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         throw new AIError(
-            errorData.error || `API Error ${response.status}`,
+            errorData.detail || errorData.error || `API Error ${response.status}`,
             response.status === 503 ? 'NETWORK_ERROR' : 'GENERATION_FAILED',
             true,
             errorData.details

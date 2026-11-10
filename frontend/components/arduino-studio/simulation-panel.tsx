@@ -1094,7 +1094,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ wiring, isRunning, ac
                                 )}
                             </div>
                         </div>
-                        <span className="text-[9px] font-mono text-gray-500 bg-white/90 px-1.5 rounded shadow-sm">TFT 1.8"</span>
+                        <span className="text-[9px] font-mono text-gray-500 bg-white/90 px-1.5 rounded shadow-sm">TFT 1.8&quot;</span>
                     </div>
                 );
             }

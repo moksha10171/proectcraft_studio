@@ -8,7 +8,7 @@ const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile'
 const REQUEST_TIMEOUT = 15000
 
 export function getGeminiApiKey(): string {
-  const key = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY
+  const key = process.env.GEMINI_API_KEY
   if (!key || key.length < 10) {
     throw new Error('GEMINI_API_KEY is not configured. Add it to your .env.local file.')
   }
@@ -21,7 +21,7 @@ export function getGroqApiKey(): string | null {
 }
 
 export function hasAiProviderConfigured(): boolean {
-  return !!(getGroqApiKey() || process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY)
+  return !!(getGroqApiKey() || process.env.GEMINI_API_KEY)
 }
 
 export interface AiMessage {

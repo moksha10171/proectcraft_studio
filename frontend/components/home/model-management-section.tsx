@@ -106,7 +106,7 @@ export function ModelManagementSection() {
                 + Add Model
               </div>
               <p className="text-[10px] text-gray-600 text-center">
-                Keys stored only in your browser localStorage
+                Keys stored in your browser; requests pass through your backend
               </p>
             </div>
 

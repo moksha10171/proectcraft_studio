@@ -39,7 +39,7 @@ import VerificationReminder from '@/components/arduino-studio/verification-remin
 import ModelCard from '@/components/studio/ModelCard';
 import AgentPanel from '@/components/studio/AgentPanel';
 import ModelManager from '@/components/studio/ModelManager';
-import { generateArduinoProject, simulateExecution, deriveWiringFromCode, verifyArduinoCode, generateRaspberryPiProject, verifyPythonCode } from '@/lib/arduino-studio/services/gemini-service';
+import { generateArduinoProject, deriveWiringFromCode, generateRaspberryPiProject } from '@/lib/arduino-studio/services/gemini-service';
 import { safeStorage } from '@/lib/utils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useAgentEngine } from '@/hooks/useAgentEngine';
@@ -66,6 +66,7 @@ export default function StudioPage() {
 
   // ===== DEVICE MODE STATE =====
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('arduino');
+  const [compileBoard, setCompileBoard] = useState('arduino:avr:uno');
   const [showModeDropdown, setShowModeDropdown] = useState(false);
 
   // ... (keeping state the same)
@@ -97,7 +98,7 @@ export default function StudioPage() {
   const [modelSections, setModelSections] = useLocalStorage<ModelSection[]>('studio-model-sections', []);
   const activeModelSection = modelSections.find(m => m.isActive) ?? null;
 
-  const activeModelConfig = activeModelSection?.apiKey && activeModelSection.apiKey.length > 10
+  const activeModelConfig = activeModelSection && (activeModelSection.provider === 'custom' ? activeModelSection.baseUrl?.trim() && activeModelSection.model.trim() : activeModelSection.apiKey.trim())
     ? {
         provider: activeModelSection.provider as 'gemini' | 'groq' | 'openai' | 'anthropic' | 'custom',
         apiKey: activeModelSection.apiKey,
@@ -143,7 +144,7 @@ export default function StudioPage() {
     if (saved) {
       setDeviceMode(saved.deviceMode);
       setFiles(saved.files);
-      setWiring(saved.wiring);
+      setWiring(saved.wiring || (saved.deviceMode === 'raspberry-pi' ? RPI_INITIAL_MANIFEST : INITIAL_MANIFEST));
       if (saved.activeFileName) setActiveFileName(saved.activeFileName);
     }
     codebaseHydratedRef.current = true;
@@ -507,11 +508,15 @@ export default function StudioPage() {
     setIsVerifying(true);
     setSimulationLogs(prev => prev + `\n[COMPILER] Verifying ${deviceMode === 'arduino' ? 'sketch' : 'Python code'}...\n`);
     try {
-      const result = deviceMode === 'arduino'
-        ? await verifyArduinoCode(files)
-        : await verifyPythonCode(files);
+      const response = await fetch('/api/compile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: files.map(({ name, content }) => ({ name, content })), deviceMode, board: compileBoard }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.detail || 'Compiler unavailable');
       setValidationResult({ valid: result.valid, errors: result.errors });
-      setSimulationLogs(prev => prev + (result.valid ? `[COMPILER] ✓ Success: ${deviceMode === 'arduino' ? 'Sketch compiled' : 'Python syntax valid'}.\n` : `[COMPILER] ✗ Failed. See problems panel.\n`));
+      setSimulationLogs(prev => prev + `[COMPILER] ${result.valid ? '✓ Passed' : '✗ Failed'} (${result.engine}).\n${result.output || ''}\n`);
 
       // Mark as verified if successful
       if (result.valid) {
@@ -520,13 +525,14 @@ export default function StudioPage() {
         const codeHash = files.map(f => f.content).join('').length.toString();
         setLastVerifiedHash(codeHash);
       }
-    } catch {
-      setSimulationLogs(prev => prev + "[COMPILER] Verification failed due to network error.\n");
-      setValidationResult({ valid: false, errors: ["Network Error: Could not verify code."] });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Compiler unavailable';
+      setSimulationLogs(prev => prev + `[COMPILER] ${message}\n`);
+      setValidationResult({ valid: false, errors: [message] });
     } finally {
       setIsVerifying(false);
     }
-  }, [isVerifying, deviceMode, files]);
+  }, [isVerifying, deviceMode, files, compileBoard]);
 
   const handleSyncWiring = useCallback(async () => {
     if (isSyncing) return;
@@ -586,7 +592,7 @@ export default function StudioPage() {
     setIsRunning(false);
     setActivePinStates({});
     setSimulationFrames([]);
-    setSimulationLogs(prev => prev + "\n[SYSTEM] Simulation stopped.\n");
+    setSimulationLogs(prev => prev + "\n[PREVIEW] Animation stopped.\n");
   }, []);
 
   const handleRunSimulation = async () => {
@@ -604,345 +610,22 @@ export default function StudioPage() {
     // Init UI
     setActiveRightTab('visualizer');
     setIsRunning(true);
-    setSimulationLogs("[SYSTEM] Initializing Physics Engine...\n");
+    setSimulationLogs("[PREVIEW] Illustrative LED animation only. Firmware is not executed; no sensor readings are generated.\n");
     setIsSerialOpen(true);
-
-    // Initialize default pin states for all components
-    const defaultPinStates: Record<string, number> = {};
-    wiring.components.forEach(comp => {
-      defaultPinStates[String(comp.pin)] = 0;
-    });
-    setActivePinStates(defaultPinStates);
-
-    setTimeout(async () => {
-      try {
-        // Raspberry Pi mode - show message and animate board
-        if (deviceMode === 'raspberry-pi') {
-          setSimulationLogs(prev => prev + "[SYSTEM] Raspberry Pi simulation mode active.\n");
-          setSimulationLogs(prev => prev + "[INFO] Python GPIO simulation started.\n");
-
-          // Generate realistic mock frames based on actual components in wiring
-          const frames: SimulationFrame[] = [];
-          const components = (wiring as RaspberryPiWiringManifest).components || [];
-
-          setSimulationLogs(prev => prev + `[INFO] Simulating ${components.length} connected components...\n`);
-
-          // Generate frames in chunks to avoid blocking UI
-          const CHUNK_SIZE = 50; // Generate 50 frames at a time
-          const TOTAL_FRAMES = 300;
-          let frameIndex = 0;
-
-          const generateChunk = () => {
-            const chunkEnd = Math.min(frameIndex + CHUNK_SIZE, TOTAL_FRAMES);
-            
-            for (let i = frameIndex; i < chunkEnd; i++) {
-              const pinStates: Record<string, number> = {};
-              let logOutput: string | null = null;
-              const timestamp = new Date(Date.now() + i * 50);
-              const timeStr = timestamp.toTimeString().split(' ')[0];
-
-              components.forEach(comp => {
-              const pin = String(comp.pin);
-
-              switch (comp.type) {
-                // GPIO Basics
-                case RaspberryPiComponentType.GPIO_LED:
-                case RaspberryPiComponentType.RGB_LED:
-                case RaspberryPiComponentType.WS2812_NEOPIXEL:
-                  pinStates[pin] = i % 20 < 10 ? 1 : 0; // Blink 1Hz
-                  break;
-                case RaspberryPiComponentType.GPIO_BUZZER:
-                  pinStates[pin] = i % 60 < 10 ? 1 : 0; // Beep every 3s
-                  break;
-                case RaspberryPiComponentType.GPIO_BUTTON:
-                case RaspberryPiComponentType.TOUCH_SENSOR:
-                  pinStates[pin] = Math.random() > 0.9 ? 1 : 0;
-                  break;
-                case RaspberryPiComponentType.GPIO_RELAY:
-                case RaspberryPiComponentType.RELAY_MODULE:
-                case RaspberryPiComponentType.SSR_RELAY:
-                  pinStates[pin] = i % 100 < 50 ? 1 : 0; // Toggle every 5s
-                  break;
-
-                // Environmental Sensors - always powered, emit readings
-                case RaspberryPiComponentType.BME280:
-                case RaspberryPiComponentType.BME680:
-                case RaspberryPiComponentType.BMP280:
-                case RaspberryPiComponentType.DHT_SENSOR:
-                case RaspberryPiComponentType.DS18B20:
-                case RaspberryPiComponentType.SHT31:
-                case RaspberryPiComponentType.AHT20:
-                  pinStates[pin] = 1;
-                  if (i % 40 === 0) {
-                    const temp = (22 + Math.random() * 5).toFixed(1);
-                    const hum = (45 + Math.random() * 20).toFixed(0);
-                    const pres = (1013 + Math.random() * 10).toFixed(0);
-                    logOutput = `[${timeStr}] ${comp.label}: T=${temp}°C H=${hum}% P=${pres}hPa\n`;
-                  }
-                  break;
-                case RaspberryPiComponentType.CCS811:
-                  pinStates[pin] = 1;
-                  if (i % 50 === 0) {
-                    const co2 = Math.floor(400 + Math.random() * 600);
-                    const tvoc = Math.floor(10 + Math.random() * 100);
-                    logOutput = `[${timeStr}] Air Quality: CO2=${co2}ppm TVOC=${tvoc}ppb\n`;
-                  }
-                  break;
-
-                // Motion Sensors
-                case RaspberryPiComponentType.PIR_SENSOR:
-                  pinStates[pin] = Math.random() > 0.95 ? 1 : 0;
-                  if (pinStates[pin] === 1) logOutput = `[${timeStr}] MOTION DETECTED!\n`;
-                  break;
-                case RaspberryPiComponentType.ULTRASONIC:
-                case RaspberryPiComponentType.VL53L0X:
-                case RaspberryPiComponentType.VL53L1X:
-                  pinStates[pin] = Math.floor(50 + Math.sin(i / 20) * 100 + 100);
-                  if (i % 30 === 0) logOutput = `[${timeStr}] Distance: ${pinStates[pin]}mm\n`;
-                  break;
-
-                // IMU Sensors
-                case RaspberryPiComponentType.MPU6050:
-                case RaspberryPiComponentType.MPU9250:
-                case RaspberryPiComponentType.ADXL345:
-                case RaspberryPiComponentType.HMC5883L:
-                  pinStates[pin] = Math.floor(Math.random() * 360);
-                  break;
-                case RaspberryPiComponentType.APDS9960:
-                  pinStates[pin] = Math.floor(Math.random() * 5); // Gesture index
-                  break;
-
-                // Motors & Actuators
-                case RaspberryPiComponentType.SERVO:
-                case RaspberryPiComponentType.PCA9685:
-                  pinStates[pin] = i % 40 < 20 ? 1 : 0;
-                  break;
-                case RaspberryPiComponentType.DC_MOTOR:
-                case RaspberryPiComponentType.STEPPER:
-                case RaspberryPiComponentType.L298N:
-                case RaspberryPiComponentType.TB6612:
-                  pinStates[pin] = 1;
-                  break;
-
-                // Displays - always on
-                case RaspberryPiComponentType.SSD1306_OLED:
-                case RaspberryPiComponentType.SH1106_OLED:
-                case RaspberryPiComponentType.LCD_I2C:
-                case RaspberryPiComponentType.ST7735_TFT:
-                case RaspberryPiComponentType.ILI9341_TFT:
-                case RaspberryPiComponentType.MAX7219_MATRIX:
-                case RaspberryPiComponentType.TM1637_7SEG:
-                case RaspberryPiComponentType.E_PAPER:
-                  pinStates[pin] = i; // Use frame index for animations
-                  break;
-
-                // Communication - connection simulation
-                case RaspberryPiComponentType.GPS_MODULE:
-                  pinStates[pin] = 1;
-                  if (i % 20 === 0) {
-                    const lat = (17.385 + Math.random() * 0.01).toFixed(6);
-                    const lon = (78.486 + Math.random() * 0.01).toFixed(6);
-                    logOutput = `[${timeStr}] GPS: ${lat},${lon} SAT:${Math.floor(6 + Math.random() * 6)}\n`;
-                  }
-                  break;
-                case RaspberryPiComponentType.RFID_RC522:
-                case RaspberryPiComponentType.PN532_NFC:
-                  pinStates[pin] = Math.random() > 0.8 ? 1 : 0;
-                  if (pinStates[pin] === 1 && i % 10 === 0) {
-                    logOutput = `[${timeStr}] Card detected: ${Math.random().toString(16).substring(2, 10).toUpperCase()}\n`;
-                  }
-                  break;
-                case RaspberryPiComponentType.NRF24L01:
-                case RaspberryPiComponentType.HC12_RADIO:
-                case RaspberryPiComponentType.LORA_SX1276:
-                  pinStates[pin] = Math.floor(Math.random() * 5); // Signal strength
-                  break;
-                case RaspberryPiComponentType.BLUETOOTH_HC05:
-                case RaspberryPiComponentType.ESP_WIFI:
-                  pinStates[pin] = Math.random() > 0.3 ? 1 : 0; // Connected status
-                  break;
-
-                // HATs
-                case RaspberryPiComponentType.SENSE_HAT:
-                case RaspberryPiComponentType.UNICORN_HAT:
-                  pinStates[pin] = i; // Animation frame
-                  break;
-                case RaspberryPiComponentType.MOTOR_HAT:
-                  pinStates[pin] = i % 3;
-                  break;
-
-                // Input
-                case RaspberryPiComponentType.KEYPAD:
-                case RaspberryPiComponentType.ROTARY_ENCODER:
-                case RaspberryPiComponentType.JOYSTICK:
-                  pinStates[pin] = i % 360;
-                  break;
-                case RaspberryPiComponentType.LOAD_CELL_HX711:
-                  pinStates[pin] = Math.floor(Math.random() * 1000);
-                  break;
-
-                // Power & RTC
-                case RaspberryPiComponentType.RTC_DS3231:
-                case RaspberryPiComponentType.RTC_DS1307:
-                case RaspberryPiComponentType.INA219:
-                case RaspberryPiComponentType.INA226:
-                  pinStates[pin] = 1;
-                  break;
-
-                // Camera
-                case RaspberryPiComponentType.PI_CAMERA:
-                case RaspberryPiComponentType.PI_CAMERA_HQ:
-                case RaspberryPiComponentType.AMG8833:
-                  pinStates[pin] = 1;
-                  break;
-
-                // ADC
-                case RaspberryPiComponentType.MCP3008:
-                case RaspberryPiComponentType.ADS1115:
-                case RaspberryPiComponentType.LDR:
-                case RaspberryPiComponentType.SOIL_MOISTURE:
-                case RaspberryPiComponentType.WATER_SENSOR:
-                case RaspberryPiComponentType.GAS_SENSOR:
-                  pinStates[pin] = Math.floor(Math.random() * 1024);
-                  break;
-
-                // Fan
-                case RaspberryPiComponentType.FAN:
-                case RaspberryPiComponentType.FAN_PWM:
-                  pinStates[pin] = 1;
-                  break;
-
-                default:
-                  // Generic handling
-                  if (String(comp.type).includes('SENSOR') || String(comp.type).includes('MODULE')) {
-                    pinStates[pin] = 1;
-                  } else {
-                    pinStates[pin] = i % 20 < 10 ? 1 : 0;
-                  }
-              }
-            });
-
-              frames.push({
-                timestamp: i * 50,
-                pinStates: pinStates,
-                serialOutput: logOutput,
-                log: null
-              });
-            }
-
-            frameIndex = chunkEnd;
-
-            // Continue generating chunks if not done
-            if (frameIndex < TOTAL_FRAMES) {
-              // Use setTimeout to yield to browser, allowing UI updates
-              setTimeout(generateChunk, 0);
-            } else {
-              // All frames generated, start playback
-              setSimulationFrames(frames);
-              let currentIndex = 0;
-              playbackTimer.current = setInterval(() => {
-                if (currentIndex >= frames.length) currentIndex = 0;
-                setActivePinStates(frames[currentIndex].pinStates || {});
-                if (frames[currentIndex].serialOutput) {
-                  setSimulationLogs(prev => prev + frames[currentIndex].serialOutput);
-                }
-                currentIndex++;
-              }, 50);
-            }
-          };
-
-          // Start generating frames
-          generateChunk();
-          return;
+    const components = wiring.components || [];
+    let lit = false;
+    const update = () => {
+      lit = !lit;
+      const states: Record<string, number> = {};
+      for (const component of components) {
+        if (String(component.type) === 'LED' || component.type === RaspberryPiComponentType.GPIO_LED) {
+          states[String(component.pin)] = lit ? 1 : 0;
         }
-
-        // If we reach here, we need to set up playback for Arduino mode
-        // (keeping existing Arduino logic below)
-
-
-        // Arduino mode - use existing wiring, skip detection if issues
-        let detectedWiring = wiring as WiringManifest;
-
-        // Only try to detect wiring if we have code files
-        const codeFiles = files.filter(f => f.type === 'code' && (f.name.endsWith('.ino') || f.name.endsWith('.h')));
-        if (codeFiles.length > 0) {
-          try {
-            setSimulationLogs(prev => prev + "[SYSTEM] Analyzing code for components...\n");
-            const result = await deriveWiringFromCode(files);
-            if (result && result.components && result.components.length > 0) {
-              detectedWiring = result;
-              setWiring(result);
-              setSimulationLogs(prev => prev + `[SYSTEM] Detected ${result.components.length} components.\n`);
-            } else {
-              setSimulationLogs(prev => prev + "[SYSTEM] No components detected in code. Using existing configuration.\n");
-            }
-          } catch (error) {
-            setSimulationLogs(prev => prev + "[WARN] Wiring detection failed. Using existing configuration.\n");
-            console.warn('Wiring detection error:', error);
-          }
-        } else {
-          setSimulationLogs(prev => prev + "[SYSTEM] No Arduino code files found. Using existing wiring.\n");
-        }
-
-        // Validate we still have components after detection
-        if (!detectedWiring.components || detectedWiring.components.length === 0) {
-          setSimulationLogs(prev => prev + "[ERROR] No components configured. Use AI to generate a circuit.\n");
-          setIsRunning(false);
-          return;
-        }
-
-        // Run simulation with detected or existing wiring
-        setSimulationLogs(prev => prev + `[SYSTEM] Starting simulation with ${detectedWiring.components.length} component(s)...\n`);
-        const result = await simulateExecution(files, detectedWiring);
-
-        if (!result.success) {
-          setSimulationLogs(prev => prev + `[ERROR] Simulation Error: ${result.error || 'Unknown error occurred'}\n`);
-          setIsRunning(false);
-          return;
-        }
-
-        if (!result.frames || result.frames.length === 0) {
-          setSimulationLogs(prev => prev + "[WARN] No simulation frames generated. Check your code and wiring configuration.\n");
-          setIsRunning(false);
-          return;
-        }
-
-        setSimulationFrames(result.frames);
-        setSimulationLogs(prev => prev + `[SYSTEM] Engine Ready. Executing ${result.frames.length} ticks...\n`);
-
-        let currentIndex = 0;
-        const STEP_TIME_MS = 50;
-
-        playbackTimer.current = setInterval(() => {
-          if (currentIndex >= result.frames.length) {
-            currentIndex = 0;
-            setSimulationLogs(prev => prev + "[SYSTEM] Loop Reset.\n");
-          }
-
-          const frame = result.frames[currentIndex];
-          setActivePinStates(frame.pinStates || {});
-
-          if (frame.serialOutput) {
-            setSimulationLogs(prev => prev + frame.serialOutput);
-          }
-
-          currentIndex++;
-
-        }, STEP_TIME_MS);
-
-      } catch (err) {
-        console.error(err);
-        setSimulationLogs(prev => prev + "\n[CRITICAL] Runtime Exception. Check console.\n");
-
-        // Fixed: Cleanup timer on error
-        if (playbackTimer.current) {
-          clearInterval(playbackTimer.current);
-          playbackTimer.current = null;
-        }
-
-        setIsRunning(false);
       }
-    }, 10);
+      setActivePinStates(states);
+    };
+    update();
+    playbackTimer.current = setInterval(update, 1000);
   };
 
   // Global Keyboard Shortcuts
@@ -1104,6 +787,16 @@ export default function StudioPage() {
                 <span className="ml-2 px-2 py-0.5 text-[10px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded uppercase tracking-wider shadow-sm">BETA</span>
               </h1>
 
+              {deviceMode === 'arduino' && <select
+                aria-label="Compiler board"
+                value={compileBoard}
+                onChange={event => setCompileBoard(event.target.value)}
+                className="ml-3 rounded border border-gray-700 bg-[#1a1a1a] px-2 py-1 text-xs text-gray-200"
+              >
+                <option value="arduino:avr:uno">Uno</option>
+                <option value="arduino:avr:nano">Nano (classic)</option>
+                <option value="arduino:avr:mega">Mega 2560</option>
+              </select>}
               {/* Mode Selector - Functional Dropdown */}
               <div className="hidden md:flex items-center ml-6 relative z-50">
                 <button
@@ -1139,6 +832,7 @@ export default function StudioPage() {
               </div>
             </div>
           </div>
+          <p className="hidden xl:block text-[11px] text-gray-400">Wiring preview is illustrative; it does not run firmware.</p>
           <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
             {/* Right Panel Toggle - Show on all screen sizes */}
             <button
@@ -1154,7 +848,7 @@ export default function StudioPage() {
             <div className="hidden md:flex items-center gap-3">
 
               <div className="flex items-center gap-1.5 px-2.5 py-1 bg-teal-500/10 rounded-full border border-teal-500/20">
-                <span className="text-teal-400 font-bold">v0.5</span>
+                <span className="text-teal-400 font-bold">v0.1</span>
               </div>
             </div>
           </div>
@@ -1405,7 +1099,7 @@ export default function StudioPage() {
                     {isRunning ? (
                       <> <Square size={10} fill="currentColor" /> Stop </>
                     ) : (
-                      <> <Play size={10} fill="currentColor" /> Run </>
+                      <> <Play size={10} fill="currentColor" /> Preview </>
                     )}
                   </button>
                 </div>
@@ -1460,7 +1154,7 @@ export default function StudioPage() {
                         <div className="pointer-events-auto bg-[#252526]/80 backdrop-blur rounded-full px-3 py-1 border border-[#333] flex items-center gap-2 shadow-sm">
                           <div className={`w-2 h-2 rounded-full ${isRunning ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-gray-500"}`}></div>
                           <span className="text-[10px] font-mono font-bold text-gray-300">
-                            {isRunning ? "SIMULATION RUNNING" : "SIMULATION STOPPED"}
+                            {isRunning ? "ILLUSTRATIVE PREVIEW" : "WIRING PREVIEW"}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">

@@ -340,7 +340,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 {project.learningOpportunities && project.learningOpportunities.length > 0 && (
                   <section className="rounded-2xl border border-border bg-card p-6">
                     <h2 className="text-xl font-bold mb-4">
-                      What You'll Learn
+                      What You&apos;ll Learn
                     </h2>
                     <ul className="grid gap-2 sm:grid-cols-2">
                       {project.learningOpportunities.map((item, index) => (
@@ -489,45 +489,29 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   </Link>
                 )}
 
-                {/* Web Development Resources - For web-based projects */}
-                {(project.technologies?.some(tech => ['React', 'Next.js', 'Node.js', 'JavaScript', 'TypeScript', 'HTML', 'CSS'].some(t => tech.includes(t))) ||
-                  project.category?.slug === 'web-development') && (
-                    <Link
-                      href="/resources/web-development"
-                      className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md touch-action-manipulation active:scale-[0.98]"
-                    >
-                      <div className="mb-2">
-                        <h3 className="font-semibold group-hover:text-primary transition-colors">Web Development</h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        React, Next.js, Node.js frameworks and tools
-                      </p>
-                    </Link>
-                  )}
-
                 {/* AI Development - Always useful */}
                 <Link
-                  href="/resources/ai-development"
+                  href="/studio"
                   className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md touch-action-manipulation active:scale-[0.98]"
                 >
                   <div className="mb-2">
-                    <h3 className="font-semibold group-hover:text-primary transition-colors">AI Coding Tools</h3>
+                    <h3 className="font-semibold group-hover:text-primary transition-colors">AI Studio</h3>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    GitHub Copilot, ChatGPT, Claude for faster development
+                    Generate and review embedded code using your configured AI provider
                   </p>
                 </Link>
 
                 {/* Hosting - Always useful for deployment */}
                 <Link
-                  href="/resources/hosting-deployment"
+                  href="/resources/esp32"
                   className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md touch-action-manipulation active:scale-[0.98]"
                 >
                   <div className="mb-2">
-                    <h3 className="font-semibold group-hover:text-primary transition-colors">Hosting & Deployment</h3>
+                    <h3 className="font-semibold group-hover:text-primary transition-colors">ESP32 & IoT</h3>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Deploy with Vercel, Netlify, Railway, and more
+                    Wi-Fi microcontroller references and connected hardware
                   </p>
                 </Link>
 

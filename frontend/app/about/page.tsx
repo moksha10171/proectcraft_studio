@@ -126,12 +126,12 @@ export default async function AboutPage() {
                 </div>
                 <h2 id="mission-heading" className="mb-4 text-2xl font-bold">Our Mission</h2>
                 <p className="leading-relaxed text-muted-foreground">
-                  ProjectCraft revolutionizes how you learn and build. We provide <strong>free access to AI-powered development tools</strong> and <strong>virtual testing environments</strong> that let you build, test, and verify your projects before spending money on hardware. Whether it's Arduino, Raspberry Pi, or web applications, you can experiment, learn, and perfect your code without any upfront investment in equipment.
+                  ProjectCraft revolutionizes how you learn and build. We provide <strong>free access to AI-powered development tools</strong> and <strong>virtual testing environments</strong> that let you build, test, and verify your projects before spending money on hardware. Whether it&apos;s Arduino, Raspberry Pi, or web applications, you can experiment, learn, and perfect your code without any upfront investment in equipment.
                 </p>
               </div>
               <div className="rounded-2xl bg-muted/50 p-8">
                 <blockquote className="text-lg font-medium italic">
-                  "Why buy hardware before you know your project works? Test everything virtually first, save money, reduce waste, and deploy with confidence."
+                  &quot;Why buy hardware before you know your project works? Test everything virtually first, save money, reduce waste, and deploy with confidence.&quot;
                 </blockquote>
               </div>
             </section>
@@ -212,7 +212,7 @@ export default async function AboutPage() {
                 </div>
                 <h2 id="build-heading" className="mb-4 text-2xl font-bold md:text-3xl">Let Us Build Your Project</h2>
                 <p className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                  Need a custom solution? Whether it's a <strong className="text-foreground">website</strong>, <strong className="text-foreground">mobile app</strong>, or <strong className="text-foreground">AI application</strong> - we will build it at your required budget and guide you towards success. Our experienced team transforms your vision into reality with professional development services.
+                  Need a custom solution? Whether it&apos;s a <strong className="text-foreground">website</strong>, <strong className="text-foreground">mobile app</strong>, or <strong className="text-foreground">AI application</strong> - we will build it at your required budget and guide you towards success. Our experienced team transforms your vision into reality with professional development services.
                 </p>
 
                 <div className="mb-8 grid gap-4 sm:grid-cols-3">

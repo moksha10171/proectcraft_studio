@@ -264,7 +264,7 @@ export default function ProjectsPage() {
     return projects.filter(p => p.difficulty === difficulty).length
   }
 
-  const FilterContent = ({ closable = false }: { closable?: boolean }) => (
+  const renderFilters = ({ closable = false }: { closable?: boolean }) => (
     <div className="space-y-6">
       {/* Category Filter */}
       <div>
@@ -377,7 +377,7 @@ export default function ProjectsPage() {
                       <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
                   ) : (
-                    <FilterContent />
+                    renderFilters({})
                   )}
                 </div>
               </aside>
@@ -448,7 +448,7 @@ export default function ProjectsPage() {
                           </div>
                         </DrawerHeader>
                         <div className="overflow-y-auto p-4 scrollbar-thin flex-1">
-                          <FilterContent closable />
+                          {renderFilters({ closable: true })}
                         </div>
                         <DrawerFooter className="border-t border-border pt-4">
                           <DrawerClose asChild>
@@ -614,7 +614,7 @@ export default function ProjectsPage() {
 
                 {/* AI Development */}
                 <Link
-                  href="/resources/ai-development"
+                  href="/studio"
                   className="group rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 touch-action-manipulation active:scale-[0.98]"
                 >
                   <div className="flex items-center gap-4 mb-3">
@@ -622,22 +622,22 @@ export default function ProjectsPage() {
                       <Bot className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">AI Coding Tools</h3>
-                      <p className="text-xs text-muted-foreground">6 AI assistants</p>
+                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">AI Studio</h3>
+                      <p className="text-xs text-muted-foreground">Your choice of provider</p>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Build 10x faster with GitHub Copilot, ChatGPT, Claude, and Cursor
+                    Generate, explain and review embedded code with your configured AI model
                   </p>
                   <div className="flex items-center text-sm font-medium text-primary">
-                    Explore AI Tools
+                    Open AI Studio
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
 
                 {/* Hosting & Deployment */}
                 <Link
-                  href="/resources/hosting-deployment"
+                  href="/resources/esp32"
                   className="group rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 touch-action-manipulation active:scale-[0.98]"
                 >
                   <div className="flex items-center gap-4 mb-3">
@@ -645,22 +645,22 @@ export default function ProjectsPage() {
                       <Cloud className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">Hosting</h3>
-                      <p className="text-xs text-muted-foreground">6 platforms</p>
+                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">ESP32 & IoT</h3>
+                      <p className="text-xs text-muted-foreground">Wi-Fi microcontrollers</p>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Deploy with Vercel, Netlify, Railway - free tiers available
+                    Explore ESP32 board references and connected hardware projects
                   </p>
                   <div className="flex items-center text-sm font-medium text-primary">
-                    Explore Hosting Options
+                    Explore ESP32 Resources
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
 
                 {/* Web Development */}
                 <Link
-                  href="/resources/web-development"
+                  href="/resources/components"
                   className="group rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 touch-action-manipulation active:scale-[0.98]"
                 >
                   <div className="flex items-center gap-4 mb-3">
@@ -668,15 +668,15 @@ export default function ProjectsPage() {
                       <Globe className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">Web Development</h3>
-                      <p className="text-xs text-muted-foreground">6 frameworks</p>
+                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">Components</h3>
+                      <p className="text-xs text-muted-foreground">Sensors and actuators</p>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    React, Next.js, Node.js, TypeScript - modern web tools
+                    Find electronic components, pin references and wiring examples
                   </p>
                   <div className="flex items-center text-sm font-medium text-primary">
-                    Explore Web Dev Resources
+                    Explore Components
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
@@ -689,7 +689,7 @@ export default function ProjectsPage() {
                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-colors touch-action-manipulation active:scale-[0.98]"
                 >
                   <BookOpen className="h-5 w-5" />
-                  Browse All 115+ Resources
+                  Browse Hardware Resources
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

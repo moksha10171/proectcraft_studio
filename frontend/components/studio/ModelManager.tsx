@@ -79,7 +79,7 @@ function ModelCard({
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'ok' | 'error'>('idle');
   const [testError, setTestError] = useState('');
 
-  const hasKey = model.apiKey.length > 10;
+  const hasKey = model.provider === 'custom' ? !!model.baseUrl?.trim() && !!model.model.trim() : !!model.apiKey.trim();
 
   async function handleTest() {
     setTestStatus('testing');
@@ -482,7 +482,7 @@ export default function ModelManager({ models, onModelsChange }: ModelManagerPro
         <AddModelPicker onAdd={handleAdd} />
         <p className="text-[10px] text-gray-600 text-center mt-2">
           <Key size={9} className="inline mr-1" />
-          API keys are stored only in your browser localStorage
+          API keys are stored in your browser and sent through your backend to the provider
         </p>
       </div>
     </div>

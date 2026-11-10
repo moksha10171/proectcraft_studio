@@ -1,6 +1,5 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { OrganizationSchema, WebSiteSchema } from "@/components/seo/json-ld"
@@ -8,11 +7,11 @@ import { GlobalErrorBoundary } from "@/components/global-error-boundary"
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   title: {
-    default: "ProjectCraft - Open Source Learning Hub",
+    default: "ProjectCraft - Arduino & IoT Studio",
     template: "%s | ProjectCraft",
   },
   description:
-    "Open-source learning platform with coding projects, AI-powered tools, and virtual hardware testing. Self-host with your own API keys.",
+    "Self-hosted Arduino and Raspberry Pi workbench with a code editor, compiler checks, wiring visualization and optional AI assistance.",
   keywords: [
     "coding projects",
     "open source",
@@ -30,14 +29,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "ProjectCraft - Open Source Learning Hub",
-    description: "Self-hosted learning platform with projects, AI tools, and virtual testing.",
+    title: "ProjectCraft - Arduino & IoT Studio",
+    description: "Edit embedded code, check it locally and visualize wiring with optional AI assistance.",
     siteName: "ProjectCraft",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ProjectCraft - Open Source Learning Hub",
-    description: "Self-hosted learning platform with projects, AI tools, and virtual testing.",
+    title: "ProjectCraft - Arduino & IoT Studio",
+    description: "Edit embedded code, check it locally and visualize wiring with optional AI assistance.",
   },
   robots: { index: true, follow: true },
   icons: {
@@ -87,7 +86,6 @@ export default function RootLayout({
             <a href="#main-content" className="skip-link">Skip to main content</a>
             {children}
           </ThemeProvider>
-          <Analytics />
         </GlobalErrorBoundary>
       </body>
     </html>

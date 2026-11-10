@@ -13,14 +13,22 @@ export default function ConsoleOutput({ isOpen, onToggle }: ConsoleOutputProps) 
     const [messages, setMessages] = useState<ConsoleMessage[]>([]);
     const consoleEndRef = useRef<HTMLDivElement>(null);
 
+    const addMessage = (type: ConsoleMessageType, message: string) => {
+        setMessages(prev => [...prev, {
+            type,
+            message,
+            timestamp: Date.now()
+        }]);
+    };
+
     useEffect(() => {
         // Listen for console messages from preview iframe
         const handleMessage = (event: MessageEvent) => {
-            if (event.data.type === 'console-log') {
+            if (event.data?.type === 'console-log') {
                 addMessage('log', event.data.args.join(' '));
-            } else if (event.data.type === 'console-error') {
+            } else if (event.data?.type === 'console-error') {
                 addMessage('error', event.data.args.join(' '));
-            } else if (event.data.type === 'console-warn') {
+            } else if (event.data?.type === 'console-warn') {
                 addMessage('warn', event.data.args.join(' '));
             }
         };
@@ -35,14 +43,6 @@ export default function ConsoleOutput({ isOpen, onToggle }: ConsoleOutputProps) 
             consoleEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages, isOpen]);
-
-    const addMessage = (type: ConsoleMessageType, message: string) => {
-        setMessages(prev => [...prev, {
-            type,
-            message,
-            timestamp: Date.now()
-        }]);
-    };
 
     const clearConsole = () => {
         setMessages([]);

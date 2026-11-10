@@ -41,7 +41,7 @@ const HOMEPAGE_FAQS = [
   },
   {
     question: "Do I need an account?",
-    answer: "No. This is local-first with no authentication. Model keys and workspace state stay on your machine (browser localStorage + data/studio/).",
+    answer: "No. This is local-first with no authentication. Model keys and workspace state stay on your machine (browser localStorage + local SQLite database).",
   },
   {
     question: "How do I configure AI models?",
@@ -49,7 +49,7 @@ const HOMEPAGE_FAQS = [
   },
   {
     question: "Where are API keys stored?",
-    answer: "BYOK keys from the Model Manager are stored only in your browser localStorage. Server env keys in frontend/.env.local are read by the Python backend for /api/agent when BYOK is not set.",
+    answer: "BYOK keys from the Model Manager are stored in your browser localStorage and sent to your backend for provider requests. Server env keys in frontend/.env.local are read by the Python backend for /api/agent when BYOK is not set.",
   },
   {
     question: "How do I add projects?",
@@ -96,7 +96,7 @@ export default async function HomePage() {
               </h1>
 
               <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed">
-                Generate code, derive wiring, and simulate circuits — self-hosted on your machine with your own API keys.
+                Edit code, run compiler checks, and visualize wiring — self-hosted on your machine with your own API keys.
               </p>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -123,7 +123,7 @@ export default async function HomePage() {
             <div className="mx-auto max-w-5xl text-center space-y-4 mb-12">
               <h2 id="studio-heading" className="text-2xl font-bold md:text-3xl">What Studio does</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Multi-turn agent with tool calls: generate → verify → derive wiring → apply changes.
+                Multi-turn agent with tool calls: edit → compile/check → visualize wiring → iterate with AI.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">

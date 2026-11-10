@@ -63,7 +63,7 @@ const DiffPreview: React.FC<DiffPreviewProps> = ({
 }) => {
     const [expandedFiles, setExpandedFiles] = React.useState<Set<string>>(new Set(changes.map(c => c.path)));
     const [viewMode, setViewMode] = React.useState<'side-by-side' | 'inline'>('side-by-side');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const diffEditorRefs = useRef<Map<string, any>>(new Map());
 
     const toggleFile = (path: string) => {
@@ -98,7 +98,7 @@ const DiffPreview: React.FC<DiffPreviewProps> = ({
         return { additions, deletions };
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const handleDiffEditorMount = useCallback((path: string) => (editor: any, monaco: any) => {
         diffEditorRefs.current.set(path, editor);
         monaco.editor.defineTheme('diff-dark', DIFF_THEME);

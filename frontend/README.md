@@ -1,16 +1,15 @@
-# Frontend — Next.js UI
+# Frontend
 
-All Next.js pages, components, hooks, and client libraries.
+Next.js UI for the ProjectCraft hardware workbench. Contains Monaco editing,
+wiring visualization, model configuration and browser persistence. Studio agent,
+generation, compiler and workspace routes proxy to the Python backend.
 
-```
-frontend/
-├── app/           Pages + AI API routes (agent, generate, search, …)
-├── components/
-├── hooks/
-├── lib/           Utilities, arduino-studio, agent executor, browser persistence
-└── public/
-```
+From the repository root run `pnpm dev:frontend`, or `pnpm dev` for both services
+after `pnpm setup:backend`. See [setup](../docs/SETUP.md) and
+[hosting/customization](../docs/DEPLOY.md).
 
-**Backend API** (studio save/load, projects, health) is proxied to Python via `next.config.mjs` rewrites → `http://localhost:8000`.
+`NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_GITHUB_URL` are
+build-time settings. Theme tokens live in `app/globals.css`. Keep credentials in
+server environment variables or the in-app Model Manager, never public variables.
 
-Run: `pnpm dev:frontend` or `pnpm dev` from repo root.
+Checks: `pnpm type-check`, `pnpm lint`, `pnpm test`, `pnpm build` from the root.

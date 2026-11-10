@@ -5,6 +5,7 @@ export function workspaceRoot(workspaceId: string): string {
 }
 
 export const studioPaths = {
+  chatMeta: (ws: string) => `${workspaceRoot(ws)}/chat/meta.json`,
   chatMessages: (ws: string) => `${workspaceRoot(ws)}/chat/messages.json`,
   chatAgentHistory: (ws: string) => `${workspaceRoot(ws)}/chat/agent-history.json`,
   chatToolCalls: (ws: string) => `${workspaceRoot(ws)}/chat/tool-calls.json`,

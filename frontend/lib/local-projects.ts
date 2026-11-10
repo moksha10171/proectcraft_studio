@@ -46,7 +46,7 @@ function getCategories(): APICategory[] {
   }))
 }
 
-function filterProjects(
+export function filterProjects(
   projects: APIProject[],
   params?: {
     category?: string
@@ -93,14 +93,14 @@ function filterProjects(
 
   const offset = params?.offset ?? 0
   const limit = params?.limit ?? 20
-  return filtered.slice(offset, offset + limit)
+  return filtered.slice(offset, limit === Infinity ? undefined : offset + limit)
 }
 
 export function listProjects(params?: Parameters<typeof filterProjects>[1]): ProjectListResponse {
   const all = getProjects()
   const filtered = filterProjects(all, params)
   const total = params
-    ? filterProjects(all, { ...params, limit: undefined, offset: undefined }).length
+    ? filterProjects(all, { ...params, limit: Infinity, offset: 0 }).length
     : all.length
 
   return {

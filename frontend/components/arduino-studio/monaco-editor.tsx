@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import MonacoEditor, { OnMount, BeforeMount } from '@monaco-editor/react';
+import MonacoEditor, { loader, OnMount, BeforeMount } from '@monaco-editor/react';
 import { CheckCircle2, Loader2, XCircle, AlertCircle, FileCode, Brackets, FileText, Copy, Check, Terminal, Maximize2, Minimize2, Columns, Settings, AlignLeft } from 'lucide-react';
+
+loader.config({ paths: { vs: '/monaco/vs' } });
 
 interface MonacoCodeEditorProps {
     code: string;
@@ -16,7 +18,7 @@ interface MonacoCodeEditorProps {
 }
 
 // Custom Arduino/C++ dark theme - using any to avoid monaco-editor type dependency
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const STUDIO_DARK_THEME: any = {
     base: 'vs-dark',
     inherit: true,
@@ -80,9 +82,9 @@ const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
     errors,
     onSelectionChange
 }) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const editorRef = useRef<any>(null);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const monacoRef = useRef<any>(null);
     const [showErrors, setShowErrors] = useState(true);
     const [copied, setCopied] = useState(false);
@@ -175,7 +177,7 @@ const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
         if (!editor || !monaco) return;
 
         const errorLines = getErrorLineNumbers();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const decorations: any[] = errorLines.map(line => ({
             range: new monaco.Range(line, 1, line, 1),
             options: {
@@ -194,9 +196,9 @@ const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
         const model = editorRef.current?.getModel();
         const allDecorations = model?.getAllDecorations() || [];
         const oldDecorations = allDecorations
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
             .filter((d: any) => d.options.className === 'error-line-decoration')
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
             .map((d: any) => d.id);
 
         editorRef.current?.deltaDecorations(oldDecorations, decorations);
@@ -315,17 +317,17 @@ const MonacoCodeEditor: React.FC<MonacoCodeEditorProps> = ({
                                     ? 'bg-red-600 hover:bg-red-500 text-white shadow-red-900/20'
                                     : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/20'
                                 }`}
-                            aria-label={isVerifying ? 'Verifying code' : (hasErrors ? 'Re-verify code' : 'Verify code')}
+                            aria-label={isVerifying ? 'Checking code' : (hasErrors ? 'Recheck code' : 'Compile or check code')}
                         >
                             {isVerifying ? (
                                 <>
                                     <Loader2 size={12} className="animate-spin" aria-hidden="true" />
-                                    Verifying...
+                                    Checking...
                                 </>
                             ) : (
                                 <>
                                     {hasErrors ? <AlertCircle size={12} aria-hidden="true" /> : <CheckCircle2 size={12} aria-hidden="true" />}
-                                    {hasErrors ? 'Re-Verify' : 'Verify'}
+                                    {hasErrors ? 'Recheck' : 'Compile / Check'}
                                 </>
                             )}
                         </button>

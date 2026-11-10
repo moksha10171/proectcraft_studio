@@ -9,8 +9,14 @@ const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
+  outputFileTracingRoot: monorepoRoot,
   turbopack: {
     root: monorepoRoot,
+  },
+  async redirects() {
+    return ['web-development', 'mobile-development', 'ai-development', 'hosting-deployment', 'cybersecurity', 'machine-learning', 'data-science'].map(category => ({
+      source: `/resources/${category}/:path*`, destination: '/resources', permanent: true,
+    }))
   },
   async rewrites() {
     return [
@@ -18,6 +24,8 @@ const nextConfig = {
       { source: '/api/projects/:path*', destination: `${backendUrl}/api/projects/:path*` },
       { source: '/api/agent/info', destination: `${backendUrl}/api/agent/info` },
       { source: '/api/agent', destination: `${backendUrl}/api/agent` },
+      { source: '/api/compile/:path*', destination: `${backendUrl}/api/compile/:path*` },
+      { source: '/api/generate', destination: `${backendUrl}/api/generate` },
       { source: '/api/health', destination: `${backendUrl}/api/health` },
     ]
   },
@@ -44,6 +52,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              "worker-src 'self' blob:",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",

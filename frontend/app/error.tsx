@@ -33,7 +33,7 @@ export default function Error({
                     </div>
                     <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">Something went wrong!</h1>
                     <p className="mb-8 text-lg text-muted-foreground">
-                        We encountered an unexpected error. Our team has been notified and we're working on it.
+                        We encountered an unexpected error. Our team has been notified and we&apos;re working on it.
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                         <Button onClick={() => reset()} className="rounded-xl h-11 px-6 touch-action-manipulation active:scale-[0.98]">

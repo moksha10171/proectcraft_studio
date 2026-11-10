@@ -3,13 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm run dev:backend & pnpm run dev:frontend",
+    "dev": "concurrently --kill-others-on-fail --names backend,frontend \"pnpm dev:backend\" \"pnpm dev:frontend\"",
     "dev:frontend": "pnpm --dir frontend dev",
-    "dev:backend": "cd backend && (test -d .venv || python3 -m venv .venv) && .venv/bin/pip install -q -r requirements.txt && .venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:backend": "node scripts/backend.mjs",
     "build": "pnpm --dir frontend build",
     "start": "pnpm --dir frontend start",
     "lint": "pnpm --dir frontend lint",
     "type-check": "pnpm --dir frontend exec tsc --noEmit",
-    "env:init": "cp -n .env.local.example frontend/.env.local 2>/dev/null || cp .env.local.example frontend/.env.local"
+    "env:init": "node scripts/init-env.mjs",
+    "test": "pnpm --dir frontend test",
+    "test:backend": "backend/.venv/bin/python -m pytest backend/tests -q",
+    "setup:backend": "node scripts/backend.mjs --setup",
+    "test:e2e": "node scripts/browser-smoke.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.5",
+    "playwright": "^1.65.0"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10 <11"
+  },
+  "pnpm": {
+    "overrides": {
+      "dompurify": "3.4.17"
+    }
   }
 }
