@@ -80,3 +80,17 @@ def test_saved_tool_turns_are_valid_provider_messages():
 
 def test_wiring_fallback_does_not_invent_components():
     assert generate._basic_regex_wiring([{"content": "void setup() {} void loop() {}"}])["components"] == []
+
+
+@pytest.mark.asyncio
+async def test_openai_compatible_agent_receives_device_instructions(monkeypatch):
+    from app.agent import loop
+    captured = {}
+    async def fake_stream(api_key, model, messages, *args):
+        captured['messages'] = messages
+        yield b'data: {"type":"done"}\n\n'
+    monkeypatch.setattr(loop, '_stream_openai_compatible', fake_stream)
+    stream = await loop._call_provider_turn('custom', '', 'local', [{'role': 'user', 'content': 'Blink'}],
+                                            'Use Arduino APIs and explain wiring.', [], 0, 100, 'http://localhost/v1')
+    _ = [chunk async for chunk in stream]
+    assert captured['messages'][0] == {'role': 'system', 'content': 'Use Arduino APIs and explain wiring.'}

@@ -348,7 +348,7 @@ async def stream_agent(body: dict) -> AsyncIterator[bytes]:
             gen = _stream_anthropic(api_key, model, messages, sys_prompt, temperature, max_tokens, active_tools)
         else:
             default_base = "https://api.groq.com/openai/v1" if provider == "groq" else "https://api.openai.com/v1"
-            gen = _stream_openai_compatible(api_key, model, messages, base_url or default_base, provider, temperature, max_tokens, active_tools)
+            gen = _stream_openai_compatible(api_key, model, [{"role": "system", "content": sys_prompt}, *messages], base_url or default_base, provider, temperature, max_tokens, active_tools)
 
         async for chunk in gen:
             yield chunk

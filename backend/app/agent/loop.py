@@ -102,7 +102,7 @@ async def _call_provider_turn(
         return _stream_anthropic(api_key, model, messages, system_prompt, temperature, max_tokens, tools)
     else:
         default_base = "https://api.groq.com/openai/v1" if provider == "groq" else "https://api.openai.com/v1"
-        return _stream_openai_compatible(api_key, model, messages, base_url or default_base, provider, temperature, max_tokens, tools)
+        return _stream_openai_compatible(api_key, model, [{"role": "system", "content": system_prompt}, *messages], base_url or default_base, provider, temperature, max_tokens, tools)
 
 
 # ── Main loop ─────────────────────────────────────────────────────────────────
