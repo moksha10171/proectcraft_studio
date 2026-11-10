@@ -21,5 +21,5 @@ can send per-request credentials instead.
 Data lives in `data/projectcraft.db` and `data/uploads/` (gitignored).
 `PROJECTCRAFT_DATA_PATH` overrides the studio location and parent runtime data
 root. Tests use a temporary root. Legacy JSON workspaces migrate on initial DB
-creation. See [architecture](../docs/ARCHITECTURE.md), [AI](../docs/AI_SETUP.md)
-and [deployment](../docs/DEPLOY.md).
+creation. See [architecture](../README.md), [AI](../README.md)
+and [deployment](../README.md).

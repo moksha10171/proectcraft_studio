@@ -81,3 +81,7 @@ test-results/
 
 # Copied from the installed Monaco package before dev/build
 frontend/public/monaco/
+
+# Internal planning and reference notes remain local
+/docs/*.md
+!/docs/README.md

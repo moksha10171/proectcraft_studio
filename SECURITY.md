@@ -32,4 +32,4 @@ There is no guaranteed response-time SLA.
 
 Rotate exposed provider keys, remove them from browser storage and environment
 files, and restart the backend. Keep database/attachment backups private. See
-[deployment](docs/DEPLOY.md) for SQLite backup guidance.
+[deployment](README.md) for SQLite backup guidance.

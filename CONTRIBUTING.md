@@ -2,8 +2,8 @@
 
 ProjectCraft focuses on the embedded workflow: code editor, compiler checks,
 wiring visualization and optional AI for Arduino, Raspberry Pi and IoT devices.
-Read [scope](docs/PROJECT_SCOPE.md), [architecture](docs/ARCHITECTURE.md),
-[setup](docs/SETUP.md) and the [code of conduct](CODE_OF_CONDUCT.md).
+Read [scope](README.md), [architecture](README.md),
+[setup](README.md) and the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Setup and checks
 

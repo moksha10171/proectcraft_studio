@@ -56,8 +56,9 @@ arduino-cli core install arduino:avr
 ```
 
 The Studio Compile/Check button uses `/api/compile`. Missing tools or board cores
-produce actionable errors. See [setup](docs/SETUP.md) for board selection, libraries
-and troubleshooting.
+produce actionable errors. Select Uno, classic Nano or Mega 2560 in the Studio
+header. Install any required libraries explicitly, for example
+`arduino-cli lib install Servo`. Compilation does not flash hardware.
 
 ## AI configuration
 
@@ -71,7 +72,12 @@ and troubleshooting.
 
 Choose a model your account/server actually provides. Hosted providers require
 credentials. Custom servers can use native tools or the documented text tool-call
-fallback; model support varies. See [AI setup](docs/AI_SETUP.md).
+fallback; model support varies. For native Ollama use
+`http://localhost:11434/v1` and the exact model ID from `ollama list`. Inside a
+container, use a reachable host/service address instead of container localhost.
+Docker Desktop commonly provides `host.docker.internal`; Linux can configure
+`extra_hosts: ["host.docker.internal:host-gateway"]` for the backend. Keep local
+model servers restricted to trusted clients.
 
 Browser-entered keys are stored in localStorage and sent to **your backend**, which
 makes provider requests. They are not confined to the browser during use. Server
@@ -86,13 +92,24 @@ docker compose up --build
 
 The UI listens at `http://localhost:3000`; Python runs on the private Compose
 network. The optional `frontend/.env.local` supplies backend credentials. Data
-persists under `./data`. The base backend image does not include Arduino CLI;
-[deployment instructions](docs/DEPLOY.md) explain how to add it.
+persists under `./data`. Use Compose v2.24 or newer. The base backend image does
+not include Arduino CLI. For container compilation, extend `backend/Dockerfile`
+with the official CLI binary for the container architecture, verify its checksum,
+and install `arduino:avr` plus required libraries during the image build.
 
 Configure the app name, public URL and repository link with build-time
 `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_GITHUB_URL`. Theme tokens
-live in `frontend/app/globals.css`. See [deployment](docs/DEPLOY.md) for Docker,
-separate-process hosting, backups and remote model servers.
+live in `frontend/app/globals.css`. Supply public settings through Compose build
+arguments or `frontend/.env.local` before a native build, then rebuild. For native
+production, run `pnpm build`, start FastAPI from `backend/` with
+`.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000`, then run
+`pnpm start` from the repository root. Windows uses `.venv\Scripts\python.exe`.
+The full app requires Node, Python and writable persistent storage.
+
+Workspaces use `data/projectcraft.db` and attachments use `data/uploads/`.
+Stop the backend before backing up these files, or use SQLite's online backup API.
+`PROJECTCRAFT_DATA_PATH` selects a studio directory; its parent holds runtime data.
+The versioned project catalog remains in `data/projects/`.
 
 This is a trusted single-user/local-network application without built-in login.
 Use authentication at your reverse proxy or a VPN for remote access.
@@ -108,24 +125,25 @@ pnpm build
 ```
 
 Tests use temporary databases and controlled provider responses; they do not spend
-API credits. See [validation](docs/VALIDATION.md) for live compiler and browser checks.
+API credits. With Arduino CLI and `arduino:avr` on PATH, backend tests compile
+actual Uno/Nano/Mega examples; otherwise those integration tests skip. For browser
+checks, start both services against disposable workspace data, run
+`pnpm exec playwright install chromium`, then `pnpm test:e2e`. Use `STUDIO_ORIGIN`
+for a different URL. On Windows, run backend tests with
+`backend\.venv\Scripts\python.exe -m pytest backend/tests -q`.
+
+If compilation returns 503, check the CLI is on the backend PATH. Missing board
+cores or libraries appear in compiler output. After changing AI credentials,
+restart the backend. Health reporting `needs_config` indicates absent server AI
+keys; browser-configured models and non-AI features can still work.
 
 ```text
 frontend/      Next.js UI, browser persistence, metadata and search
 backend/       FastAPI, AI providers and tools, compiler API, SQLite persistence
 examples/      Downloadable hardware source files
 data/          Hardware references and project catalog (runtime data ignored)
-docs/          Setup, AI, hosting, architecture and validation
 ```
 
-[Architecture](docs/ARCHITECTURE.md) · [Contributing](CONTRIBUTING.md) ·
-[Security](SECURITY.md) · [Related tools and scope](docs/PROJECT_SCOPE.md)
+[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 Licensed under [MIT](LICENSE). Maintained by B Mokshagna Reddy and contributors.
-
-## Proposed product direction
-
-The [research and UX brief](docs/PRODUCT_DIRECTION.md) and
-[delivery plan](docs/STUDIO_ROADMAP.md) describe a proposed path toward
-reproducible embedded experiments. These are design proposals, not shipped
-capabilities.

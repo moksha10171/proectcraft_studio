@@ -141,7 +141,7 @@ export function SetupStatus() {
             <p className="text-sm text-muted-foreground max-w-lg">
               Start both services with <code className="rounded bg-muted px-1.5 py-0.5 text-xs">pnpm dev</code>{" "}
               (Next.js :3000 + Python :8000). See{" "}
-              <code className="rounded bg-muted px-1.5 py-0.5 text-xs">docs/SETUP.md</code> in the repo.
+              <code className="rounded bg-muted px-1.5 py-0.5 text-xs">README.md</code> in the repo.
             </p>
           )}
 

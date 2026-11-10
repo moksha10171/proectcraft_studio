@@ -82,6 +82,6 @@ def health():
         "setup": {
             "envFile": "frontend/.env.local",
             "exampleFile": ".env.local.example",
-            "docs": "docs/SETUP.md",
+            "docs": "README.md",
         },
     }

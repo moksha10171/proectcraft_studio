@@ -5,8 +5,8 @@ wiring visualization, model configuration and browser persistence. Studio agent,
 generation, compiler and workspace routes proxy to the Python backend.
 
 From the repository root run `pnpm dev:frontend`, or `pnpm dev` for both services
-after `pnpm setup:backend`. See [setup](../docs/SETUP.md) and
-[hosting/customization](../docs/DEPLOY.md).
+after `pnpm setup:backend`. See [setup](../README.md) and
+[hosting/customization](../README.md).
 
 `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_GITHUB_URL` are
 build-time settings. Theme tokens live in `app/globals.css`. Keep credentials in

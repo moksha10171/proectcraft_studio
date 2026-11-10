@@ -58,7 +58,7 @@ async def compile_code(body: CompileRequest):
 
     cli = shutil.which("arduino-cli")
     if not cli:
-        raise HTTPException(503, "Arduino CLI is not installed. Follow docs/SETUP.md to install it and the arduino:avr core.")
+        raise HTTPException(503, "Arduino CLI is not installed. Follow README.md to install it and the arduino:avr core.")
     ino_files = [f for f in body.files if f.name.endswith(".ino")]
     if not ino_files:
         raise HTTPException(400, "No Arduino sketch (.ino) to compile")
