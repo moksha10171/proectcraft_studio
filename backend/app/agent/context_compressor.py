@@ -14,6 +14,8 @@ COMPRESSED_PLACEHOLDER = "[Content compressed — earlier in conversation]"
 
 
 class AgentMessage(TypedDict, total=False):
+    calls: list[dict]
+    call_id: str
     role: str          # user | assistant | tool_result | tool_use | system
     content: str
     tool: str | None
@@ -27,7 +29,7 @@ def estimate_tokens(text: str) -> int:
 
 
 def _truncate_tool_result(msg: AgentMessage) -> AgentMessage:
-    if msg.get("role") != "tool_result":
+    if msg.get("role") not in ("tool_result", "tool"):
         return msg
     content = msg.get("content") or ""
     if len(content) <= MAX_TOOL_RESULT_CHARS:
@@ -52,9 +54,9 @@ def compress_context(messages: list[AgentMessage], keep_turns: int = KEEP_TURNS)
 
     result = []
     for i, msg in enumerate(messages):
-        if i < compress_before and msg.get("role") == "tool_result" and not msg.get("compressed"):
+        if i < compress_before and msg.get("role") in ("tool_result", "tool") and not msg.get("compressed"):
             result.append({**msg, "content": COMPRESSED_PLACEHOLDER, "compressed": True, "token_estimate": estimate_tokens(COMPRESSED_PLACEHOLDER)})  # type: ignore[arg-type]
-        elif msg.get("role") == "tool_result":
+        elif msg.get("role") in ("tool_result", "tool"):
             result.append(_truncate_tool_result(msg))
         else:
             result.append(msg)

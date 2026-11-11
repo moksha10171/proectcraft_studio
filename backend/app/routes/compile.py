@@ -1,6 +1,8 @@
 """Local compiler checks. Submitted code is never executed or uploaded."""
 
 import ast
+import hashlib
+import re
 import asyncio
 import shutil
 import tempfile
@@ -21,6 +23,7 @@ class SourceFile(BaseModel):
 class CompileRequest(BaseModel):
     files: list[SourceFile] = Field(min_length=1, max_length=50)
     deviceMode: Literal["arduino", "raspberry-pi"] = "arduino"
+    includeArtifact: bool = False
     board: Literal["arduino:avr:uno", "arduino:avr:nano", "arduino:avr:mega"] = "arduino:avr:uno"
 
 
@@ -54,7 +57,8 @@ async def compile_code(body: CompileRequest):
             except (SyntaxError, ValueError) as exc:
                 errors.append(f"{source.name}:{getattr(exc, 'lineno', 1)}: {getattr(exc, 'msg', str(exc))}")
         return {"valid": not errors, "errors": errors, "engine": "python-ast",
-                "output": "Python syntax check only; imports and GPIO behavior are not executed."}
+                "output": "Python syntax check only; imports and GPIO behavior are not executed.",
+                "diagnostics": [{"severity": "error", "message": e} for e in errors]}
 
     cli = shutil.which("arduino-cli")
     if not cli:
@@ -84,5 +88,22 @@ async def compile_code(body: CompileRequest):
             await process.communicate()
             raise HTTPException(504, "Compilation exceeded 120 seconds")
         text = output.decode(errors="replace")[-20_000:]
-        return {"valid": process.returncode == 0, "errors": [] if process.returncode == 0 else [text],
-                "engine": "arduino-cli", "board": body.board, "output": text}
+        diagnostics = []
+        for line in text.splitlines():
+            match = re.search(r"(?:^|/)([^/:]+\.(?:ino|cpp|c|h|hpp)):(\d+)(?::(\d+))?:\s*(error|warning|fatal error):\s*(.*)", line)
+            if match:
+                name, number, column, severity, message = match.groups()
+                diagnostics.append({"file": primary.name if name == 'sketch.ino' else name,
+                                    "line": int(number), "column": int(column or 1),
+                                    "severity": "warning" if severity == "warning" else "error", "message": message})
+        text = text.replace(temp, '<build>')
+        if process.returncode and not diagnostics:
+            diagnostics.append({"severity": "error", "message": text or 'Compiler exited without diagnostics'})
+        result = {"valid": process.returncode == 0, "errors": [] if process.returncode == 0 else [text],
+                  "engine": "arduino-cli", "board": body.board, "output": text, "diagnostics": diagnostics}
+        artifact = Path(temp) / 'build' / 'sketch.ino.hex'
+        if body.includeArtifact and process.returncode == 0 and artifact.is_file():
+            content = artifact.read_text()
+            result['artifact'] = {"format": "intel-hex", "content": content,
+                                  "sha256": hashlib.sha256(content.encode()).hexdigest()}
+        return result

@@ -25,7 +25,7 @@ build, modify, and verify Arduino and Raspberry Pi projects in the Studio IDE.
 1. **Refresh project state when needed.** Use LIST_FILES and READ_FILE before generating.
 2. **Use domain prompts.** Call FETCH_PROMPTS before complex operations.
 3. **Build loop:** GENERATE → VERIFY → DERIVE_WIRING → OPTIMIZE as needed.
-4. **Every tool call MUST include _summary** — present tense, ≤8 words.
+4. **Use the tool input schema.** Keep arguments focused and explain assumptions.
 5. **Be concise.** Summarize results when done.
 
 ## Available prompts (fetch via FETCH_PROMPTS)

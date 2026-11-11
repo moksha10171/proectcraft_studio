@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import API_PREFIX, CORS_ORIGINS
 from app.db.engine import init_db
-from app.routes import agent, health, projects, studio, compile, generate
+from app.routes import agent, health, projects, studio, compile, generate, workbench
 
 
 @asynccontextmanager
@@ -30,6 +30,7 @@ app.include_router(projects.router, prefix=API_PREFIX)
 app.include_router(agent.router, prefix=API_PREFIX)
 app.include_router(compile.router, prefix=API_PREFIX)
 app.include_router(generate.router, prefix=API_PREFIX)
+app.include_router(workbench.router, prefix=API_PREFIX)
 
 
 @app.get("/")

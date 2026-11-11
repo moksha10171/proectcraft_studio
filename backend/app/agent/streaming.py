@@ -5,11 +5,13 @@ from __future__ import annotations
 import json
 import os
 import time
+import uuid
 from typing import Any, AsyncIterator, Dict, List, Optional
 
 import httpx
 
 from app.agent.providers import resolve_provider
+from app.agent.protocol import openai_messages, gemini_messages, anthropic_messages
 
 TEXT_FALLBACK_SUFFIX = """
 
@@ -44,11 +46,7 @@ async def _stream_gemini(
     base = (base_url or "https://generativelanguage.googleapis.com/v1beta").rstrip("/")
     url = f"{base}/models/{model}:streamGenerateContent?key={api_key}&alt=sse"
 
-    contents = [
-        {"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]}
-        for m in messages
-        if m.get("role") != "system"
-    ]
+    contents = gemini_messages(messages)
     body: Dict[str, Any] = {
         "contents": contents,
         "systemInstruction": {"parts": [{"text": system_prompt}]},
@@ -97,7 +95,8 @@ async def _stream_gemini(
                                         "type": "tool_call",
                                         "tool": fc.get("name"),
                                         "args": fc.get("args") or {},
-                                        "call_id": f"{fc.get('name')}_{int(time.time() * 1000)}",
+                                        "call_id": uuid.uuid4().hex,
+                                        "signature": part.get("thoughtSignature"),
                                     }
                                 )
                         usage = js.get("usageMetadata") or {}
@@ -140,7 +139,7 @@ async def _stream_openai_compatible(
         ]
     payload: Dict[str, Any] = {
         "model": model,
-        "messages": messages,
+        "messages": openai_messages(messages),
         "temperature": temperature,
         "max_tokens": max_tokens,
         "stream": True,
@@ -230,7 +229,7 @@ async def _stream_anthropic(
     max_tokens: int = 8192,
     tools: Optional[List[dict]] = None,
 ) -> AsyncIterator[bytes]:
-    non_system = [m for m in messages if m.get("role") != "system"]
+    non_system = anthropic_messages(messages)
     body: Dict[str, Any] = {
         "model": model,
         "system": system_prompt,

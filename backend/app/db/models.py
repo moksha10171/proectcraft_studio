@@ -171,3 +171,32 @@ class UsageLog(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
     workspace: Mapped[Workspace] = relationship(back_populates="usage_logs")
+
+
+class ExperimentProject(Base):
+    """Versioned document; separate table preserves existing workspace schemas."""
+    __tablename__ = 'experiment_projects'
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    revision: Mapped[int] = mapped_column(Integer)
+    document: Mapped[str] = mapped_column(Text)
+
+
+class ExperimentRevision(Base):
+    __tablename__ = 'experiment_revisions'
+    id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(64), index=True)
+    document: Mapped[str] = mapped_column(Text)
+
+
+class ExperimentRun(Base):
+    __tablename__ = 'experiment_runs'
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(64), index=True)
+    document: Mapped[str] = mapped_column(Text)
+
+
+class ExperimentPatch(Base):
+    __tablename__ = 'experiment_patches'
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(64), index=True)
+    document: Mapped[str] = mapped_column(Text)

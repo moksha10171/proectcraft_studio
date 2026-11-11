@@ -46,6 +46,7 @@ class AgentRequest(BaseModel):
     workspaceId: str = "default"
     message: str | None = Field(default=None, max_length=50_000)
     modelConfig: dict = Field(default_factory=dict)
+    intent: Literal['explain', 'debug', 'modify'] = 'modify'
     mode: Literal["arduino", "raspberry-pi"] = "arduino"
     messages: list[dict] = Field(default_factory=list, max_length=500)
     systemPrompt: str = ""
@@ -71,12 +72,17 @@ async def agent_post(request: AgentRequest, db: Session = Depends(get_db)):
     user_message: str | None = body.get("message")
     model_config: dict = body.get("modelConfig") or {}
     mode: str = body.get("mode") or "arduino"
+    from app.db.models import ExperimentProject
+    if db.get(ExperimentProject, workspace_id):
+        from app.services.experiments import get_project
+        from app.domain.project import BOARDS
+        mode = BOARDS[get_project(db, workspace_id).boardId]['mode']
 
     if user_message:
         # New backend-owned loop path
         from app.agent.loop import run_agent_loop
         return StreamingResponse(
-            run_agent_loop(workspace_id, user_message, model_config, mode, db),  # type: ignore[arg-type]
+            run_agent_loop(workspace_id, user_message, model_config, mode, db, intent=request.intent),  # type: ignore[arg-type]
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache, no-transform",

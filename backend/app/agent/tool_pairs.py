@@ -14,6 +14,8 @@ def _merge_consecutive_roles(messages: list[AgentMessage]) -> list[AgentMessage]
     for msg in messages:
         if (merged
                 and merged[-1]["role"] == msg["role"]
+                and not merged[-1].get("calls") and not msg.get("calls")
+                and not merged[-1].get("call_id") and not msg.get("call_id")
                 and isinstance(merged[-1].get("content"), str)
                 and isinstance(msg.get("content"), str)):
             merged[-1] = {**merged[-1], "content": merged[-1]["content"] + "\n\n" + (msg.get("content") or "")}  # type: ignore[assignment]
@@ -27,7 +29,7 @@ def sanitize_tool_pairs(messages: list[AgentMessage]) -> list[AgentMessage]:
     if not messages:
         return messages
 
-    non_empty = [m for m in messages if (m.get("content") or "").strip()]
+    non_empty = [m for m in messages if (m.get("content") or "").strip() or m.get("calls") or m.get("call_id")]
 
     # Never start with tool_result
     while non_empty and non_empty[0].get("role") == "tool_result":

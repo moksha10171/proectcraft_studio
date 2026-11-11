@@ -12,6 +12,7 @@ _EXCLUDE_FROM_ARDUINO = {"GENERATE_RPI", "VERIFY_PYTHON"}
 
 # All tool names in registry order
 _ALL_TOOLS = [
+    "CHECK_PROJECT",
     "GENERATE_ARDUINO",
     "GENERATE_RPI",
     "VERIFY_ARDUINO",

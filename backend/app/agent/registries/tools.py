@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 
 # Names must match frontend lib/arduino-studio/tool-registry.ts
 TOOL_REGISTRY: List[Dict[str, Any]] = [
+    {"name": "CHECK_PROJECT", "emoji": "✓", "label": "Build / check project", "interactive": False},
     {"name": "GENERATE_ARDUINO", "emoji": "⚡", "label": "Generate Arduino", "interactive": False},
     {"name": "GENERATE_RPI", "emoji": "🍓", "label": "Generate Raspberry Pi", "interactive": False},
     {"name": "VERIFY_ARDUINO", "emoji": "✅", "label": "Verify Arduino", "interactive": False},

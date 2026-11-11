@@ -31,6 +31,7 @@ class ToolResult:
     text: str
     files: list[dict] | None = None
     wiring: dict | None = None
+    patch: dict | None = None
     auto_apply: bool = False
     files_modified: list[str] = dataclasses.field(default_factory=list)
 
@@ -76,6 +77,15 @@ async def execute_tool(
     Side-effects: may write ProjectFile / Wiring rows directly.
     """
     resolved = resolve_tool_for_device(tool_name, device_mode)
+
+    from app.agent.tools.workbench import execute_workbench
+    try:
+        handled = await execute_workbench(resolved, args, workspace_id, model_config, db)
+        if handled is not None:
+            return handled
+    except Exception as exc:
+        log.warning("Workbench tool rejected: %s (%s)", resolved, type(exc).__name__)
+        return ToolResult(text="ERROR: Tool arguments or generated output did not pass project validation. No project changes applied.")
 
     # Load current DB files for context
     db_files = repo.list_files(db, workspace_id)
