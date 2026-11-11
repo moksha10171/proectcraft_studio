@@ -60,7 +60,8 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1
-      - run: pnpm exec playwright install --with-deps chromium
+      # ubuntu-24.04 includes stable Chrome and its runtime dependencies.
+      - run: google-chrome --version
       - name: Browser integration with real compiler and Uno firmware
         run: |
           (cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000) > "$RUNNER_TEMP/backend.log" 2>&1 &
@@ -73,6 +74,7 @@ jobs:
           pnpm test:e2e
         env:
           PROJECTCRAFT_DATA_PATH: ${{ runner.temp }}/projectcraft-browser/studio
+          PLAYWRIGHT_CHANNEL: chrome
 
 
   containers:

@@ -139,7 +139,8 @@ API credits. With Arduino CLI and `arduino:avr` on PATH, backend tests compile
 actual Uno/Nano/Mega examples; otherwise those integration tests skip. For browser
 checks, start both services against disposable workspace data, run
 `pnpm exec playwright install chromium`, then `pnpm test:e2e`. Use `STUDIO_ORIGIN`
-for a different URL. On Windows, run backend tests with
+for a different URL, or `PLAYWRIGHT_CHANNEL=chrome` to use an installed Google
+Chrome (also used by CI). On Windows, run backend tests with
 `backend\.venv\Scripts\python.exe -m pytest backend/tests -q`.
 
 If compilation returns 503, check the CLI is on the backend PATH. Missing board

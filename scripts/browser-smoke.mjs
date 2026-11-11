@@ -3,7 +3,7 @@ import { chromium } from 'playwright'
 
 // Use a disposable instance. These checks create projects and run local tools.
 const origin = process.env.STUDIO_ORIGIN || 'http://localhost:3000'
-const browser = await chromium.launch({ headless: true })
+const browser = await chromium.launch({ headless: true, channel: process.env.PLAYWRIGHT_CHANNEL || undefined })
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } })
   const replaceSource = async content => {
