@@ -85,3 +85,5 @@ frontend/public/monaco/
 # Internal planning and reference notes remain local
 /docs/*.md
 !/docs/README.md
+*.hex
+*.elf

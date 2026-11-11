@@ -44,8 +44,36 @@ jobs:
           mkdir -p "$RUNNER_TEMP/arduino-bin"
           tar -xzf "$RUNNER_TEMP/arduino-cli.tar.gz" -C "$RUNNER_TEMP/arduino-bin" arduino-cli
           echo "$RUNNER_TEMP/arduino-bin" >> "$GITHUB_PATH"
-      - run: arduino-cli core update-index && arduino-cli core install arduino:avr
+      - run: arduino-cli core update-index && arduino-cli core install arduino:avr@1.8.8
       - run: python -m pytest backend/tests -q
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: python scripts/compiler-fixtures.py "$RUNNER_TEMP/projectcraft-firmware"
+      - run: pnpm test
+        env:
+          PROJECTCRAFT_HEX_FIXTURE: ${{ runner.temp }}/projectcraft-firmware/blink.hex
+          PROJECTCRAFT_BUTTON_HEX_FIXTURE: ${{ runner.temp }}/projectcraft-firmware/button.hex
+      - run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Browser integration with real compiler and Uno firmware
+        run: |
+          (cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000) > "$RUNNER_TEMP/backend.log" 2>&1 &
+          pnpm start > "$RUNNER_TEMP/frontend.log" 2>&1 &
+          trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://localhost:3000/api/health > /dev/null; then break; fi
+            sleep 1
+          done
+          pnpm test:e2e
+        env:
+          PROJECTCRAFT_DATA_PATH: ${{ runner.temp }}/projectcraft-browser/studio
+
 
   containers:
     runs-on: ubuntu-24.04

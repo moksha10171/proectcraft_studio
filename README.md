@@ -10,21 +10,28 @@ makers who want source code, local workspaces and a choice of AI providers.
 
 ## What works
 
-- **Code editor:** Monaco editor, multiple project files and Arduino/Python modes.
+- **Project workspace:** named experiments, persistent board profiles, a local Monaco editor, revision history and undo.
 - **Compiler checks:** Arduino CLI compilation for Uno, classic Nano and Mega;
   Python syntax checking without executing submitted scripts.
-- **AI assistance:** generate sketches/Python, explain code, review it and derive
-  wiring using Gemini, Groq, OpenAI, Anthropic or an OpenAI-compatible local server.
-- **Wiring visualization:** interactive component diagrams and illustrative animations.
+- **AI assistance:** read-only explanations, debugging with real compiler tools,
+  and staged file proposals you can inspect, apply or reject. Supports Gemini,
+  Groq, OpenAI, Anthropic and compatible local servers.
+- **Circuit editor:** explicit named terminals/nets, editable parts, pan/zoom and
+  a keyboard-accessible connection inspector.
+- **Uno execution:** AVR8js runs actual compiled firmware in a browser worker.
+  Inspect GPIO transitions, operate a connected push button and capture UART text.
+- **Portable experiments:** export/reimport source, target/core versions, connections,
+  notes and recorded run results. Compare capture timing and UART text; imported recordings remain labelled imported.
 - **Local storage:** SQLite workspaces plus a browser fallback; no account required.
 - **Hardware examples:** downloadable [Arduino and Raspberry Pi sources](examples/README.md).
 
-**Current limits:** the visualizer is not a CPU emulator or an electrical circuit
-solver. Animations do not prove code behavior. AI review is separate from compiler
-checks. The compiler endpoint currently targets AVR boards; ESP32 references are
-available, but ESP32 builds require an external toolchain. Linux Raspberry Pi
-Python and Pico/MicroPython are different targets. Flashing, electrical validation
-and real hardware testing remain external steps.
+**Current limits:** the execution adapter supports Uno/ATmega328P GPIO, timers
+and UART. Nano and Mega support compilation; Linux Raspberry Pi supports Python
+syntax checks. ESP32/Pico execution, flashing and physical serial capture are not
+implemented. Circuit coordinates are a logical terminal view, not physical header
+placement. External LED/resistor graphics show connectivity; there is no analog
+voltage/current solver. A successful build or emulator run is not physical
+hardware validation. AI suggestions require an explicitly configured provider.
 
 ## Quick start
 
@@ -42,7 +49,7 @@ pnpm env:init
 pnpm dev
 ```
 
-Open [Studio](http://localhost:3000/studio). Configure **Studio → Models** or set
+Open [Studio](http://localhost:3000/studio). Configure **Studio → Assistant → Configure AI providers** or set
 `GEMINI_API_KEY` / `GROQ_API_KEY` in `frontend/.env.local` and restart the backend.
 Editing, examples and Python syntax checks work without AI credentials. Cloud
 providers may charge for usage. Local models need their model files downloaded first.
@@ -52,22 +59,23 @@ put `arduino-cli` on the backend process's `PATH`, then run:
 
 ```bash
 arduino-cli core update-index
-arduino-cli core install arduino:avr
+arduino-cli core install arduino:avr@1.8.8
 ```
 
-The Studio Compile/Check button uses `/api/compile`. Missing tools or board cores
+The Studio Build button records the current project revision and compiler result. Missing tools or board cores
 produce actionable errors. Select Uno, classic Nano or Mega 2560 in the Studio
-header. Install any required libraries explicitly, for example
-`arduino-cli lib install Servo`. Compilation does not flash hardware.
+header. New AVR projects pin core 1.8.8 and build results record the installed
+toolchain. Install any declared libraries at their specified versions, for example
+`arduino-cli lib install "Servo@1.3.0"`. Compilation does not flash hardware.
 
 ## AI configuration
 
 | Provider | Configuration |
 | --- | --- |
-| Gemini | Studio → Models; or server `GEMINI_API_KEY`, optional `GEMINI_MODEL` |
-| Groq | Studio → Models; or server `GROQ_API_KEY`, optional `GROQ_MODEL` |
-| OpenAI | Studio → Models; enter your API key and an available model ID |
-| Anthropic | Studio → Models; enter your API key and an available model ID |
+| Gemini | Assistant → Configure AI providers; or server `GEMINI_API_KEY`, optional `GEMINI_MODEL` |
+| Groq | Assistant → Configure AI providers; or server `GROQ_API_KEY`, optional `GROQ_MODEL` |
+| OpenAI | Assistant → Configure AI providers; enter your API key and an available model ID |
+| Anthropic | Assistant → Configure AI providers; enter your API key and an available model ID |
 | Ollama / LM Studio / compatible servers | Custom provider; base URL including `/v1`, downloaded model ID; key optional for local servers |
 
 Choose a model your account/server actually provides. Hosted providers require
@@ -92,10 +100,12 @@ docker compose up --build
 
 The UI listens at `http://localhost:3000`; Python runs on the private Compose
 network. The optional `frontend/.env.local` supplies backend credentials. Data
-persists under `./data`. Use Compose v2.24 or newer. The base backend image does
-not include Arduino CLI. For container compilation, extend `backend/Dockerfile`
-with the official CLI binary for the container architecture, verify its checksum,
-and install `arduino:avr` plus required libraries during the image build.
+persists under `./data`. Use Compose v2.24 or newer. The default backend image
+bundles checksum-verified Arduino CLI 1.5.1 and AVR core 1.8.8 for Linux amd64/arm64.
+The container build downloads these once. Set `PROJECTCRAFT_BACKEND_TARGET=runtime`
+for a lighter image without the compiler; Build then explains the missing tool.
+Additional libraries must be installed explicitly. No API key is needed for
+editing, compilation, supported Uno execution or experiment export.
 
 Configure the app name, public URL and repository link with build-time
 `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_GITHUB_URL`. Theme tokens
@@ -138,8 +148,8 @@ restart the backend. Health reporting `needs_config` indicates absent server AI
 keys; browser-configured models and non-AI features can still work.
 
 ```text
-frontend/      Next.js UI, browser persistence, metadata and search
-backend/       FastAPI, AI providers and tools, compiler API, SQLite persistence
+frontend/      Next.js UI, project workspace, circuit editor and AVR worker
+backend/       FastAPI, project revisions, staged proposals, builds and SQLite
 examples/      Downloadable hardware source files
 data/          Hardware references and project catalog (runtime data ignored)
 ```
@@ -147,3 +157,32 @@ data/          Hardware references and project catalog (runtime data ignored)
 [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 Licensed under [MIT](LICENSE). Maintained by B Mokshagna Reddy and contributors.
+
+## Working with an experiment
+
+1. Open Studio and choose Blink, Button input, Empty project or import an `.ino`,
+   `.py` or ProjectCraft JSON bundle. No model setup is needed for the core flow.
+2. Edit and select the board. Changes save as revisions; a conflicting session is
+   reported instead of overwriting its work. Unsaved drafts can be exported.
+3. Build. Click a diagnostic to reach its file/line. Editing after a build marks
+   that result stale and disables execution until rebuilt.
+4. On Uno, Run executes the compiled HEX in a worker. Signals show cycle-based
+   timestamps; Serial displays actual emulator UART output. Stop saves a capture.
+   The recording retains at most 10,000 events and reports dropped events. Compare
+   saved captures using GPIO transition counts, median rising intervals and UART text.
+5. Export preserves the experiment and run metadata. Reimport creates a new
+   project; reference recordings are not reported as freshly executed results.
+6. Open Assistant only when useful. Explain mode cannot mutate project files.
+   Modify stages a proposal; applying a stale proposal is rejected. Undo restores
+   the previous saved revision. Hosted providers can charge for usage; local
+   models require their own downloads and sufficient compute.
+
+## Third-party components
+
+The Uno engine uses [AVR8js](https://github.com/wokwi/avr8js) 0.21.1, licensed MIT,
+by Uri Shaked and contributors. Monaco and other dependencies retain their own
+licenses. The bundled [Arduino CLI](https://github.com/arduino/arduino-cli/tree/v1.5.1)
+and AVR toolchain/core have their own terms; the compiler image retains CLI license
+text and source references under `/usr/share/licenses/arduino-cli` and upstream
+core/tool files under `/root/.arduino15`. ProjectCraft's MIT license does not
+replace the licenses of those tools. Browser graphics are a custom logical view.

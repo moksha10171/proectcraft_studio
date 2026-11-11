@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+      target: ${PROJECTCRAFT_BACKEND_TARGET:-full}
     env_file:
       - path: frontend/.env.local
         required: false
