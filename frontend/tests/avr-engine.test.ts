@@ -16,6 +16,7 @@ test('CPU executes firmware instructions rather than synthesizing LED frames', (
   record.push((-record.reduce((a, b) => a + b, 0)) & 255)
   const hex = ':' + record.map(b => b.toString(16).padStart(2, '0')).join('') + '\n:00000001FF'
   const engine = new UnoEngine(hex)
+  assert.equal(engine.cpu.data.length, 0x100 + 2048)
   engine.advance(40)
   const d13 = engine.drain().filter(e => e.pin === 'D13')
   assert.ok(d13.some(e => e.value === 1))

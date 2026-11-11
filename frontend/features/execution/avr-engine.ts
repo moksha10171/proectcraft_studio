@@ -33,7 +33,7 @@ export class UnoEngine {
   dropped = 0
 
   constructor(hex: string) {
-    this.cpu = new CPU(decodeHex(hex))
+    this.cpu = new CPU(decodeHex(hex), 2048) // ATmega328P SRAM; AVR8js defaults to a larger device.
     new AVRTimer(this.cpu, timer0Config)
     new AVRTimer(this.cpu, timer1Config)
     new AVRTimer(this.cpu, timer2Config)
