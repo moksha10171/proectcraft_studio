@@ -22,7 +22,7 @@ makers who want source code, local workspaces and a choice of AI providers.
   Inspect GPIO transitions, operate a connected push button and capture UART text.
 - **Portable experiments:** export/reimport source, target/core versions, connections,
   notes and recorded run results. Compare capture timing and UART text; imported recordings remain labelled imported.
-- **Local storage:** SQLite workspaces plus a browser fallback; no account required.
+- **Local storage:** SQLite experiments with browser draft recovery; no account required.
 - **Hardware examples:** downloadable [Arduino and Raspberry Pi sources](examples/README.md).
 
 **Current limits:** the execution adapter supports Uno/ATmega328P GPIO, timers

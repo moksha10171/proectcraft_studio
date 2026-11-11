@@ -132,6 +132,46 @@ try {
     deviceMode: 'raspberry-pi', files: [{ name: 'main.py', content: 'raise RuntimeError("never executed")' }],
   } })
   assert.equal((await syntax.json()).valid, true)
+  // A failed save preserves a recoverable draft, then resumes server persistence.
+  const activeId = await page.evaluate(() => localStorage.getItem('projectcraft:last-project'))
+  const recoveryProject = await (await page.request.get(`${origin}/api/workbench/projects/${activeId}`)).json()
+  const recoveryUrl = `${origin}/api/workbench/projects/${recoveryProject.id}`
+  const failSave = async route => {
+    if (route.request().method() === 'PUT') await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ detail: 'Validation: simulated save interruption' }) })
+    else await route.continue()
+  }
+  await page.route(recoveryUrl, failSave)
+  await replaceSource(recoveryProject.files[0].content + '\n// recovered browser draft\n')
+  await page.getByRole('alert').filter({ hasText: 'simulated save interruption' }).waitFor()
+  await page.reload({ waitUntil: 'networkidle' })
+  await page.locator('.monaco-editor').first().waitFor()
+  assert.match(await page.locator('.monaco-editor').first().innerText(), /recovered\s+browser\s+draft/)
+  await page.getByRole('alert').filter({ hasText: 'simulated save interruption' }).waitFor()
+  await page.unroute(recoveryUrl, failSave)
+  const recoveredSave = page.waitForResponse(r => r.url() === recoveryUrl && r.request().method() === 'PUT' && r.ok())
+  await page.keyboard.press('ControlOrMeta+s')
+  await recoveredSave
+  const recovered = await (await page.request.get(recoveryUrl)).json()
+  assert.match(recovered.files[0].content, /recovered browser draft/)
+
+  // These deterministic proposals exercise review controls without calling an AI service.
+  const proposalBody = { baseRevision: recovered.revision, files: [{ ...recovered.files[0], content: recovered.files[0].content + '// reviewed proposal\n' }], explanation: 'Browser validation of explicit review' }
+  await page.request.post(recoveryUrl + '/patches', { data: proposalBody })
+  await page.getByRole('button', { name: 'Assistant', exact: true }).click()
+  await page.getByRole('button', { name: 'Reject', exact: true }).click()
+  assert.equal((await (await page.request.get(recoveryUrl)).json()).revision, recovered.revision)
+  await page.getByRole('button', { name: 'Close assistant' }).click()
+  await page.request.post(recoveryUrl + '/patches', { data: proposalBody })
+  await page.getByRole('button', { name: 'Assistant', exact: true }).click()
+  await page.getByRole('button', { name: 'Apply changes', exact: true }).click()
+  await page.waitForFunction(() => /reviewed\s+proposal/.test(document.querySelector('.monaco-editor')?.textContent || ''))
+  const applied = await (await page.request.get(recoveryUrl)).json()
+  assert.equal(applied.revision, recovered.revision + 1)
+  await page.getByRole('button', { name: 'Close assistant' }).click()
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await page.waitForFunction(() => !/reviewed\s+proposal/.test(document.querySelector('.monaco-editor')?.textContent || ''))
+  assert.deepEqual((await (await page.request.get(recoveryUrl)).json()).files, recovered.files)
+
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(origin + '/studio', { waitUntil: 'networkidle' })
   await page.getByRole('navigation', { name: 'Work surface' }).getByRole('button', { name: 'Circuit', exact: true }).click()
