@@ -15,7 +15,7 @@
 
 export type StreamChunkType =
   | 'text_delta' | 'tool_call' | 'usage' | 'thinking' | 'done' | 'error'
-  | 'message_start' | 'tool_call_start' | 'tool_call_end' | 'file_update' | 'wiring_update';
+  | 'patch_ready' | 'message_start' | 'tool_call_start' | 'tool_call_end' | 'file_update' | 'wiring_update';
 
 export interface TextDeltaChunk {
   type: 'text_delta';
@@ -90,7 +90,10 @@ export interface WiringUpdateChunk {
   manifest: Record<string, unknown>;
 }
 
+export interface PatchReadyChunk { type: 'patch_ready'; patch: import('@/features/project/types').Patch }
+
 export type StreamChunk =
+  | PatchReadyChunk
   | TextDeltaChunk
   | ToolCallChunk
   | UsageChunk
@@ -141,6 +144,9 @@ function parseSseLine(line: string): StreamChunk | null {
     }
     if (json.type === 'error') {
       return { type: 'error', message: String(json.message ?? 'Unknown error'), code: json.code ? String(json.code) : undefined };
+    }
+    if (json.type === 'patch_ready' && json.patch && typeof json.patch === 'object') {
+      return { type: 'patch_ready', patch: json.patch as import('@/features/project/types').Patch };
     }
     if (json.type === 'message_start') {
       return { type: 'message_start', workspace_id: json.workspace_id ? String(json.workspace_id) : undefined };

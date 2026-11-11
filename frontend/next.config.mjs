@@ -20,6 +20,7 @@ const nextConfig = {
   },
   async rewrites() {
     return [
+      { source: '/api/workbench/:path*', destination: `${backendUrl}/api/workbench/:path*` },
       { source: '/api/studio/:path*', destination: `${backendUrl}/api/studio/:path*` },
       { source: '/api/projects/:path*', destination: `${backendUrl}/api/projects/:path*` },
       { source: '/api/agent/info', destination: `${backendUrl}/api/agent/info` },

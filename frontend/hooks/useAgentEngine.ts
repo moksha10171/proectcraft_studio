@@ -77,6 +77,9 @@ export interface AgentEngineOptions {
   getContext: () => { files: ProjectFile[]; deviceMode: DeviceMode };
   modelConfig?: ModelConfig;
   onToolResult?: (payload: ToolResultPayload) => void;
+  onPatch?: (patch: import('@/features/project/types').Patch) => void;
+  skipLegacySync?: boolean;
+  intent?: 'explain' | 'debug' | 'modify';
   welcomeMessage?: string;
   initialMessages?: ChatMessage[];
   initialToolCalls?: ToolCallEntry[];
@@ -113,6 +116,8 @@ export function useAgentEngine(_systemPrompt?: string, options?: AgentEngineOpti
   const modelConfig = options?.modelConfig;
   const onToolResult = options?.onToolResult;
   const workspaceId = options?.workspaceId ?? 'default';
+
+  useEffect(() => () => { abortRef.current?.abort() }, [])
 
   // Show welcome message on first render
   useEffect(() => {
@@ -173,7 +178,7 @@ export function useAgentEngine(_systemPrompt?: string, options?: AgentEngineOpti
     const deviceMode = ctx?.deviceMode ?? 'arduino';
 
     try {
-      if (ctx) {
+      if (ctx && !options?.skipLegacySync) {
         const saved = await fetch('/api/studio/workspace', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -190,6 +195,7 @@ export function useAgentEngine(_systemPrompt?: string, options?: AgentEngineOpti
           message: userText,
           modelConfig,
           mode: deviceMode,
+          intent: options?.intent,
         }),
         signal: abortRef.current.signal,
       });
@@ -217,7 +223,9 @@ export function useAgentEngine(_systemPrompt?: string, options?: AgentEngineOpti
       for await (const chunk of parseStream(resp.body)) {
         if (abortRef.current?.signal.aborted) break;
 
-        if (chunk.type === 'text_delta') {
+        if (chunk.type === 'patch_ready') {
+          options?.onPatch?.(chunk.patch);
+        } else if (chunk.type === 'text_delta') {
           streamingContent += chunk.text;
           updateLastMessage(m => ({ ...m, content: streamingContent, thinking: thinkingContent || undefined }));
 
