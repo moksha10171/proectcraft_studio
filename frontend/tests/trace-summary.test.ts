@@ -18,3 +18,9 @@ test('capture comparison measures actual transitions and median rising intervals
   assert.equal(fast.serial, 'OK\n')
   assert.equal(summarizeTrace([{ timeUs: 0, pin: 'D2', value: 1 }]).pins.D2.risingIntervalUs, null)
 })
+
+test('capture summary includes whole-cycle duty cycle', () => {
+  const events = [{ timeUs: 0, pin: 'D9', value: 0 }, ...[100, 1100, 2100].flatMap(t => [{ timeUs: t, pin: 'D9', value: 1 }, { timeUs: t + 250, pin: 'D9', value: 0 }])]
+  assert.ok(Math.abs(summarizeTrace(events).pins.D9.dutyPercent! - 25) < 1e-9)
+  assert.equal(summarizeTrace([{ timeUs: 0, pin: 'D2', value: 1 }]).pins.D2.dutyPercent, null)
+})

@@ -20,3 +20,24 @@
 .pin-label{font-size:15px}
 
 .run-comparison{font-size:12px;overflow:auto}.run-comparison table{width:100%;border-collapse:collapse}.run-comparison th,.run-comparison td{text-align:left;padding:8px;border-bottom:1px solid var(--wb-border)}.run-comparison select{max-width:260px;background:var(--wb-bg);color:inherit;padding:6px}.capture-text{display:flex;gap:16px}.capture-text pre{flex:1;max-height:140px;overflow:auto;white-space:pre-wrap}
+/* Signal analyzer */
+.signal-toolbar{flex-wrap:wrap;gap:8px}
+.signal-chips,.signal-controls{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.signal-chip,.signal-controls button{background:var(--wb-raised);color:var(--wb-text);border:1px solid var(--wb-border);border-radius:5px;padding:3px 8px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.signal-chip[aria-pressed=false]{opacity:.5;text-decoration:line-through}
+.signal-controls button:disabled{opacity:.4;cursor:not-allowed}
+.signal-summary,.signal-readout{font-size:11px;color:var(--wb-muted);margin:6px 0}
+.signal-readout{color:var(--wb-text);font-variant-numeric:tabular-nums}
+.link-button{background:none;border:0;padding:0;color:var(--wb-accent);text-decoration:underline;cursor:pointer;font-size:inherit}
+.signal-scroll{overflow-x:auto;border:1px solid var(--wb-border);border-radius:6px;background:var(--wb-canvas)}
+.signal-scroll:focus-visible{outline:2px solid var(--wb-accent);outline-offset:2px}
+.signal-svg{width:100%;min-width:640px;display:block;cursor:crosshair}
+.signal-label{fill:var(--wb-text);font-size:12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.signal-tick{fill:var(--wb-muted);font-size:10px}
+.signal-grid{stroke:var(--wb-border);stroke-width:1;stroke-dasharray:2 4}
+.signal-cursor{stroke:var(--wb-warn);stroke-width:1.5}
+.signal-cursor-label{fill:var(--wb-warn);font-size:11px;font-weight:700}
+.signal-measurements{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px;font-variant-numeric:tabular-nums}
+.signal-measurements caption{text-align:left;color:var(--wb-muted);padding-bottom:4px}
+.signal-measurements th,.signal-measurements td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--wb-border)}
+@media(max-width:800px){.signal-svg{min-width:560px}}
