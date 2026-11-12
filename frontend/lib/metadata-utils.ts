@@ -90,7 +90,6 @@ export function generateBreadcrumbs(pathname: string, customLabels: Record<strin
         studio: 'Studio',
         build: 'Build',
         resources: 'Resources',
-        'cost-calculator': 'Cost Calculator',
         search: 'Search',
         privacy: 'Privacy Policy',
         terms: 'Terms of Service',

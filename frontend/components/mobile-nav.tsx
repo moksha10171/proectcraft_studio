@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Home, Folder, Grid3x3, Info, ChevronRight, HelpCircle, Zap, BookOpen, Calculator } from "lucide-react"
+import { Home, Folder, Grid3x3, Info, ChevronRight, HelpCircle, Zap, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCallback } from "react"
 import { Logo } from "@/components/logo"
@@ -24,7 +24,6 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
     { href: "/projects", label: "Projects", icon: Folder },
     { href: "/resources", label: "Resources", icon: BookOpen },
     { href: "/categories", label: "Categories", icon: Grid3x3 },
-    { href: "/cost-calculator", label: "Cost Calculator", icon: Calculator },
     { href: "/about", label: "About", icon: Info },
   ]
 
