@@ -41,3 +41,15 @@
 .signal-measurements caption{text-align:left;color:var(--wb-muted);padding-bottom:4px}
 .signal-measurements th,.signal-measurements td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--wb-border)}
 @media(max-width:800px){.signal-svg{min-width:560px}}
+/* Wiring check */
+.wiring-check{padding:13px 20px;font-size:12px;line-height:1.6}
+.wiring-summary{margin:0 0 8px}
+.wiring-findings{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.wiring-findings li{display:grid;grid-template-columns:70px 1fr auto;gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--wb-border);border-radius:6px;background:var(--wb-raised)}
+.wiring-findings p{margin:0 0 3px}
+.wiring-findings code{font-size:10px;color:var(--wb-muted)}
+.wiring-check details{margin-top:10px}
+@media(max-width:800px){.wiring-findings li{grid-template-columns:1fr}}
+.assistant-starters{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}
+.assistant-starters button{background:var(--wb-raised);color:var(--wb-text);border:1px solid var(--wb-border);border-radius:14px;padding:5px 10px;font-size:11px;cursor:pointer;text-align:left}
+.assistant-starters button:hover{border-color:var(--wb-accent)}

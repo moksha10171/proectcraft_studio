@@ -22,3 +22,5 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
   }
   return body as T
 }
+export interface WiringFinding { code: string; severity: 'error' | 'warning' | 'info'; message: string; terminals: string[]; file?: string; line?: number }
+export interface WiringReport { revision: number; supported: boolean; hasCircuit?: boolean; summary: string; findings: WiringFinding[]; unresolved: { file: string; line: number; call: string; expression: string }[]; pinUsage: { terminal: string; pin: number; roles: string[]; modes: string[]; connected: boolean; builtinLed: boolean; calls: { file: string; line: number; call: string }[] }[] }

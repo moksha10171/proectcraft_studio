@@ -12,6 +12,8 @@ TOOL_REGISTRY: List[Dict[str, Any]] = [
     {"name": "VERIFY_ARDUINO", "emoji": "✅", "label": "Verify Arduino", "interactive": False},
     {"name": "VERIFY_PYTHON", "emoji": "✅", "label": "Verify Python", "interactive": False},
     {"name": "DERIVE_WIRING", "emoji": "🔌", "label": "Derive Wiring", "interactive": False},
+    {"name": "CHECK_WIRING", "emoji": "🧭", "label": "Check wiring against sketch", "interactive": False},
+    {"name": "INSPECT_RECORDING", "emoji": "📈", "label": "Inspect latest emulator recording", "interactive": False},
     {"name": "OPTIMIZE_CODE", "emoji": "🚀", "label": "Optimize Code", "interactive": False},
     {"name": "APPLY_CHANGES", "emoji": "📝", "label": "Apply Changes", "interactive": True},
     {"name": "FETCH_PROMPTS", "emoji": "📚", "label": "Fetch Prompts", "interactive": False},

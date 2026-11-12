@@ -8,6 +8,12 @@ import ModelManager from '@/components/studio/ModelManager'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import type { Project, Patch } from '../project/types'
 
+const STARTERS = {
+  explain: ['Check my wiring against the sketch', 'What does my latest recording show?'],
+  debug: ['Why does my build fail?', 'Why is my LED not behaving as expected?'],
+  modify: ['Add a current-limiting resistor to my LED circuit', 'Make the LED blink twice per second'],
+} as const
+
 export function Assistant({ project, patches, beforeSend, onPatch, onDecision, onClose }: { project: Project; patches: Patch[]; beforeSend: () => Promise<Project>; onPatch: (patch: Patch) => void; onDecision: (patch: Patch, action: 'apply' | 'reject') => Promise<void>; onClose: () => void }) {
   const [models, setModels] = useLocalStorage<ModelSection[]>('studio-model-sections', [])
   const [settings, setSettings] = useState(false), [input, setInput] = useState(''), [error, setError] = useState('')
@@ -24,6 +30,7 @@ export function Assistant({ project, patches, beforeSend, onPatch, onDecision, o
     <header><div><Bot size={18} /><strong>Project assistant</strong></div><button title="Configure AI providers" aria-label="Configure AI providers" onClick={() => setSettings(s => !s)}><Settings2 size={17} /></button><button aria-label="Close assistant" onClick={() => { agent.stopGeneration(); onClose() }}><X size={18} /></button></header>
     {settings ? <div className="model-settings"><ModelManager models={models} onModelsChange={setModels} /></div> : <>
       <div className="assistant-intents" role="group" aria-label="Assistant intent">{(['explain', 'debug', 'modify'] as const).map(value => <button aria-pressed={intent === value} key={value} disabled={busy} onClick={() => setIntent(value)}>{value}</button>)}</div>
+      {agent.messages.length <= 1 && !busy && <div className="assistant-starters" role="group" aria-label="Suggested questions">{STARTERS[intent].map(text => <button type="button" key={text} onClick={() => setInput(text)}>{text}</button>)}</div>}
       <p className="assistant-context">{project.boardId.toUpperCase()} · revision {project.revision} · {active?.name || 'Server configuration / optional AI'}</p>
       <div className="assistant-scroll" aria-live="polite">{agent.messages.map(message => <div key={message.id} className={`assistant-message ${message.role} ${message.type === 'error' ? 'error' : ''}`}><span>{message.role === 'user' ? 'You' : 'Assistant'}</span><p>{message.content}</p></div>)}
         {agent.allToolCalls.slice(-5).map(call => <div key={call.id} className="tool-progress"><Check size={12} />{call.label} · {call.status}</div>)}

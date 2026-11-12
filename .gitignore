@@ -87,3 +87,6 @@ frontend/public/monaco/
 !/docs/README.md
 *.hex
 *.elf
+
+# Written by `next dev`; tooling output, not project source
+/frontend/AGENTS.md

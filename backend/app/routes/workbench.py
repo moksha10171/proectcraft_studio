@@ -167,6 +167,14 @@ def export_bundle(project_id: str, db: Session = Depends(get_db)):
     return Bundle(project=ProjectContent.model_validate(project.model_dump(include=set(ProjectContent.model_fields))), runs=runs)
 
 
+@router.get('/projects/{project_id}/wiring-check')
+def wiring_check(project_id: str, db: Session = Depends(get_db)):
+    """Static comparison of the sketch's pin usage with the saved connections."""
+    from app.services.wiring import check_wiring
+    project = get_project(db, project_id)
+    return {'revision': project.revision, **check_wiring(ProjectContent.model_validate(project.model_dump(include=set(ProjectContent.model_fields))))}
+
+
 @router.post('/projects/{project_id}/build')
 async def build(project_id: str, body: RevisionBody, db: Session = Depends(get_db)):
     return await build_project(db, project_id, body.revision)

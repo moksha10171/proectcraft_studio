@@ -67,6 +67,7 @@ test('formatters choose readable units', () => {
   assert.equal(formatTime(1_500_000), '1.500 s')
   assert.equal(formatTime(2500), '2.500 ms')
   assert.equal(formatTime(4.25), '4.25 µs')
+  assert.equal(formatTime(0), '0 s')
   assert.equal(formatFrequency(0.5), '0.500 Hz')
   assert.equal(formatFrequency(980.4), '980.4 Hz')
   assert.equal(formatFrequency(null), '—')

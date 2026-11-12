@@ -7,8 +7,9 @@ import { useTheme } from 'next-themes'
 import type { OnMount } from '@monaco-editor/react'
 import { loader } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
-import { request, contentOf, type Board, type Project, type ProjectContent, type Patch, type Run, type TraceEvent } from '../project/types'
+import { request, contentOf, type Board, type Project, type ProjectContent, type Patch, type Run, type TraceEvent, type WiringReport } from '../project/types'
 import { CircuitCanvas } from '../circuit/CircuitCanvas'
+import { WiringCheck } from '../circuit/WiringCheck'
 import { buttonInputs } from '../circuit/graph'
 import { Signals } from '../execution/Signals'
 import { CompareRuns } from '../execution/CompareRuns'
@@ -36,6 +37,7 @@ export default function Workbench() {
   const [run, setRun] = useState<Run | null>(null), [building, setBuilding] = useState(false)
   const [surface, setSurface] = useState<'code' | 'circuit'>('code'), [results, setResults] = useState('problems'), [assistant, setAssistant] = useState(false)
   const [railOpen, setRailOpen] = useState(false)
+  const [wiring, setWiring] = useState<WiringReport | null>(null), [wiringError, setWiringError] = useState('')
   const [dialog, setDialog] = useState(false), [name, setName] = useState('Untitled experiment'), [target, setTarget] = useState<ProjectContent['boardId']>('uno'), [newTemplate, setNewTemplate] = useState('blink')
   const [newFile, setNewFile] = useState(''), [fileActions, setFileActions] = useState(false)
   const [running, setRunning] = useState(false), [events, setEvents] = useState<TraceEvent[]>([]), [timeUs, setTimeUs] = useState(0), [states, setStates] = useState<Record<string, number>>({}), [dropped, setDropped] = useState(0)
@@ -102,6 +104,15 @@ export default function Workbench() {
     finally { setLoading(false) }
   }, [activate])
   useEffect(() => { void load(); return () => { worker.current?.terminate() } }, [load])
+  // The report describes the saved revision; refetch whenever a new revision is stored.
+  const savedId = project?.id, savedRevision = project?.revision
+  useEffect(() => {
+    if (!savedId) { setWiring(null); return }
+    let current = true
+    setWiringError('')
+    request<WiringReport>(`/projects/${savedId}/wiring-check`).then(report => { if (current) setWiring(report) }).catch(e => { if (current) { setWiring(null); setWiringError(e instanceof Error ? e.message : 'Wiring check unavailable') } })
+    return () => { current = false }
+  }, [savedId, savedRevision])
 
   const persist = useCallback(async (): Promise<Project> => {
     if (saveTask.current) return saveTask.current
@@ -281,7 +292,7 @@ export default function Workbench() {
             </section>
             <section className="circuit-surface" aria-label="Circuit"><div className="surface-title"><span><CircuitBoard size={15} />Circuit</span><span className={running ? 'execution-label' : 'muted'}>{running ? '● EMULATED' : 'TERMINAL VIEW'}</span></div>{board && <CircuitCanvas circuit={draft.circuit} board={board} states={states} running={running} onButton={button} onChange={circuit => change({ ...draft, circuit })} />}</section>
           </div>
-          <section className="results-panel" aria-label="Experiment results"><nav aria-label="Result views">{['problems', 'output', 'serial', 'signals', 'runs', 'compare', 'notes'].map(tab => <button aria-current={results === tab} onClick={() => setResults(tab)} key={tab}>{tab === 'output' ? 'Build output' : tab === 'runs' ? 'Run history' : tab}{tab === 'problems' && !!run?.diagnostics.length && <span className="count">{run.diagnostics.length}</span>}</button>)}<span className={`run-status ${stale ? 'stale' : run?.valid ? 'passed' : ''}`}>{stale ? 'Source changed · rebuild required' : run ? `${run.status} · ${run.engine}` : 'No checks run yet'}</span></nav>
+          <section className="results-panel" aria-label="Experiment results"><nav aria-label="Result views">{['problems', 'output', 'serial', 'signals', 'runs', 'compare', 'wiring', 'notes'].map(tab => <button aria-current={results === tab} onClick={() => setResults(tab)} key={tab}>{tab === 'output' ? 'Build output' : tab === 'runs' ? 'Run history' : tab === 'wiring' ? 'Wiring check' : tab}{tab === 'problems' && !!run?.diagnostics.length && <span className="count">{run.diagnostics.length}</span>}{tab === 'wiring' && !!wiring?.findings.filter(f => f.severity !== 'info').length && <span className="count">{wiring.findings.filter(f => f.severity !== 'info').length}</span>}</button>)}<span className={`run-status ${stale ? 'stale' : run?.valid ? 'passed' : ''}`}>{stale ? 'Source changed · rebuild required' : run ? `${run.status} · ${run.engine}` : 'No checks run yet'}</span></nav>
             <div className="result-content">
               {results === 'problems' && (run?.diagnostics.length ? run.diagnostics.map((d, i) => <button className="diagnostic" key={i} onClick={() => jump(d.file, d.line, d.column)}><span className={`severity ${d.severity}`}>{d.severity}</span><span>{d.message}</span>{d.file && <code>{d.file}:{d.line}</code>}</button>) : <p className="empty-result">{run?.valid ? stale ? `Showing a saved result from revision ${run.sourceRevision}. Rebuild to check the current source.` : 'This revision passed its compiler check.' : 'Build your project to see compiler diagnostics. Click a problem to jump to its source.'}</p>)}
               {results === 'output' && <pre className="build-output">{run ? `Run ${run.id}\nRevision ${run.sourceRevision} · ${run.boardId} · ${run.durationMs} ms\n\n${run.output}` : 'No build output. Start with Build; AI is not required.'}</pre>}
@@ -289,6 +300,7 @@ export default function Workbench() {
               {results === 'signals' && <Signals events={events} timeUs={timeUs} dropped={dropped} />}
               {results === 'runs' && <div className="run-list">{!runs.length && <p className="empty-result">Every build and saved capture will appear here with its source revision.</p>}{runs.map(item => <button key={item.id} onClick={() => { setRun(item); if (item.trace) { setEvents(item.trace); setTimeUs(item.durationMs * 1000); setDropped(item.dropped || 0); setResults('signals') } else setResults('output') }}><span className={`run-dot ${item.valid ? 'passed' : ''}`} /><strong>{item.engine}</strong><span>{item.origin}</span><span>rev {item.sourceRevision}</span><span>{item.status}</span><code>{item.id.slice(0, 8)}</code></button>)}</div>}
               {results === 'compare' && <CompareRuns runs={runs} />}
+              {results === 'wiring' && <WiringCheck report={wiring} error={wiringError} savedRevision={project?.revision} dirty={dirty} onJump={(file, line) => jump(file, line)} />}
               {results === 'notes' && <label className="experiment-notes"><span>Prediction, observations and limitations</span><textarea aria-label="Experiment notes" value={draft.notes} onChange={e => change({ ...draft, notes: e.target.value })} placeholder="What do you expect to happen? What did you observe?" /></label>}
             </div>
           </section>

@@ -7,7 +7,7 @@ from typing import Literal
 DeviceMode = Literal["arduino", "raspberry-pi"]
 
 # Tools excluded from each mode
-_EXCLUDE_FROM_RPI = {"GENERATE_ARDUINO", "VERIFY_ARDUINO"}
+_EXCLUDE_FROM_RPI = {"GENERATE_ARDUINO", "VERIFY_ARDUINO", "CHECK_WIRING", "INSPECT_RECORDING"}
 _EXCLUDE_FROM_ARDUINO = {"GENERATE_RPI", "VERIFY_PYTHON"}
 
 # All tool names in registry order
@@ -18,6 +18,8 @@ _ALL_TOOLS = [
     "VERIFY_ARDUINO",
     "VERIFY_PYTHON",
     "DERIVE_WIRING",
+    "CHECK_WIRING",
+    "INSPECT_RECORDING",
     "OPTIMIZE_CODE",
     "APPLY_CHANGES",
     "SEND_MESSAGE",

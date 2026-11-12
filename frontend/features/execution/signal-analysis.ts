@@ -86,6 +86,7 @@ export function valueAt(edges: Edge[], timeUs: number): 0 | 1 | null {
 }
 
 export function formatTime(us: number, digits = 3): string {
+  if (us === 0) return '0 s'
   const abs = Math.abs(us)
   if (abs >= 1e6) return `${(us / 1e6).toFixed(digits)} s`
   if (abs >= 1e3) return `${(us / 1e3).toFixed(digits)} ms`

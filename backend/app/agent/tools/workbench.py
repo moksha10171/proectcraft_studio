@@ -22,6 +22,22 @@ async def execute_workbench(tool: str, args: dict, project_id: str, model_config
     if tool in ('VERIFY_ARDUINO', 'VERIFY_PYTHON'):
         run = await build_project(db, project_id, project.revision)
         return ToolResult(text=f"Deterministic check {run['id']}: {run['status']} at revision {project.revision}.\n{run['output']}")
+    if tool == 'CHECK_WIRING':
+        from app.domain.project import ProjectContent
+        from app.services.wiring import check_wiring, describe
+        return ToolResult(text=f'Wiring check for revision {project.revision}, target {project.boardId}.\n' + describe(check_wiring(ProjectContent.model_validate(project.model_dump(include=set(ProjectContent.model_fields))))))
+    if tool == 'INSPECT_RECORDING':
+        import json
+        from sqlalchemy import select
+        from app.db.models import ExperimentRun
+        from app.services.signals import describe as describe_recording
+        recordings = [json.loads(r.document) for r in db.scalars(select(ExperimentRun).where(ExperimentRun.project_id == project_id)).all()]
+        emulated = sorted((r for r in recordings if r.get('origin') == 'emulator' and r.get('trace')), key=lambda r: r.get('startedAt', ''))
+        if not emulated:
+            imported = sum(1 for r in recordings if r.get('origin') == 'imported' and r.get('trace'))
+            note = f' {imported} imported reference recording(s) exist but were not produced here.' if imported else ''
+            return ToolResult(text='No emulator recording exists for this project. Ask the user to Build and Run an Uno sketch, then Stop to save a capture.' + note)
+        return ToolResult(text=describe_recording(emulated[-1], project.revision))
     if tool == 'DERIVE_WIRING':
         return ToolResult(text='The circuit uses explicit terminal nets. Inspect current connections: ' + project.circuit.model_dump_json() + '. Explain uncertainties; do not invent connections from source text.')
     if tool not in ('WRITE_FILE', 'GENERATE_ARDUINO', 'GENERATE_RPI', 'OPTIMIZE_CODE'):
