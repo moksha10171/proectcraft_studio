@@ -4,34 +4,45 @@
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A self-hosted, open-source workbench for **Arduino, Raspberry Pi and IoT learning**.
-Edit embedded code, check it with local tools, visualize wiring, and ask an AI
-assistant to generate or explain a project. Designed for students, educators and
-makers who want source code, local workspaces and a choice of AI providers.
+Write embedded code, build it with the real Arduino toolchain, run Uno firmware in
+the browser, measure what every pin did, and check the sketch against the circuit.
+An optional AI assistant explains, debugs and drafts changes that it compiles
+before you review them. Designed for students, educators and makers.
 
 ## What works
 
-- **Project workspace:** named experiments, persistent board profiles, a local Monaco editor, revision history and undo.
-- **Compiler checks:** Arduino CLI compilation for Uno, classic Nano and Mega;
-  Python syntax checking without executing submitted scripts.
-- **AI assistance:** read-only explanations, debugging with real compiler tools,
-  and staged file proposals you can inspect, apply or reject. Supports Gemini,
-  Groq, OpenAI, Anthropic and compatible local servers.
-- **Circuit editor:** explicit named terminals/nets, editable parts, pan/zoom and
-  a keyboard-accessible connection inspector.
-- **Uno execution:** AVR8js runs actual compiled firmware in a browser worker.
-  Inspect GPIO transitions, operate a connected push button and capture UART text.
-- **Portable experiments:** export/reimport source, target/core versions, connections,
-  notes and recorded run results. Compare capture timing and UART text; imported recordings remain labelled imported.
-- **Local storage:** SQLite experiments with browser draft recovery; no account required.
-- **Hardware examples:** downloadable [Arduino and Raspberry Pi sources](examples/README.md).
+- **Project workspace:** named experiments, board profiles, a local Monaco editor,
+  revision history, undo and browser draft recovery. No account required.
+- **Real builds:** Arduino CLI with a pinned `arduino:avr` core compiles Uno, classic
+  Nano and Mega sketches; diagnostics link to the file and line. Raspberry Pi
+  Python gets a syntax check (scripts are never executed).
+- **Uno execution:** [AVR8js](https://github.com/wokwi/avr8js) runs the compiled HEX
+  in a browser worker: GPIO, timers (`millis`, `delay`, PWM), the ADC
+  (`analogRead`) and UART output. Press a wired push button or turn a
+  potentiometer while the firmware runs.
+- **Signal analyzer:** multi-pin waveforms with zoom, pan and A/B cursors;
+  per-pin frequency, period, duty cycle and pulse widths; analog input lanes;
+  Value Change Dump export for GTKWave or PulseView.
+- **Circuit and wiring check:** parts (LED, resistor, button, potentiometer) joined
+  by named nets, with a keyboard-accessible inspector. The wiring check compares
+  the pins the sketch uses with the connections and flags unconnected pins, LEDs
+  without resistors, floating inputs, `analogWrite` on non-PWM pins and more.
+- **Optional assistant:** explains, debugs and drafts edits, compiles and
+  wiring-checks its own draft, and hands over one proposal with a line diff and
+  its verification results. Nothing changes until you apply it. Works with Gemini,
+  Groq, OpenAI, Anthropic and OpenAI-compatible local servers.
+- **Portable experiments:** export and re-import source, board, core version,
+  connections, notes and recordings as one JSON bundle; compare saved runs.
+- **Starter experiments:** Blink, button input and potentiometer dimmer templates,
+  plus downloadable [Arduino and Raspberry Pi sources](examples/README.md).
 
-**Current limits:** the execution adapter supports Uno/ATmega328P GPIO, timers
-and UART. Nano and Mega support compilation; Linux Raspberry Pi supports Python
-syntax checks. ESP32/Pico execution, flashing and physical serial capture are not
-implemented. Circuit coordinates are a logical terminal view, not physical header
-placement. External LED/resistor graphics show connectivity; there is no analog
-voltage/current solver. A successful build or emulator run is not physical
-hardware validation. AI suggestions require an explicitly configured provider.
+**Current limits:** only the Uno is emulated (no I2C/SPI peripherals or external
+devices beyond the button and potentiometer inputs). Nano and Mega compile only;
+Raspberry Pi gets a syntax check only. ESP32/Pico execution, flashing and physical
+serial capture are not implemented. The circuit is a logical connection view, not
+physical placement or an analog solver: a potentiometer supplies a voltage to the
+ADC, but LED current and brightness are not simulated. A successful build or
+emulator run is not hardware validation. AI features need a configured provider.
 
 ## Quick start
 
@@ -68,6 +79,26 @@ header. New AVR projects pin core 1.8.8 and build results record the installed
 toolchain. Install any declared libraries at their specified versions, for example
 `arduino-cli lib install "Servo@1.3.0"`. Compilation does not flash hardware.
 
+## Working with an experiment
+
+1. Open Studio and choose Blink, Button input, Analog dimmer, Empty project, or
+   import an `.ino`, `.py` or ProjectCraft JSON bundle. No AI setup is needed.
+2. Edit and select the board. Changes save as revisions; a conflicting session is
+   reported instead of overwriting its work. Unsaved drafts can be exported.
+3. Build. Click a diagnostic to reach its file and line. Editing after a build
+   marks that result stale and disables execution until you rebuild.
+4. On Uno, Run executes the compiled HEX in a worker. Press buttons and move
+   potentiometer sliders in the circuit view while it runs. Serial shows the
+   emulated UART output. Signals measures each pin; click the waveform to place
+   A/B cursors and time events, and export VCD. Stop saves a recording (at most 10,000 events; dropped
+   events are reported). Compare saved runs side by side.
+5. Open Wiring check to compare the sketch's pin usage with the circuit.
+6. Export preserves the experiment and run metadata. Re-importing creates a new
+   project; imported recordings stay labelled as imported, not freshly executed.
+7. Open the assistant when it helps. Applying a stale proposal is rejected, and
+   Undo restores the previous saved revision. Hosted providers can charge for
+   usage; local models need their own downloads and compute.
+
 ## AI configuration
 
 | Provider | Configuration |
@@ -91,6 +122,27 @@ Browser-entered keys are stored in localStorage and sent to **your backend**, wh
 makes provider requests. They are not confined to the browser during use. Server
 keys stay on the server; never put them in `NEXT_PUBLIC_*` variables or commit them.
 Workspace code and prompts go to the chosen provider when AI features are used.
+
+### How the assistant works
+
+The assistant runs on your backend as a tool-using loop over the open project:
+
+1. Each request includes a short project snapshot: board, files, the latest build
+   of this revision, wiring-check findings and the latest recording's measurements.
+2. It inspects with read-only tools: `LIST_FILES`, `READ_FILE` (line-numbered),
+   `CHECK_WIRING`, `INSPECT_RECORDING`, `BOARD_INFO` (pin capabilities and
+   electrical limits) and `WEB_SEARCH` when `SERPER_API_KEY` or
+   `BRAVE_SEARCH_API_KEY` is set.
+3. In debug and modify modes it edits a **draft** with `EDIT_FILE` (exact text
+   replacement) or `WRITE_FILE`. `CHECK_PROJECT` compiles the draft with the
+   real toolchain without saving it, so the assistant can fix its own errors.
+4. When it finishes, the draft becomes one proposal. If the assistant did not
+   check its final draft, the backend builds and wiring-checks it first. The
+   review panel shows the diff and those results; you apply or reject it.
+
+Explain mode only has the read-only tools. Tool errors (text not found, ambiguous
+match, invalid path) go back to the model so it can correct itself. Every step is
+listed in the panel and stored with the project's chat history.
 
 ## Self-hosting and customization
 
@@ -134,11 +186,13 @@ pnpm test:backend
 pnpm build
 ```
 
-Tests use temporary databases and controlled provider responses; they do not spend
-API credits. With Arduino CLI and `arduino:avr` on PATH, backend tests compile
+Tests use temporary databases and scripted provider responses; they do not call a
+hosted model or spend API credits. With Arduino CLI and `arduino:avr` on PATH, backend tests compile
 actual Uno/Nano/Mega examples; otherwise those integration tests skip. For browser
 checks, start both services against disposable workspace data, run
-`pnpm exec playwright install chromium`, then `pnpm test:e2e`. Use `STUDIO_ORIGIN`
+`pnpm exec playwright install chromium`, then `pnpm test:e2e`. The browser check
+drives the assistant with a local scripted OpenAI-compatible endpoint, so it tests
+the loop, real draft builds and the review UI without an AI service. Use `STUDIO_ORIGIN`
 for a different URL, or `PLAYWRIGHT_CHANNEL=chrome` to use an installed Google
 Chrome (also used by CI). On Windows, run backend tests with
 `backend\.venv\Scripts\python.exe -m pytest backend/tests -q`.
@@ -149,34 +203,12 @@ restart the backend. Health reporting `needs_config` indicates absent server AI
 keys; browser-configured models and non-AI features can still work.
 
 ```text
-frontend/      Next.js UI, project workspace, circuit editor and AVR worker
-backend/       FastAPI, project revisions, staged proposals, builds and SQLite
+frontend/      Next.js UI, workbench, circuit editor, signal analyzer and AVR worker
+backend/       FastAPI, project revisions, builds, wiring check, assistant loop, SQLite
 examples/      Downloadable hardware source files
 data/          Hardware references and project catalog (runtime data ignored)
 ```
 
-[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
-
-Licensed under [MIT](LICENSE). Maintained by B Mokshagna Reddy and contributors.
-
-## Working with an experiment
-
-1. Open Studio and choose Blink, Button input, Empty project or import an `.ino`,
-   `.py` or ProjectCraft JSON bundle. No model setup is needed for the core flow.
-2. Edit and select the board. Changes save as revisions; a conflicting session is
-   reported instead of overwriting its work. Unsaved drafts can be exported.
-3. Build. Click a diagnostic to reach its file/line. Editing after a build marks
-   that result stale and disables execution until rebuilt.
-4. On Uno, Run executes the compiled HEX in a worker. Signals show cycle-based
-   timestamps; Serial displays actual emulator UART output. Stop saves a capture.
-   The recording retains at most 10,000 events and reports dropped events. Compare
-   saved captures using GPIO transition counts, median rising intervals and UART text.
-5. Export preserves the experiment and run metadata. Reimport creates a new
-   project; reference recordings are not reported as freshly executed results.
-6. Open Assistant only when useful. Explain mode cannot mutate project files.
-   Modify stages a proposal; applying a stale proposal is rejected. Undo restores
-   the previous saved revision. Hosted providers can charge for usage; local
-   models require their own downloads and sufficient compute.
 
 ## Third-party components
 
@@ -187,3 +219,9 @@ and AVR toolchain/core have their own terms; the compiler image retains CLI lice
 text and source references under `/usr/share/licenses/arduino-cli` and upstream
 core/tool files under `/root/.arduino15`. ProjectCraft's MIT license does not
 replace the licenses of those tools. Browser graphics are a custom logical view.
+
+## License
+
+Licensed under [MIT](LICENSE). Maintained by B Mokshagna Reddy and contributors.
+
+[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)

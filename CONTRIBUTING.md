@@ -47,12 +47,16 @@ Next.js React/import plugins; test plugin compatibility before a major upgrade.
 - Keep `.env*`, keys, databases, uploads, virtualenvs, node_modules, build output,
   screenshots and local test reports out of commits. Source tests belong in Git.
 
-## Adding an AI tool
+## Adding an assistant tool
 
-Add its metadata and JSON input schema to
-`backend/app/agent/registries/tools.py`, implement it in
-`backend/app/agent/tools/executor.py`, include any device mapping and add a
-regression test. Provider calls belong in backend adapters, not UI components.
+Tools live in `backend/app/agent/session.py`. Add an entry to `TOOLS` with a
+description that says when to use it, its JSON input schema and whether it
+writes, then implement `_<tool_name>` on `ProjectSession`. Read-only tools are
+available in explain mode automatically. Tools must never change the saved
+project: write tools edit the session draft, which is verified and staged for
+review. Return specific `ERROR:` text the model can act on, and add a test in
+`backend/tests/test_agent_loop.py` driven by the scripted provider there.
+Provider calls belong in backend adapters, not UI components.
 
 ## Reporting issues
 
