@@ -34,8 +34,8 @@ export function getServerEnvStatus(): EnvStatus {
 }
 
 export const ENV_SETUP_STEPS = [
-  { step: 1, title: 'Copy env file', command: 'cp .env.local.example frontend/.env.local' },
-  { step: 2, title: 'Add API keys', command: '# edit frontend/.env.local — GEMINI_API_KEY or GROQ_API_KEY' },
-  { step: 3, title: 'Install & run', command: 'pnpm install && pnpm dev' },
-  { step: 4, title: 'Verify setup', command: 'curl http://localhost:3000/api/health' },
+  { step: 1, title: 'Install dependencies', command: 'pnpm install --frozen-lockfile && pnpm setup:backend' },
+  { step: 2, title: 'Install the AVR compiler core', command: 'arduino-cli core install arduino:avr@1.8.8' },
+  { step: 3, title: 'Start Studio', command: 'pnpm env:init && pnpm dev' },
+  { step: 4, title: 'Verify the backend', command: 'curl http://localhost:3000/api/health' },
 ] as const

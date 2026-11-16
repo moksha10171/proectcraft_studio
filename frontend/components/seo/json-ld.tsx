@@ -14,7 +14,7 @@ export function OrganizationSchema({
   name = APP_CONFIG.name,
   url = APP_CONFIG.url,
   logo = `${APP_CONFIG.url}/icon.svg`,
-  description = "Open-source learning hub for developers with coding projects, AI tools, and virtual hardware testing.",
+  description = "Open-source, self-hosted Arduino experiment workbench with real compilation, Uno emulation and optional AI assistance.",
   sameAs = [APP_CONFIG.githubUrl],
 }: OrganizationSchemaProps) {
   const schema = {

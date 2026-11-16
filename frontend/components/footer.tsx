@@ -17,17 +17,17 @@ export function Footer() {
               <Logo />
             </Link>
             <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
-              Self-hosted Arduino and IoT workbench. Edit code, check it locally and explore wiring with optional AI assistance.
+              Self-hosted Arduino workbench. Build with the real compiler, run Uno firmware in the browser, inspect signals and export reproducible experiments. AI is optional.
             </p>
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
               <p className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Key className="h-4 w-4 text-primary" />
-                Bring your own keys
+                Optional AI, your keys
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Set <code className="rounded bg-muted px-1">GEMINI_API_KEY</code> or{" "}
                 <code className="rounded bg-muted px-1">GROQ_API_KEY</code> in{" "}
-                <code className="rounded bg-muted px-1">frontend/.env.local</code>, or use Studio → Models.
+                <code className="rounded bg-muted px-1">frontend/.env.local</code>, or configure a provider under Studio → Assistant.
               </p>
             </div>
             <Link

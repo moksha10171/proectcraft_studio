@@ -1,4 +1,4 @@
-import { Github, FolderOpen, Cpu, Key, Settings2 } from "lucide-react"
+import { Github, FolderOpen, Cpu, Key } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { APP_CONFIG } from "@/lib/config"
@@ -13,14 +13,14 @@ export function SetupSection() {
           <header className="text-center space-y-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
               <Github className="h-3.5 w-3.5" />
-              Open Source & Self-Hosted
+              Open source & self-hosted
             </div>
             <h2 id="setup-heading" className="text-2xl font-bold md:text-3xl lg:text-4xl">
               Run it on your machine
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Clone the repo, add your own AI API keys, and run everything locally.
-              No accounts, no private servers, no vendor lock-in.
+              Clone the repository and run the backend and frontend locally, or use Docker Compose.
+              No accounts and no hosted service are required for building and running Uno firmware.
             </p>
           </header>
 
@@ -28,10 +28,7 @@ export function SetupSection() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             {ENV_SETUP_STEPS.map(({ step, title, command }) => (
-              <div
-                key={step}
-                className="rounded-2xl border border-border bg-card p-5 space-y-3"
-              >
+              <div key={step} className="rounded-2xl border border-border bg-card p-5 space-y-3">
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
                     {step}
@@ -47,24 +44,12 @@ export function SetupSection() {
 
           <div className="grid gap-4 md:grid-cols-3">
             {[
-              {
-                icon: FolderOpen,
-                title: "Local projects",
-                desc: "Add projects to data/projects/projects.json",
-              },
-              {
-                icon: Cpu,
-                title: "AI Studio",
-                desc: "Arduino & Raspberry Pi IDE with simulation",
-              },
-              {
-                icon: Key,
-                title: "API keys",
-                desc: "frontend/.env.local or Studio → Models (browser BYOK)",
-              },
+              { icon: FolderOpen, title: "Local data", desc: "Projects, revisions and recordings live in a SQLite file under ./data." },
+              { icon: Cpu, title: "Real toolchain", desc: "Builds use Arduino CLI with the pinned arduino:avr core; the Docker image bundles both." },
+              { icon: Key, title: "AI is optional", desc: "Configure a provider under Studio → Assistant, or set a server key in frontend/.env.local." },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="rounded-2xl border border-border bg-card p-5 space-y-2">
-                <Icon className="h-5 w-5 text-primary" />
+                <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
                 <h3 className="font-semibold text-sm">{title}</h3>
                 <p className="text-sm text-muted-foreground">{desc}</p>
               </div>
@@ -75,13 +60,7 @@ export function SetupSection() {
             <Button asChild className="rounded-xl gap-2">
               <Link href={APP_CONFIG.githubUrl} target="_blank" rel="noopener noreferrer">
                 <Github className="h-4 w-4" />
-                Star on GitHub
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="rounded-xl gap-2">
-              <Link href="/studio">
-                <Settings2 className="h-4 w-4" />
-                Manage Models
+                View on GitHub
               </Link>
             </Button>
           </div>

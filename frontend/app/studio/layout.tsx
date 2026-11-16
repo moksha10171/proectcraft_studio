@@ -3,15 +3,15 @@ import { generatePageMetadata } from "@/lib/metadata-utils"
 import { APP_CONFIG } from "@/lib/config"
 
 export const metadata: Metadata = generatePageMetadata({
-  title: "AI Studio - Arduino & Raspberry Pi IDE",
-  description: "Self-hosted AI-powered IDE for Arduino and Raspberry Pi. Generate code, visualize wiring, and run virtual simulations using your own API keys.",
+  title: "Studio — Arduino Experiment Workbench",
+  description: "Build Arduino sketches with the real compiler, run Uno firmware in an in-browser emulator, inspect signals and export experiments. AI assistance is optional.",
   path: "/studio",
   keywords: [
     "open source arduino ide",
     "raspberry pi studio",
     "self-hosted",
-    "virtual hardware testing",
-    "embedded systems simulator",
+    "avr emulator",
+    "arduino build and run",
   ],
 })
 
@@ -28,7 +28,7 @@ export default function StudioLayout({ children }: { children: React.ReactNode }
             applicationCategory: "DeveloperApplication",
             operatingSystem: "Web Browser",
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-            description: "Self-hosted AI IDE for embedded systems with virtual simulation.",
+            description: "Self-hosted Arduino workbench with real compilation and Uno emulation.",
             url: `${APP_CONFIG.url}/studio`,
             isAccessibleForFree: true,
           }),

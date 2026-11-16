@@ -93,7 +93,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   return {
     title: `${project.title} | ProjectCraft`,
     description: enhancedDescription,
-    keywords: [...(project.tags || []), ...(project.technologies || []), 'virtual testing', 'AI Studio', 'free download'],
+    keywords: [...(project.tags || []), ...(project.technologies || []), 'arduino', 'example source', 'free download'],
     openGraph: {
       title: project.title,
       description: enhancedDescription,
@@ -421,13 +421,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                     <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
                       <Zap className="h-5 w-5 text-accent" />
                     </div>
-                    <h3 className="font-semibold mb-2">Test Before You Buy</h3>
+                    <h3 className="font-semibold mb-2">Open it in Studio</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Use our AI Studio to simulate and test hardware projects virtually before purchasing components.
+                      Build the sketch with the real Arduino compiler and, for the Uno, run it in the browser emulator. Emulation is not a substitute for testing on hardware.
                     </p>
                     <Button variant="outline" asChild className="w-full rounded-xl touch-action-manipulation active:scale-[0.98] bg-transparent">
                       <Link href="/studio">
-                        Try AI Studio
+                        Open Studio
                         <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                       </Link>
                     </Button>

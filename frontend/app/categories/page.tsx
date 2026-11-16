@@ -12,15 +12,11 @@ import { generateBreadcrumbs } from "@/lib/metadata-utils"
 export const metadata: Metadata = {
   title: "Project Categories - Browse by Technology",
   description:
-    "Explore free coding projects by category: Web Development, Arduino, Raspberry Pi, Machine Learning, Cybersecurity, Mobile Apps, IoT, and more.",
+    "Browse example projects by category: Arduino, Raspberry Pi and IoT.",
   keywords: [
-    "coding projects by category",
-    "web development projects",
+    "example projects by category",
     "arduino projects",
     "raspberry pi tutorials",
-    "machine learning projects",
-    "cybersecurity tutorials",
-    "mobile development",
     "IoT projects",
     "free programming resources"
   ],

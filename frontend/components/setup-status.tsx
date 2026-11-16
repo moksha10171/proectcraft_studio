@@ -149,7 +149,7 @@ export function SetupStatus() {
             <p className="text-sm text-muted-foreground max-w-lg">
               Copy <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{exampleFile}</code> to{" "}
               <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{envFile}</code> and add your keys,
-              or paste them in Studio → Models (browser-only BYOK). You are responsible for API usage and costs.
+              or add a provider under Studio → Assistant → Configure AI providers. AI is optional; you are responsible for provider usage and costs.
             </p>
           )}
         </div>

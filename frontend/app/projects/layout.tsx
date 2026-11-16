@@ -3,12 +3,11 @@ import { generatePageMetadata } from "@/lib/metadata-utils"
 
 export const metadata: Metadata = generatePageMetadata({
     title: "All Coding Projects - ProjectCraft",
-    description: "Browse 1000+ free coding projects and tutorials for web development, Arduino, Raspberry Pi, and more. Download source code or test projects virtually in our AI Studio.",
+    description: "Downloadable example sketches and scripts for Arduino and Raspberry Pi, with wiring notes. Open them in ProjectCraft Studio or use them with your own tools.",
     path: "/projects",
     keywords: [
         "coding project library",
-        "free source code",
-        "web development tutorials",
+        "example sketches",
         "arduino project list",
         "raspberry pi projects",
         "coding for beginners",
