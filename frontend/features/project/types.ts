@@ -10,7 +10,12 @@ export interface Diagnostic { severity: 'error' | 'warning' | 'info'; message: s
 /** A digital level (`value`), an analog input stimulus in volts (`volts`, A0–A5) or UART text (`serial`). */
 export interface TraceEvent { timeUs: number; pin?: string; value?: number; volts?: number; serial?: string }
 export interface Run { id: string; projectId: string; sourceRevision: number; sourceHash: string; boardId: string; origin: string; engine: string; status: string; valid: boolean; output: string; diagnostics: Diagnostic[]; durationMs: number; dropped?: number; artifact?: { format: string; content: string; sha256: string }; trace?: TraceEvent[] }
-export interface Patch { id: string; projectId: string; baseRevision: number; status: 'proposed' | 'applied' | 'rejected'; explanation: string; before: ProjectContent; after: ProjectContent }
+/** Checks the assistant ran on the exact proposed content before handing it over. */
+export interface Verification {
+  build: { status: 'passed' | 'failed' | 'unavailable'; engine?: string; boardId: string; summary: string }
+  wiring?: { summary: string; findings: { code: string; severity: 'error' | 'warning' | 'info'; message: string; file?: string | null; line?: number | null }[] }
+}
+export interface Patch { id: string; projectId: string; baseRevision: number; status: 'proposed' | 'applied' | 'rejected'; explanation: string; before: ProjectContent; after: ProjectContent; verification?: Verification }
 export function contentOf(project: Project): ProjectContent {
   return { name: project.name, boardId: project.boardId, coreVersion: project.coreVersion, files: project.files, circuit: project.circuit, dependencies: project.dependencies, notes: project.notes }
 }

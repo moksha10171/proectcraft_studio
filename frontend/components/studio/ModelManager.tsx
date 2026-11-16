@@ -268,12 +268,12 @@ function ModelCard({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-                Temperature <span className="text-gray-600 font-normal">{model.temperature ?? 0.7}</span>
+                Temperature <span className="text-gray-600 font-normal">{model.temperature ?? 0.2}</span>
               </label>
               <input
                 type="range"
                 min="0" max="1" step="0.1"
-                value={model.temperature ?? 0.7}
+                value={model.temperature ?? 0.2}
                 onChange={e => onUpdate({ temperature: parseFloat(e.target.value) })}
                 className="w-full accent-teal-500"
               />

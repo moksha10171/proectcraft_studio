@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import http from 'node:http'
 import { chromium } from 'playwright'
 
 // Use a disposable instance. These checks create projects and run local tools.
@@ -217,6 +218,64 @@ try {
   await page.waitForFunction(() => !/reviewed\s+proposal/.test(document.querySelector('.monaco-editor')?.textContent || ''))
   assert.deepEqual((await (await page.request.get(recoveryUrl)).json()).files, recovered.files)
 
+  // Assistant loop end to end, driven by a scripted OpenAI-compatible endpoint (a test double, not an AI model):
+  // read → exact edit → real draft build → one proposal with its verification → user applies.
+  const llmRequests = []
+  const llm = http.createServer(async (request, response) => {
+    let raw = ''
+    for await (const chunk of request) raw += chunk
+    const body = JSON.parse(raw)
+    llmRequests.push(body)
+    const step = body.messages.filter(m => m.role === 'tool').length
+    const call = [['READ_FILE', { path: 'sketch.ino' }], ['EDIT_FILE', { path: 'sketch.ino', old_text: 'delay(1000);', new_text: 'delay(250);', replace_all: true }], ['CHECK_PROJECT', {}]][step]
+    response.writeHead(200, { 'Content-Type': 'text/event-stream' })
+    const send = data => response.write(`data: ${JSON.stringify(data)}\n\n`)
+    if (call) {
+      send({ choices: [{ delta: { tool_calls: [{ index: 0, id: `call_${step}`, type: 'function', function: { name: call[0], arguments: JSON.stringify(call[1]) } }] } }] })
+      send({ choices: [{ delta: {}, finish_reason: 'tool_calls' }] })
+    } else {
+      send({ choices: [{ delta: { content: 'Changed both delays to **250 ms** in `sketch.ino`, so the LED blinks twice per second.' } }] })
+      send({ choices: [{ delta: {}, finish_reason: 'stop' }] })
+    }
+    response.end('data: [DONE]\n\n')
+  })
+  await new Promise(resolve => llm.listen(0, '127.0.0.1', resolve))
+  try {
+    const agentProject = await (await page.request.post(origin + '/api/workbench/projects', { data: { name: 'Browser assistant experiment', template: 'blink' } })).json()
+    const agentUrl = `${origin}/api/workbench/projects/${agentProject.id}`
+    await page.evaluate(([id, port]) => {
+      localStorage.setItem('projectcraft:last-project', id)
+      localStorage.setItem('studio-model-sections', JSON.stringify([{ id: 'scripted', name: 'Scripted test endpoint', provider: 'custom', apiKey: '', model: 'scripted', baseUrl: `http://127.0.0.1:${port}/v1`, supportsNativeTools: true, isActive: true, addedAt: 0 }]))
+    }, [agentProject.id, llm.address().port])
+    await page.reload({ waitUntil: 'networkidle' })
+    await page.locator('.monaco-editor').first().waitFor()
+    await page.getByRole('button', { name: 'Assistant', exact: true }).click()
+    await page.getByRole('group', { name: 'Assistant intent' }).getByRole('button', { name: 'modify' }).click()
+    await page.locator('#assistant-input').fill('Make the LED blink twice per second')
+    await page.getByRole('button', { name: 'Send message' }).click()
+    const proposal = page.getByRole('region', { name: 'Proposed changes' })
+    await proposal.waitFor({ timeout: 150_000 })
+    const proposalText = await proposal.innerText()
+    assert.match(proposalText, cli.arduinoCli ? /Draft build passed/ : /Draft build unavailable/)
+    assert.match(proposalText, /Wiring check clean|wiring finding/)
+    assert.match(proposalText, /\+2\s+−2/)
+    assert.equal(await proposal.locator('.diff-line.add').count(), 2)
+    const steps = await page.getByRole('list', { name: 'Assistant steps' }).innerText()
+    assert.match(steps, /Read file[\s\S]*Edit file[\s\S]*Build project/)
+    await page.locator('.assistant-message.assistant strong', { hasText: '250 ms' }).waitFor()
+    assert.match(llmRequests[0].messages.at(-1).content, /^<project-state>[\s\S]*Make the LED blink twice per second$/)
+    assert.ok(llmRequests[0].tools.some(t => t.function.name === 'EDIT_FILE'))
+    assert.equal((await (await page.request.get(agentUrl)).json()).revision, 1, 'nothing is saved before the user applies')
+    await proposal.getByRole('button', { name: 'Apply changes' }).click()
+    await page.waitForFunction(() => /delay\(250\)/.test(document.querySelector('.monaco-editor')?.textContent || ''))
+    const appliedAgent = await (await page.request.get(agentUrl)).json()
+    assert.equal(appliedAgent.revision, 2)
+    assert.equal(appliedAgent.files[0].content.match(/delay\(250\);/g).length, 2)
+    await page.getByRole('button', { name: 'Close assistant' }).click()
+  } finally {
+    llm.close()
+  }
+
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(origin + '/studio', { waitUntil: 'networkidle' })
   await page.getByRole('navigation', { name: 'Work surface' }).getByRole('button', { name: 'Circuit', exact: true }).click()
@@ -226,7 +285,7 @@ try {
   await page.getByRole('dialog').waitFor()
   assert.equal(await page.locator('body').evaluate(el => el.scrollWidth <= window.innerWidth), true)
   assert.deepEqual(errors, [])
-  console.log('Project creation, local editor, build/availability, firmware capture, stale status, export/import and mobile circuit checks passed.')
+  console.log('Project creation, local editor, build/availability, firmware capture, stale status, export/import, assistant draft-verify-review loop and mobile circuit checks passed.')
 } finally {
   await browser.close()
 }
