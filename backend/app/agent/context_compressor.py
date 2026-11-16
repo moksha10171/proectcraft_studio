@@ -1,8 +1,5 @@
-"""Context compressor — port of frontend/lib/arduino-studio/context-compressor.ts.
-
-Keeps the last N conversation turns fully intact and stubs older tool_result
-content to prevent runaway context growth. Matches Logen's OptimizationSettings.
-"""
+"""Keeps the last N conversation turns intact and replaces older tool results with a stub,
+so long chats do not grow without bound."""
 
 from __future__ import annotations
 
@@ -61,14 +58,3 @@ def compress_context(messages: list[AgentMessage], keep_turns: int = KEEP_TURNS)
         else:
             result.append(msg)
     return result
-
-
-def sanitize_and_compress(messages: list[AgentMessage]) -> list[AgentMessage]:
-    """Compress context. Tool-pair sanitization is handled by tool_pairs.py."""
-    return compress_context(messages)
-
-
-def calculate_context_usage(messages: list[AgentMessage], max_tokens: int = 128_000) -> dict:
-    used = sum(estimate_tokens(m.get("content") or "") for m in messages)
-    percent = min(100, round((used / max_tokens) * 100))
-    return {"usedTokens": used, "maxTokens": max_tokens, "percent": percent}

@@ -28,9 +28,9 @@ def resolve_provider(config: dict | None = None) -> tuple[str, str, str, str | N
                 raise ValueError(f"{provider.upper()}_API_KEY is not configured")
         model = (config.get("model") or os.environ.get(f"{provider.upper()}_MODEL") or DEFAULT_MODELS.get(provider, "")).strip()
         if not model:
-            raise ValueError("Choose a model in Studio → Models")
+            raise ValueError("Choose a model in the assistant's AI provider settings")
         return provider, key, model, base_url
     for candidate in ("gemini", "groq"):
         if os.environ.get(f"{candidate.upper()}_API_KEY", "").strip():
             return resolve_provider({"provider": candidate})
-    raise ValueError("Configure a model in Studio → Models or set GEMINI_API_KEY / GROQ_API_KEY")
+    raise ValueError("No AI model is configured. Add one in the assistant's AI provider settings (gear icon), or set GEMINI_API_KEY or GROQ_API_KEY on the server.")

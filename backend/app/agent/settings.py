@@ -1,4 +1,4 @@
-"""Agent loop settings — mirrors Logen workspace agent limits."""
+"""Assistant loop limits and defaults, overridable from the environment."""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ WORKSPACE_AGENT_NAME = "projectcraft__workspace_agent"
 
 AGENT_MAX_TURNS = int(os.environ.get("AGENT_MAX_TURNS", "20"))
 AGENT_TOOL_RESULT_MAX_CHARS = int(os.environ.get("AGENT_TOOL_RESULT_MAX_CHARS", "10000"))
-AGENT_CONTEXT_WINDOW = int(os.environ.get("AGENT_CONTEXT_WINDOW", "128000"))
 AGENT_DEFAULT_TEMPERATURE = float(os.environ.get("AGENT_DEFAULT_TEMPERATURE", "0.2"))
 AGENT_DEFAULT_MAX_TOKENS = int(os.environ.get("AGENT_DEFAULT_MAX_TOKENS", "8192"))
 

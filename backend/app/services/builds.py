@@ -10,7 +10,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.models import ExperimentRun
-from app.domain.project import BOARDS
+from app.domain.project import BOARDS, ProjectContent
 from app.routes.compile import CompileRequest, compile_code
 from app.services.experiments import get_project, timestamp
 
@@ -39,27 +39,23 @@ async def toolchain_info():
     return data
 
 
-async def build_project(db: Session, project_id: str, revision: int) -> dict:
-    project = get_project(db, project_id)
-    if project.revision != revision:
-        raise HTTPException(409, 'Save your latest changes before building')
-    board = BOARDS[project.boardId]
-    environment = await toolchain_info()
+async def compile_content(content: ProjectContent, environment: dict | None = None) -> dict:
+    """Compile project content with the pinned toolchain. Nothing is stored; callers decide that."""
+    board = BOARDS[content.boardId]
+    environment = environment or await toolchain_info()
+    run: dict = {'boardId': content.boardId, 'engine': 'python-ast' if content.boardId == 'pi4' else 'arduino-cli'}
     started = time.monotonic()
-    run = {'id': uuid.uuid4().hex, 'projectId': project_id, 'sourceRevision': revision,
-           'sourceHash': project.sourceHash, 'boardId': project.boardId, 'origin': 'compiler',
-           'startedAt': timestamp(), 'status': 'running', 'engine': 'python-ast' if project.boardId == 'pi4' else 'arduino-cli'}
     try:
-        if project.boardId != 'pi4' and environment.get('arduinoCli'):
+        if content.boardId != 'pi4' and environment.get('arduinoCli'):
             installed = next((c.get('version') for c in (environment.get('cores') or []) if c.get('id') == 'arduino:avr'), None)
-            if project.coreVersion and installed != project.coreVersion:
-                raise HTTPException(503, f"Project requires arduino:avr@{project.coreVersion}; installed version is {installed or 'none'}. Install it explicitly with arduino-cli core install arduino:avr@{project.coreVersion}.")
-            for dependency in project.dependencies:
+            if content.coreVersion and installed != content.coreVersion:
+                raise HTTPException(503, f"Project requires arduino:avr@{content.coreVersion}; installed version is {installed or 'none'}. Install it explicitly with arduino-cli core install arduino:avr@{content.coreVersion}.")
+            for dependency in content.dependencies:
                 if dependency.source != 'arduino-library':
                     raise HTTPException(503, f'Unsupported dependency source: {dependency.source}. Configure this toolchain externally.')
                 if not any(lib.get('name') == dependency.name and lib.get('version') == dependency.version for lib in (environment.get('libraries') or [])):
                     raise HTTPException(503, f'Install the declared library explicitly: arduino-cli lib install "{dependency.name}@{dependency.version}"')
-        result = await compile_code(CompileRequest(files=[{'name': f.name, 'content': f.content} for f in project.files],
+        result = await compile_code(CompileRequest(files=[{'name': f.name, 'content': f.content} for f in content.files],
                                    deviceMode=board['mode'], board=board['fqbn'] or 'arduino:avr:uno', includeArtifact=True))
         run.update(result)
         if result.get('artifact'):
@@ -70,7 +66,17 @@ async def build_project(db: Session, project_id: str, revision: int) -> dict:
                    errors=[str(exc.detail)], diagnostics=[{'severity': 'error', 'message': str(exc.detail)}])
     run['durationMs'] = round((time.monotonic() - started) * 1000)
     run['toolchain'] = environment
-    run['dependencies'] = [d.model_dump() for d in project.dependencies]
+    run['dependencies'] = [d.model_dump() for d in content.dependencies]
+    return run
+
+
+async def build_project(db: Session, project_id: str, revision: int) -> dict:
+    project = get_project(db, project_id)
+    if project.revision != revision:
+        raise HTTPException(409, 'Save your latest changes before building')
+    run = {'id': uuid.uuid4().hex, 'projectId': project_id, 'sourceRevision': revision,
+           'sourceHash': project.sourceHash, 'origin': 'compiler', 'startedAt': timestamp()}
+    run.update(await compile_content(project))
     db.add(ExperimentRun(id=run['id'], project_id=project_id, document=json.dumps(run)))
     db.commit()
     return run

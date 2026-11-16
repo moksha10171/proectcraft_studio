@@ -99,9 +99,16 @@ async def test_workbench_agent_stages_changes_and_explain_intent_is_read_only(cl
     from app.agent.loop import run_agent_loop
     from app.db.engine import SessionLocal
     project = create(client)
+    turns = 0
     async def provider(*args):
+        nonlocal turns
+        turns += 1
+        first = turns % 2 == 1
         async def stream():
-            yield ('data: ' + json.dumps({'type': 'tool_call', 'tool': 'WRITE_FILE', 'args': {'path': 'sketch.ino', 'content': 'void setup(){} void loop(){}'}, 'call_id': 'proposal-call'}) + '\n\n').encode()
+            if first:
+                yield ('data: ' + json.dumps({'type': 'tool_call', 'tool': 'WRITE_FILE', 'args': {'path': 'sketch.ino', 'content': 'void setup(){} void loop(){}'}, 'call_id': 'proposal-call'}) + '\n\n').encode()
+            else:
+                yield b'data: {"type":"text_delta","text":"Done."}\n\n'
             yield b'data: {"type":"done"}\n\n'
         return stream()
     config = {'provider': 'custom', 'model': 'local', 'baseUrl': 'http://localhost:11434/v1', 'supportsNativeTools': True}

@@ -9,9 +9,8 @@ from app.routes.studio import _ws_id
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from app.agent.registries.agents import get_workspace_agent
-from app.agent.registries.prompts import PROMPT_INDEX
-from app.agent.registries.tools import TOOL_REGISTRY
+from app.agent.session import TOOLS, READ_ONLY
+from app.agent.settings import AGENT_MAX_TURNS
 from app.db.engine import SessionLocal
 
 router = APIRouter(prefix="/agent", tags=["agent"])
@@ -28,16 +27,15 @@ def get_db():
 @router.get("/info")
 def agent_info():
     """Agent registry metadata."""
-    agent = get_workspace_agent()
     return {
         "success": True,
         "data": {
-            **agent,
-            "tools": TOOL_REGISTRY,
-            "promptIndex": [{"name": p["name"], "description": p["description"]} for p in PROMPT_INDEX],
+            "tools": [{"name": t["name"], "label": t["label"], "description": t["description"], "writes": t["writes"]} for t in TOOLS],
+            "readOnlyIntent": "explain",
+            "readOnlyTools": READ_ONLY,
+            "maxTurns": AGENT_MAX_TURNS,
+            "changes": "Edits accumulate in a draft that is compiled and wiring-checked, then staged as one proposal for review.",
             "auth": "none",
-            "mode": "local-first",
-            "architecture": "backend-agent-loop",
         },
     }
 

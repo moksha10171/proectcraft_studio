@@ -26,7 +26,6 @@ const nextConfig = {
       { source: '/api/agent/info', destination: `${backendUrl}/api/agent/info` },
       { source: '/api/agent', destination: `${backendUrl}/api/agent` },
       { source: '/api/compile/:path*', destination: `${backendUrl}/api/compile/:path*` },
-      { source: '/api/generate', destination: `${backendUrl}/api/generate` },
       { source: '/api/health', destination: `${backendUrl}/api/health` },
     ]
   },

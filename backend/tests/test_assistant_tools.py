@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from app.agent.device_tools import get_tools_for_device_mode
+from app.agent.session import available_tools
 from app.agent.loop import run_agent_loop
 from app.db.engine import SessionLocal
 from app.db.models import ExperimentRun
@@ -60,8 +60,8 @@ def test_wiring_endpoint_reports_findings_with_revision(client):
 
 
 def test_tools_are_available_for_arduino_and_hidden_from_pi_mode():
-    assert {'CHECK_WIRING', 'INSPECT_RECORDING'} <= set(get_tools_for_device_mode('arduino'))
-    assert not {'CHECK_WIRING', 'INSPECT_RECORDING'} & set(get_tools_for_device_mode('raspberry-pi'))
+    assert {'CHECK_WIRING', 'INSPECT_RECORDING'} <= set(available_tools('explain', 'uno'))
+    assert not {'CHECK_WIRING', 'INSPECT_RECORDING'} & set(available_tools('modify', 'pi4'))
 
 
 @pytest.mark.asyncio

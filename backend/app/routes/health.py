@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter
 
-from app.agent.registries.agents import WORKSPACE_AGENT_NAME
+from app.agent.settings import WORKSPACE_AGENT_NAME
 from app.agent.settings import DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL
 from app.config import DB_PATH, PROJECTS_DIR, STUDIO_DIR
 from app.routes.projects import _get_categories, _get_projects

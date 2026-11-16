@@ -57,7 +57,7 @@ def create_project(db: Session, content: ProjectContent):
     return save_project(db, uuid.uuid4().hex, content)
 
 
-def propose_files(db: Session, project_id: str, proposal: ProposedFiles) -> dict:
+def propose_files(db: Session, project_id: str, proposal: ProposedFiles, verification: dict | None = None) -> dict:
     project = get_project(db, project_id)
     if project.revision != proposal.baseRevision:
         raise HTTPException(409, 'Proposal is based on an old revision')
@@ -67,6 +67,8 @@ def propose_files(db: Session, project_id: str, proposal: ProposedFiles) -> dict
     patch = {'id': uuid.uuid4().hex, 'projectId': project_id, 'baseRevision': project.revision,
              'status': 'proposed', 'explanation': proposal.explanation, 'createdAt': timestamp(),
              'before': project.model_dump(include=set(ProjectContent.model_fields)), 'after': content.model_dump()}
+    if verification:
+        patch['verification'] = verification
     db.add(ExperimentPatch(id=patch['id'], project_id=project_id, document=json.dumps(patch)))
     db.commit()
     return patch
