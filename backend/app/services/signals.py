@@ -92,6 +92,15 @@ def describe(run: dict, current_revision: int) -> str:
         lines.append(f'- {pin}: ' + ', '.join(parts))
     if not summary['pins']:
         lines.append('- No pin edges were recorded.')
+    stimulus: dict[str, list[tuple[float, float]]] = {}
+    for event in run.get('trace') or []:
+        if event.get('volts') is not None and event.get('pin'):
+            steps = stimulus.setdefault(event['pin'], [])
+            if not steps or steps[-1][1] != event['volts']:
+                steps.append((float(event['timeUs']), float(event['volts'])))
+    for pin, steps in sorted(stimulus.items()):
+        shown = ' → '.join(f'{volts:g} V at {_time(at)}' for at, volts in steps[:6])
+        lines.append(f'- Analog input {pin} (applied stimulus): {shown}' + (f' … ({len(steps)} changes)' if len(steps) > 6 else ''))
     serial = summary['serial']
     lines.append(f'UART text ({len(serial)} chars{", first 400 shown" if len(serial) > 400 else ""}): {serial[:400]!r}' if serial else 'UART text: none.')
     if run.get('dropped'):

@@ -11,7 +11,7 @@ from app.routes.workbench import NewProject, template
 async def main():
     output = Path(sys.argv[1])
     output.mkdir(parents=True, exist_ok=True)
-    for example in ('blink', 'button'):
+    for example in ('blink', 'button', 'dimmer'):
         project = template(NewProject(name=example, template=example))
         result = await compile_code(CompileRequest(files=[{'name': f.name, 'content': f.content} for f in project.files], includeArtifact=True))
         if not result['valid'] or not result.get('artifact'):

@@ -256,6 +256,13 @@ def check_wiring(content: ProjectContent) -> dict:
                 grounded = 'board:GND' in graph.reach(cathode, False)
                 if pins and grounded:
                     findings.append(finding('led-no-resistor', 'warning', f'{part.label} ({part.id}) is wired from {pins[0][6:]} to GND with no series resistor. Add a current-limiting resistor (commonly 220 Ω to 1 kΩ at 5 V) to protect the LED and the pin.', terminals=[anode, cathode, pins[0]]))
+            elif part.kind == 'potentiometer':
+                wiper_pins = sorted(t for t in graph.reach(f'{part.id}:W', False) if is_gpio(t))
+                if not wiper_pins:
+                    continue
+                ends = [{t[6:] for t in graph.reach(f'{part.id}:{end}', False) if t in ('board:5V', 'board:3V3', 'board:GND')} for end in ('1', '2')]
+                if not all(ends) or ends[0] == ends[1] or any(len(e) > 1 for e in ends):
+                    findings.append(finding('pot-unpowered', 'warning', f'{part.label} ({part.id}) feeds {wiper_pins[0][6:]} but its two ends are not tied to different supply rails (end 1: {", ".join(sorted(ends[0])) or "nothing"}, end 2: {", ".join(sorted(ends[1])) or "nothing"}). Connect one end to 5V and the other to GND so the wiper sweeps 0-5 V.', terminals=[f'{part.id}:1', f'{part.id}:W', f'{part.id}:2', wiper_pins[0]]))
             elif part.kind == 'button':
                 for side, other in ((f'{part.id}:1', f'{part.id}:2'), (f'{part.id}:2', f'{part.id}:1')):
                     pins = sorted(t for t in graph.reach(side, False) if is_gpio(t))

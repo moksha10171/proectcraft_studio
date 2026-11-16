@@ -20,7 +20,7 @@ router = APIRouter(prefix='/workbench', tags=['workbench'])
 class NewProject(Contract):
     name: str = Field(min_length=1, max_length=100)
     boardId: Literal['uno', 'nano', 'mega', 'pi4'] = 'uno'
-    template: Literal['blink', 'button', 'empty'] = 'blink'
+    template: Literal['blink', 'button', 'dimmer', 'empty'] = 'blink'
 
 
 class RevisionBody(Contract):
@@ -35,7 +35,15 @@ class SignalEvent(Contract):
     timeUs: float = Field(ge=0, allow_inf_nan=False)
     pin: str | None = Field(default=None, pattern=r'^(D(?:[0-9]|1[0-3])|A[0-5])$')
     value: Literal[0, 1] | None = None
+    # Analog input stimulus applied to A0-A5, in volts. Digital levels use `value`; UART text uses `serial`.
+    volts: float | None = Field(default=None, ge=0, le=5, allow_inf_nan=False)
     serial: str | None = Field(default=None, max_length=1000)
+
+    @model_validator(mode='after')
+    def one_kind_of_event(self):
+        if self.volts is not None and (not (self.pin or '').startswith('A') or self.value is not None or self.serial is not None):
+            raise ValueError('An analog stimulus needs an A0-A5 pin and no digital value or serial text')
+        return self
 
 
 class ImportedRun(BaseModel):
@@ -82,6 +90,29 @@ async def boards():
     return {'boards': [{'id': key, **value} for key, value in BOARDS.items()], 'toolchain': await toolchain_info()}
 
 
+DIMMER_SKETCH = '''// Analog dimmer: a potentiometer on A0 sets the brightness of an LED on D9.
+// D9 is a PWM pin, so analogWrite() switches it on and off hundreds of times per second.
+const int POT_PIN = A0;
+const int LED_PIN = 9;
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int raw = analogRead(POT_PIN);         // 0..1023 for 0..5 V
+  int duty = map(raw, 0, 1023, 0, 255);  // analogWrite takes 0..255
+  analogWrite(LED_PIN, duty);
+  Serial.print("raw=");
+  Serial.print(raw);
+  Serial.print(" duty=");
+  Serial.println(duty);
+  delay(250);
+}
+'''
+
+
 def template(body: NewProject):
     if body.boardId == 'pi4':
         code = 'from signal import pause\nfrom gpiozero import LED\n\nwith LED(17) as led:\n    led.blink(on_time=1, off_time=1)\n    pause()\n'
@@ -94,10 +125,23 @@ def template(body: NewProject):
         circuit = {'parts': [{'id': 'button1', 'kind': 'button', 'label': 'Push button', 'x': 500, 'y': 140}],
                    'nets': [{'id': 'input', 'label': 'D2 / input pull-up', 'terminals': ['board:D2', 'button1:1']},
                             {'id': 'ground', 'label': 'Ground', 'terminals': ['board:GND', 'button1:2']}]}
+    if body.template == 'dimmer':
+        code = DIMMER_SKETCH
+        circuit = {'parts': [{'id': 'pot1', 'kind': 'potentiometer', 'label': 'Potentiometer', 'value': '10 kΩ', 'x': 470, 'y': 110},
+                             {'id': 'r1', 'kind': 'resistor', 'label': 'Resistor', 'value': '330 Ω', 'x': 470, 'y': 230},
+                             {'id': 'led1', 'kind': 'led', 'label': 'LED', 'x': 470, 'y': 350}],
+                   'nets': [{'id': 'supply', 'label': '5V', 'terminals': ['board:5V', 'pot1:2']},
+                            {'id': 'ground', 'label': 'Ground', 'terminals': ['board:GND', 'pot1:1', 'led1:K']},
+                            {'id': 'wiper', 'label': 'A0 / wiper', 'terminals': ['board:A0', 'pot1:W']},
+                            {'id': 'pwm', 'label': 'D9 / PWM', 'terminals': ['board:D9', 'r1:1']},
+                            {'id': 'led', 'label': 'LED anode', 'terminals': ['r1:2', 'led1:A']}]}
     if body.template == 'empty':
         code = 'void setup() {\n}\n\nvoid loop() {\n}\n'
-    return ProjectContent(name=body.name, boardId=body.boardId, files=[{'name': 'sketch.ino', 'content': code}], circuit=circuit,
-                          notes='Predict what happens on D13, change the delay, then compare GPIO and serial events. Built-in LED is on the board; it needs no external wire.')
+    notes = 'Predict what happens on D13, change the delay, then compare GPIO and serial events. Built-in LED is on the board; it needs no external wire.'
+    if body.template == 'dimmer':
+        notes = ('Turn the potentiometer slider while the sketch runs. Predict the analogRead value at 0 %, 50 % and 100 %, then check the Serial tab. '
+                 'In Signals, measure the D9 PWM frequency and duty cycle and compare the duty with the slider position. Emulated analog input is an ideal voltage divider; no loading or noise is modelled.')
+    return ProjectContent(name=body.name, boardId=body.boardId, files=[{'name': 'sketch.ino', 'content': code}], circuit=circuit, notes=notes)
 
 
 @router.get('/projects')

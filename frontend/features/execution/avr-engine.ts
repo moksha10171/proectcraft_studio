@@ -1,5 +1,5 @@
 /** ATmega328P execution adapter. CPU/peripheral emulation is provided by AVR8js (MIT). */
-import { avrInstruction, CPU, AVRIOPort, AVRTimer, AVRUSART, portBConfig, portCConfig, portDConfig, timer0Config, timer1Config, timer2Config, usart0Config, PinState } from 'avr8js'
+import { avrInstruction, CPU, AVRADC, adcConfig, AVRIOPort, AVRTimer, AVRUSART, portBConfig, portCConfig, portDConfig, timer0Config, timer1Config, timer2Config, usart0Config, PinState } from 'avr8js'
 import type { TraceEvent } from '../project/types'
 
 export function decodeHex(hex: string): Uint16Array {
@@ -27,6 +27,7 @@ export class UnoEngine {
   readonly cpu: CPU
   readonly ports: { B: AVRIOPort; C: AVRIOPort; D: AVRIOPort }
   readonly usart: AVRUSART
+  readonly adc: AVRADC
   readonly clockHz = 16_000_000
   readonly states: Record<string, number> = {}
   private pending: TraceEvent[] = []
@@ -39,6 +40,8 @@ export class UnoEngine {
     new AVRTimer(this.cpu, timer2Config)
     this.ports = { B: new AVRIOPort(this.cpu, portBConfig), C: new AVRIOPort(this.cpu, portCConfig), D: new AVRIOPort(this.cpu, portDConfig) }
     this.usart = new AVRUSART(this.cpu, usart0Config, this.clockHz)
+    // Without an ADC peripheral, analogRead() would wait forever for the conversion-complete flag.
+    this.adc = new AVRADC(this.cpu, adcConfig)
     this.usart.onByteTransmit = byte => this.push({ timeUs: this.timeUs, serial: String.fromCharCode(byte) })
     for (const [name, port] of Object.entries(this.ports)) {
       port.addListener(() => {
@@ -63,6 +66,15 @@ export class UnoEngine {
     port.setPin(pin >= 8 ? pin - 8 : pin, high)
     this.states[`D${pin}`] = high ? 1 : 0
     this.push({ timeUs: this.timeUs, pin: `D${pin}`, value: high ? 1 : 0 })
+  }
+  /** Apply a voltage (0–5 V) to analog input A<channel>; the stimulus is recorded in the trace. */
+  analog(channel: number, volts: number) {
+    if (!Number.isInteger(channel) || channel < 0 || channel > 5) throw new Error('Unsupported analog input')
+    if (!Number.isFinite(volts) || volts < 0 || volts > 5) throw new Error('Analog input must be between 0 and 5 V')
+    const rounded = Math.round(volts * 1000) / 1000
+    if (this.adc.channelValues[channel] === rounded) return
+    this.adc.channelValues[channel] = rounded
+    this.push({ timeUs: this.timeUs, pin: `A${channel}`, volts: rounded })
   }
   advance(cycles: number) {
     const end = this.cpu.cycles + cycles

@@ -55,3 +55,43 @@ test('real compiled button firmware responds to injected GPIO input', { skip: !p
   engine.advance(3_200_000)
   assert.ok(engine.drain().some(e => e.pin === 'D13' && e.value === 0))
 })
+
+test('analog stimulus is range-checked, recorded once per change, and never reaches digital channels', () => {
+  const engine = new UnoEngine(':00000001FF')
+  assert.throws(() => engine.analog(6, 1), /Unsupported analog input/)
+  assert.throws(() => engine.analog(0, 5.5), /between 0 and 5 V/)
+  assert.throws(() => engine.analog(0, Number.NaN), /between 0 and 5 V/)
+  engine.analog(0, 2.5)
+  engine.analog(0, 2.5)
+  engine.analog(0, 1.0004)
+  assert.deepEqual(engine.drain().map(e => [e.pin, e.volts]), [['A0', 2.5], ['A0', 1]])
+})
+
+const dimmerPath = process.env.PROJECTCRAFT_DIMMER_HEX_FIXTURE
+test('real compiled dimmer reads the ADC and produces 490 Hz PWM whose duty follows the input', { skip: !dimmerPath }, async () => {
+  const { channelsOf, measure } = await import('../features/execution/signal-analysis')
+  const run = (volts: number) => {
+    const engine = new UnoEngine(fs.readFileSync(dimmerPath!, 'utf8'))
+    engine.analog(0, volts)
+    const events = []
+    for (let i = 0; i < 300; i++) { engine.advance(160_000); events.push(...engine.drain()) }
+    return { serial: events.map(e => e.serial || '').join(''), d9: measure('D9', channelsOf(events).D9 || []), events }
+  }
+  const mid = run(2.5), quarter = run(1.25), low = run(0), high = run(5)
+  assert.match(mid.serial, /raw=512 duty=127/)
+  assert.match(quarter.serial, /raw=256 duty=63/)
+  assert.match(low.serial, /raw=0 duty=0/)
+  assert.match(high.serial, /raw=1023 duty=255/)
+  assert.ok(Math.abs(mid.d9.frequencyHz! - 490.2) < 1, `PWM frequency ${mid.d9.frequencyHz}`)
+  assert.ok(Math.abs(mid.d9.dutyPercent! - 50) < 1, `duty ${mid.d9.dutyPercent}`)
+  assert.ok(Math.abs(quarter.d9.dutyPercent! - 24.7) < 1, `duty ${quarter.d9.dutyPercent}`)
+  assert.equal(low.d9.transitions, 0, '0 % duty keeps D9 low')
+  assert.equal(high.d9.transitions, 1, '100 % duty holds D9 high')
+  assert.ok(mid.events.some(e => e.pin === 'A0' && e.volts === 2.5), 'the stimulus is part of the recording')
+})
+
+test('analogRead completes instead of hanging when no stimulus was applied', { skip: !dimmerPath }, () => {
+  const engine = new UnoEngine(fs.readFileSync(dimmerPath!, 'utf8'))
+  engine.advance(1_600_000)
+  assert.match(engine.drain().map(e => e.serial || '').join(''), /raw=0 duty=0/)
+})

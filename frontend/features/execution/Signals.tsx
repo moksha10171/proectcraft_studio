@@ -2,7 +2,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Download, Maximize2, ZoomIn, ZoomOut } from 'lucide-react'
 import type { TraceEvent } from '../project/types'
-import { channelsOf, comparePins, formatFrequency, formatTime, measure, niceTicks, toVcd, valueAt, windowEdges } from './signal-analysis'
+import { analogChannels, channelsOf, comparePins, formatFrequency, formatTime, measure, niceTicks, toVcd, valueAt, windowEdges } from './signal-analysis'
 
 const WIDTH = 1000, GUTTER = 64, PLOT = WIDTH - GUTTER - 16, LANE = 34, PITCH = 50, TOP = 10, MIN_SPAN_US = 10
 const clamp = (value: number, low: number, high: number) => Math.min(high, Math.max(low, value))
@@ -10,19 +10,22 @@ const clamp = (value: number, low: number, high: number) => Math.min(high, Math.
 export function Signals({ events, timeUs, dropped }: { events: TraceEvent[]; timeUs: number; dropped: number }) {
   const channels = useMemo(() => channelsOf(events), [events])
   const pins = useMemo(() => Object.keys(channels).sort(comparePins), [channels])
+  const analog = useMemo(() => analogChannels(events), [events])
+  const analogPins = useMemo(() => Object.keys(analog).sort(comparePins), [analog])
   const [hidden, setHidden] = useState<Set<string>>(new Set())
   const [view, setView] = useState<{ start: number; end: number } | null>(null)
   const [cursors, setCursors] = useState<number[]>([])
   const svg = useRef<SVGSVGElement>(null)
 
   const visible = useMemo(() => pins.filter(pin => !hidden.has(pin)), [pins, hidden])
+  const visibleAnalog = useMemo(() => analogPins.filter(pin => !hidden.has(pin)), [analogPins, hidden])
   const lastEvent = events.length ? events[events.length - 1].timeUs : 0
   const fullEnd = Math.max(timeUs, lastEvent, 1)
   const start = view ? clamp(view.start, 0, fullEnd - MIN_SPAN_US) : 0
   const end = view ? clamp(view.end, start + MIN_SPAN_US, fullEnd) : fullEnd
   const span = end - start
   const x = (t: number) => GUTTER + clamp((t - start) / span, 0, 1) * PLOT
-  const height = TOP + Math.max(visible.length, 1) * PITCH + 30
+  const height = TOP + Math.max(visible.length + visibleAnalog.length, 1) * PITCH + 30
   const measurements = useMemo(() => visible.map(pin => measure(pin, channels[pin])), [visible, channels])
 
   const zoom = (factor: number) => {
@@ -44,7 +47,7 @@ export function Signals({ events, timeUs, dropped }: { events: TraceEvent[]; tim
     setCursors(current => current.length >= 2 ? [t] : [...current, t])
   }
   const download = () => {
-    const url = URL.createObjectURL(new Blob([toVcd(events, timeUs, visible)], { type: 'text/plain' }))
+    const url = URL.createObjectURL(new Blob([toVcd(events, timeUs, [...visible, ...visibleAnalog])], { type: 'text/plain' }))
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'projectcraft-signals.vcd'; anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
@@ -52,21 +55,21 @@ export function Signals({ events, timeUs, dropped }: { events: TraceEvent[]; tim
   const delta = a !== undefined && b !== undefined ? Math.abs(b - a) : null
   const table = useMemo(() => events.filter(e => e.pin && !hidden.has(e.pin)).slice(-100), [events, hidden])
 
-  if (!pins.length) return <div className="signal-view"><p className="empty-result">Build and run the Uno example to inspect real GPIO transitions. Pins appear here when the firmware changes their level.</p>{dropped > 0 && <p className="warning-note">{dropped} events were not retained.</p>}</div>
+  if (!pins.length && !analogPins.length) return <div className="signal-view"><p className="empty-result">Build and run the Uno example to inspect real GPIO transitions. Pins appear here when the firmware changes their level.</p>{dropped > 0 && <p className="warning-note">{dropped} events were not retained.</p>}</div>
 
   return <div className="signal-view">
     <div className="signal-toolbar">
-      <div className="signal-chips" role="group" aria-label="Visible pins">{pins.map(pin => <button key={pin} type="button" className="signal-chip" aria-pressed={!hidden.has(pin)} onClick={() => setHidden(current => { const next = new Set(current); if (next.has(pin)) next.delete(pin); else next.add(pin); return next })}>{pin}</button>)}</div>
+      <div className="signal-chips" role="group" aria-label="Visible pins">{[...pins, ...analogPins].map(pin => <button key={pin} type="button" className="signal-chip" aria-pressed={!hidden.has(pin)} onClick={() => setHidden(current => { const next = new Set(current); if (next.has(pin)) next.delete(pin); else next.add(pin); return next })}>{pin}</button>)}</div>
       <div className="signal-controls" role="group" aria-label="Time axis">
         <button type="button" aria-label="Pan earlier" title="Pan earlier (←)" onClick={() => pan(-1)}><ChevronLeft size={14} /></button>
         <button type="button" aria-label="Zoom out" title="Zoom out (−)" onClick={() => zoom(2)}><ZoomOut size={14} /></button>
         <button type="button" aria-label="Zoom in" title="Zoom in (+)" onClick={() => zoom(0.5)}><ZoomIn size={14} /></button>
         <button type="button" aria-label="Fit whole recording" title="Fit whole recording (0)" onClick={() => setView(null)}><Maximize2 size={14} /></button>
         <button type="button" aria-label="Pan later" title="Pan later (→)" onClick={() => pan(1)}><ChevronRight size={14} /></button>
-        <button type="button" className="signal-export" onClick={download} disabled={!visible.length} title="Download visible pins as a Value Change Dump for GTKWave or PulseView"><Download size={14} />VCD</button>
+        <button type="button" className="signal-export" onClick={download} disabled={!visible.length && !visibleAnalog.length} title="Download visible channels as a Value Change Dump for GTKWave or PulseView"><Download size={14} />VCD</button>
       </div>
     </div>
-    <p className="signal-summary">{formatTime(start)} – {formatTime(end)} of {formatTime(fullEnd)} simulated · {events.length} retained events{cursors.length ? <> · <button type="button" className="link-button" onClick={() => setCursors([])}>Clear cursors</button></> : ' · click the waveform to place cursor A, then B'}</p>
+    <p className="signal-summary">{formatTime(start)} – {formatTime(end)} of {formatTime(fullEnd)} simulated · {events.length} retained events{analogPins.length ? ` · analog inputs ${analogPins.join(', ')}` : ''}{cursors.length ? <> · <button type="button" className="link-button" onClick={() => setCursors([])}>Clear cursors</button></> : ' · click the waveform to place cursor A, then B'}</p>
     <div className="signal-scroll" tabIndex={0} aria-label="Waveform. Use plus and minus to zoom, left and right arrows to pan, zero to fit." onKeyDown={event => {
       if (event.key === '+' || event.key === '=') { event.preventDefault(); zoom(0.5) }
       else if (event.key === '-') { event.preventDefault(); zoom(2) }
@@ -74,7 +77,7 @@ export function Signals({ events, timeUs, dropped }: { events: TraceEvent[]; tim
       else if (event.key === 'ArrowRight') { event.preventDefault(); pan(1) }
       else if (event.key === '0') { event.preventDefault(); setView(null) }
     }}>
-      <svg ref={svg} viewBox={`0 0 ${WIDTH} ${height}`} role="img" aria-label={`Digital waveforms for ${visible.join(', ') || 'no pins'}`} onClick={place} className="signal-svg">
+      <svg ref={svg} viewBox={`0 0 ${WIDTH} ${height}`} role="img" aria-label={`Waveforms for ${[...visible, ...visibleAnalog].join(', ') || 'no pins'}`} onClick={place} className="signal-svg">
         {visible.map((pin, lane) => {
           const top = TOP + lane * PITCH, high = top + 4, low = top + LANE - 4
           const edges = windowEdges(channels[pin], start, end)
@@ -88,6 +91,22 @@ export function Signals({ events, timeUs, dropped }: { events: TraceEvent[]; tim
             <text x={GUTTER - 8} y={top + LANE / 2 + 4} textAnchor="end" className="signal-label">{pin}</text>
             <path d={`M${GUTTER} ${high}H${GUTTER + PLOT} M${GUTTER} ${low}H${GUTTER + PLOT}`} className="signal-guide" />
             <path d={d} className="signal-line" />
+          </g>
+        })}
+        {visibleAnalog.map((pin, index) => {
+          const top = TOP + (visible.length + index) * PITCH, high = top + 4, low = top + LANE - 4
+          const steps = windowEdges(analog[pin], start, end)
+          const levelY = (volts: number) => low - (volts / 5) * (low - high)
+          let d = `M${x(Math.max(start, steps[0].timeUs))} ${levelY(steps[0].volts)}`
+          for (let i = 1; i < steps.length; i++) d += ` H${x(steps[i].timeUs)} V${levelY(steps[i].volts)}`
+          d += ` H${x(Math.min(end, fullEnd))}`
+          const shown = [...steps].reverse().find(step => step.timeUs <= end)
+          return <g key={pin}>
+            <text x={GUTTER - 8} y={top + LANE / 2 + 4} textAnchor="end" className="signal-label">{pin}</text>
+            <path d={`M${GUTTER} ${high}H${GUTTER + PLOT} M${GUTTER} ${low}H${GUTTER + PLOT}`} className="signal-guide" />
+            <path d={d} className="signal-line analog" />
+            <text x={GUTTER + 4} y={high + 8} className="signal-tick">5 V</text><text x={GUTTER + 4} y={low - 2} className="signal-tick">0 V</text>
+            {shown && <text x={GUTTER + PLOT - 4} y={high + 8} textAnchor="end" className="signal-label">{shown.volts.toFixed(2)} V</text>}
           </g>
         })}
         <line x1={GUTTER} x2={GUTTER + PLOT} y1={height - 24} y2={height - 24} className="signal-guide" />

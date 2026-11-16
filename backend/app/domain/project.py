@@ -14,7 +14,7 @@ BOARDS = {
     'mega': {'name': 'Arduino Mega 2560', 'mode': 'arduino', 'fqbn': 'arduino:avr:mega', 'clockHz': 16000000, 'emulator': None, 'pins': [*[f'D{i}' for i in range(54)], *[f'A{i}' for i in range(16)], '5V', '3V3', 'GND']},
     'pi4': {'name': 'Raspberry Pi • Linux Python', 'mode': 'raspberry-pi', 'fqbn': None, 'clockHz': None, 'emulator': None, 'pins': [*[f'GPIO{i}' for i in range(28)], '3V3', '5V', 'GND']},
 }
-PORTS = {'led': ['A', 'K'], 'resistor': ['1', '2'], 'button': ['1', '2']}
+PORTS = {'led': ['A', 'K'], 'resistor': ['1', '2'], 'button': ['1', '2'], 'potentiometer': ['1', 'W', '2']}
 
 
 class Contract(BaseModel):
@@ -37,7 +37,7 @@ class Source(Contract):
 
 class Part(Contract):
     id: str = Field(pattern=r'^[a-z][a-z0-9_-]{0,40}$')
-    kind: Literal['led', 'resistor', 'button']
+    kind: Literal['led', 'resistor', 'button', 'potentiometer']
     label: str = Field(min_length=1, max_length=100)
     x: float = Field(default=500, ge=0, le=4000)
     y: float = Field(default=180, ge=0, le=4000)

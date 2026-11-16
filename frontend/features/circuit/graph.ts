@@ -1,5 +1,5 @@
 import type { Circuit, Net } from '../project/types'
-export const partPorts = { led: ['A', 'K'], resistor: ['1', '2'], button: ['1', '2'] }
+export const partPorts = { led: ['A', 'K'], resistor: ['1', '2'], button: ['1', '2'], potentiometer: ['1', 'W', '2'] }
 
 /** Merge nets on connection; a terminal always belongs to a single net. */
 export function connect(circuit: Circuit, from: string, to: string): Circuit {
@@ -26,4 +26,37 @@ export function buttonInputs(circuit: Circuit, pressed: Set<string>): Record<num
   while (queue.length) { const t = queue.pop()!; if (seen.has(t)) continue; seen.add(t); queue.push(...(links.get(t) || [])) }
   for (const pin of Object.keys(inputs)) if (seen.has(`board:D${pin}`)) inputs[Number(pin)] = false
   return inputs
+}
+
+const RAILS: Record<string, number> = { 'board:5V': 5, 'board:3V3': 3.3, 'board:GND': 0 }
+
+/**
+ * Voltages (0–5 V) the circuit applies to analog inputs, keyed by channel (A0 = 0).
+ * Resolved purely from connectivity: an analog pin tied to a power rail takes that voltage, and a
+ * potentiometer whose two ends are both tied to rails drives its wiper between them (position 0 =
+ * terminal 1, 1 = terminal 2). Series resistors, loads and other sources are not modelled.
+ */
+export function analogInputs(circuit: Circuit, positions: Record<string, number> = {}): Record<number, number> {
+  const netOf = new Map<string, Net>()
+  for (const net of circuit.nets) for (const terminal of net.terminals) netOf.set(terminal, net)
+  const rail = (terminal: string): number | null => {
+    const levels = new Set((netOf.get(terminal)?.terminals || []).flatMap(t => t in RAILS ? [RAILS[t]] : []))
+    return levels.size === 1 ? [...levels][0] : null
+  }
+  const channelOf = (terminal: string) => /^board:A[0-5]$/.test(terminal) ? Number(terminal.slice(7)) : null
+  const volts: Record<number, number> = {}
+  for (const net of circuit.nets) for (const terminal of net.terminals) {
+    const channel = channelOf(terminal), level = channel === null ? null : rail(terminal)
+    if (channel !== null && level !== null) volts[channel] = level
+  }
+  for (const part of circuit.parts.filter(p => p.kind === 'potentiometer')) {
+    const wiper = netOf.get(`${part.id}:W`), low = rail(`${part.id}:1`), high = rail(`${part.id}:2`)
+    if (!wiper || low === null || high === null) continue
+    const position = Math.min(1, Math.max(0, positions[part.id] ?? 0.5))
+    for (const terminal of wiper.terminals) {
+      const channel = channelOf(terminal)
+      if (channel !== null) volts[channel] = Math.round((low + (high - low) * position) * 1000) / 1000
+    }
+  }
+  return volts
 }

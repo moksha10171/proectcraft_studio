@@ -4,8 +4,9 @@ import { Minus, Plus, Maximize2, Trash2, Cable } from 'lucide-react'
 import type { Board, Circuit, Part } from '../project/types'
 import { connect, partPorts } from './graph'
 
-interface Props { circuit: Circuit; board: Board; states: Record<string, number>; onChange: (circuit: Circuit) => void; onButton: (id: string, pressed: boolean) => void; running: boolean }
-export function CircuitCanvas({ circuit, board, states, onChange, onButton, running }: Props) {
+interface Props { circuit: Circuit; board: Board; states: Record<string, number>; onChange: (circuit: Circuit) => void; onButton: (id: string, pressed: boolean) => void; positions: Record<string, number>; onPot: (id: string, position: number) => void; running: boolean }
+const NEW_PARTS: Record<Part['kind'], { label: string; value: string }> = { button: { label: 'Push button', value: '' }, resistor: { label: 'Resistor', value: '330 Ω' }, led: { label: 'LED', value: '' }, potentiometer: { label: 'Potentiometer', value: '10 kΩ' } }
+export function CircuitCanvas({ circuit, board, states, onChange, onButton, positions, onPot, running }: Props) {
   const [selected, setSelected] = useState('board:D13')
   const [from, setFrom] = useState('board:D2'), [to, setTo] = useState('board:GND')
   const [zoom, setZoom] = useState(1)
@@ -17,13 +18,13 @@ export function CircuitCanvas({ circuit, board, states, onChange, onButton, runn
   const diagramHeight = Math.max(510, rightCount * 24 + 110)
   const terminalPositions: Record<string, { x: number; y: number }> = {}
   pinNames.forEach((pin, i) => { terminalPositions[`board:${pin}`] = { x: i < rightCount ? 270 : 100, y: 92 + (i < rightCount ? i : i - rightCount) * 24 } })
-  for (const part of circuit.parts) partPorts[part.kind].forEach((port, i) => { terminalPositions[`${part.id}:${port}`] = { x: part.x + i * 100, y: part.y + 64 } })
+  for (const part of circuit.parts) partPorts[part.kind].forEach((port, i, ports) => { terminalPositions[`${part.id}:${port}`] = { x: part.x + i * (100 / Math.max(1, ports.length - 1)), y: part.y + 64 } })
   const terminals = Object.keys(terminalPositions)
   const selectedNet = circuit.nets.find(n => n.terminals.includes(selected))
   const connected = new Set(selectedNet?.terminals || [selected])
   const addPart = (kind: Part['kind']) => {
     const id = `${kind}_${Date.now().toString(36)}`
-    onChange({ ...circuit, parts: [...circuit.parts, { id, kind, label: kind === 'button' ? 'Push button' : kind === 'resistor' ? 'Resistor' : 'LED', value: kind === 'resistor' ? '330 Ω' : '', x: 460 + (circuit.parts.length % 2) * 150, y: 100 + Math.floor(circuit.parts.length / 2) * 150 }] })
+    onChange({ ...circuit, parts: [...circuit.parts, { id, kind, label: NEW_PARTS[kind].label, value: NEW_PARTS[kind].value, x: 460 + (circuit.parts.length % 2) * 150, y: 100 + Math.floor(circuit.parts.length / 2) * 150 }] })
   }
   const point = (event: React.PointerEvent) => {
     const matrix = svg.current?.getScreenCTM()?.inverse()
@@ -71,7 +72,7 @@ export function CircuitCanvas({ circuit, board, states, onChange, onButton, runn
         </g> })}
       </g>
     </svg>
-    <div className="part-palette"><span>Add a part</span>{(['button', 'resistor', 'led'] as const).map(kind => <button key={kind} onClick={() => addPart(kind)} disabled={circuit.parts.length >= 50}><Plus size={13} />{kind}</button>)}</div>
+    <div className="part-palette"><span>Add a part</span>{(['button', 'resistor', 'led', 'potentiometer'] as const).map(kind => <button key={kind} onClick={() => addPart(kind)} disabled={circuit.parts.length >= 50}><Plus size={13} />{kind}</button>)}</div>
     <div className="terminal-inspector"><div><Cable size={15} /><strong>{selected}</strong><span>{selectedNet ? selectedNet.label || selectedNet.id : 'Not connected'}</span></div>
       {selectedNet && <p>{selectedNet.terminals.join(' ↔ ')}</p>}
       <form className="connect-form" onSubmit={event => { event.preventDefault(); onChange(connect(circuit, from, to)) }}>
@@ -79,8 +80,8 @@ export function CircuitCanvas({ circuit, board, states, onChange, onButton, runn
         <span>→</span><label className="sr-only" htmlFor="to-terminal">To terminal</label><select id="to-terminal" value={to} onChange={e => setTo(e.target.value)}>{terminals.map(t => <option key={t}>{t}</option>)}</select><button className="small-button" disabled={!terminals.includes(from) || !terminals.includes(to) || from === to}>Connect</button>
       </form>
       {circuit.nets.length > 0 && <details><summary>Connection table · {circuit.nets.length} nets</summary><ul className="net-list">{circuit.nets.map(net => <li key={net.id}><button onClick={() => setSelected(net.terminals[0])}>{net.label || net.id}: {net.terminals.join(' ↔ ')}</button><button aria-label={`Delete connection ${net.label || net.id}`} onClick={() => onChange({ ...circuit, nets: circuit.nets.filter(n => n.id !== net.id) })}><Trash2 size={13} /></button></li>)}</ul></details>}
-      {circuit.parts.map(part => <div className="part-actions" key={part.id}><span>{part.label}</span>{part.kind === 'button' && <button disabled={!running} onPointerDown={() => onButton(part.id, true)} onPointerUp={() => onButton(part.id, false)} onPointerLeave={() => onButton(part.id, false)} onKeyDown={e => { if (e.code === 'Space') { e.preventDefault(); onButton(part.id, true) } }} onKeyUp={e => { if (e.code === 'Space') onButton(part.id, false) }} onBlur={() => onButton(part.id, false)}>Hold button</button>}<button aria-label={`Remove ${part.label}`} onClick={() => onChange({ parts: circuit.parts.filter(p => p.id !== part.id), nets: circuit.nets.map(n => ({ ...n, terminals: n.terminals.filter(t => !t.startsWith(part.id + ':')) })).filter(n => n.terminals.length >= 2) })}><Trash2 size={13} /></button></div>)}
-      <p className="muted-note">Logical terminal diagram, not physical header placement. Digital model: Uno built-in LED, GPIO and push buttons. External LED/resistor artwork shows connectivity; analog current and voltage are not calculated.</p>
+      {circuit.parts.map(part => <div className="part-actions" key={part.id}><span>{part.label}</span>{part.kind === 'potentiometer' && <label className="pot-slider"><span className="sr-only">{part.label} wiper position</span><input type="range" min="0" max="100" step="1" value={Math.round((positions[part.id] ?? 0.5) * 100)} onChange={e => onPot(part.id, Number(e.target.value) / 100)} aria-valuetext={`${Math.round((positions[part.id] ?? 0.5) * 100)} percent toward terminal 2`} /><output>{Math.round((positions[part.id] ?? 0.5) * 100)} %</output></label>}{part.kind === 'button' && <button disabled={!running} onPointerDown={() => onButton(part.id, true)} onPointerUp={() => onButton(part.id, false)} onPointerLeave={() => onButton(part.id, false)} onKeyDown={e => { if (e.code === 'Space') { e.preventDefault(); onButton(part.id, true) } }} onKeyUp={e => { if (e.code === 'Space') onButton(part.id, false) }} onBlur={() => onButton(part.id, false)}>Hold button</button>}<button aria-label={`Remove ${part.label}`} onClick={() => onChange({ parts: circuit.parts.filter(p => p.id !== part.id), nets: circuit.nets.map(n => ({ ...n, terminals: n.terminals.filter(t => !t.startsWith(part.id + ':')) })).filter(n => n.terminals.length >= 2) })}><Trash2 size={13} /></button></div>)}
+      <p className="muted-note">Logical terminal diagram, not physical header placement. Emulated inputs: push buttons and potentiometers whose ends are tied to 5V/GND (an ideal voltage divider; 0 % = terminal 1, 100 % = terminal 2). External LED/resistor artwork shows connectivity; current, loading and noise are not calculated.</p>
     </div>
   </div>
 }

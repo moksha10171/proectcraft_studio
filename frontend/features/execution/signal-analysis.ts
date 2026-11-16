@@ -2,6 +2,7 @@
 import type { TraceEvent } from '../project/types'
 
 export interface Edge { timeUs: number; value: 0 | 1 }
+export interface AnalogStep { timeUs: number; volts: number }
 export interface Measurement {
   pin: string
   transitions: number
@@ -30,6 +31,18 @@ export function channelsOf(events: TraceEvent[]): Record<string, Edge[]> {
     const edges = channels[event.pin] ||= []
     if (edges.length && edges[edges.length - 1].value === value) continue
     edges.push({ timeUs: event.timeUs, value })
+  }
+  return channels
+}
+
+/** Analog input stimulus (volts) per A0–A5 channel, dropping repeated values. */
+export function analogChannels(events: TraceEvent[]): Record<string, AnalogStep[]> {
+  const channels: Record<string, AnalogStep[]> = {}
+  for (const event of events) {
+    if (!event.pin || event.volts == null) continue
+    const steps = channels[event.pin] ||= []
+    if (steps.length && steps[steps.length - 1].volts === event.volts) continue
+    steps.push({ timeUs: event.timeUs, volts: event.volts })
   }
   return channels
 }
@@ -112,7 +125,7 @@ export function niceTicks(startUs: number, endUs: number, target = 8): number[] 
 }
 
 /** Edges needed to draw [start, end]: the level entering the window plus every edge inside it. */
-export function windowEdges(edges: Edge[], startUs: number, endUs: number): Edge[] {
+export function windowEdges<T extends { timeUs: number }>(edges: T[], startUs: number, endUs: number): T[] {
   let first = 0
   while (first < edges.length && edges[first].timeUs < startUs) first++
   const out = edges.slice(Math.max(0, first - 1))
@@ -126,17 +139,20 @@ export function windowEdges(edges: Edge[], startUs: number, endUs: number): Edge
  * Levels before a pin's first recorded edge are written as unknown (x).
  */
 export function toVcd(events: TraceEvent[], endUs: number, pins?: string[]): string {
-  const channels = channelsOf(events)
+  const channels = channelsOf(events), analog = analogChannels(events)
   const names = (pins || Object.keys(channels)).filter(pin => channels[pin]?.length).sort(comparePins)
-  const ids = new Map(names.map((pin, index) => [pin, String.fromCharCode(33 + index)]))
-  if (names.length > 90) throw new Error('VCD export supports at most 90 channels')
-  const lines = ['$version ProjectCraft Studio $end', '$comment Digital pin changes recorded from the Uno emulator. UART text is not included. $end', '$timescale 1 ns $end', '$scope module board $end']
+  const analogNames = (pins ? pins.filter(pin => analog[pin]?.length) : Object.keys(analog)).sort(comparePins)
+  if (names.length + analogNames.length > 90) throw new Error('VCD export supports at most 90 channels')
+  const ids = new Map([...names, ...analogNames].map((pin, index) => [pin, String.fromCharCode(33 + index)]))
+  const lines = ['$version ProjectCraft Studio $end', '$comment Digital pin changes and analog input stimulus (volts) recorded from the Uno emulator. UART text is not included. $end', '$timescale 1 ns $end', '$scope module board $end']
   for (const pin of names) lines.push(`$var wire 1 ${ids.get(pin)} ${pin} $end`)
+  for (const pin of analogNames) lines.push(`$var real 64 ${ids.get(pin)} ${pin}_volts $end`)
   lines.push('$upscope $end', '$enddefinitions $end', '#0', '$dumpvars')
   for (const pin of names) lines.push(`x${ids.get(pin)}`)
   lines.push('$end')
   const changes: { ns: number; line: string }[] = []
   for (const pin of names) for (const edge of channels[pin]) changes.push({ ns: Math.round(edge.timeUs * 1000), line: `${edge.value}${ids.get(pin)}` })
+  for (const pin of analogNames) for (const step of analog[pin]) changes.push({ ns: Math.round(step.timeUs * 1000), line: `r${step.volts} ${ids.get(pin)}` })
   changes.sort((a, b) => a.ns - b.ns)
   let emitted = 0 // Last timestamp written; VCD time never goes backwards.
   for (const change of changes) {

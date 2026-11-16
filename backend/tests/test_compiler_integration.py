@@ -29,3 +29,22 @@ def test_actual_invalid_sketch_fails(client):
     response = client.post('/api/compile', json={'files': [{'name': 'sketch.ino', 'content': 'void setup() { bad syntax } void loop() {}'}]})
     assert response.status_code == 200
     assert not response.json()['valid'] and response.json()['errors']
+
+
+EXAMPLES = Path(__file__).resolve().parents[2] / 'examples'
+
+
+@pytest.mark.parametrize('slug, template', [('arduino-button-input', 'button'), ('arduino-potentiometer-dimmer', 'dimmer')])
+def test_example_sketches_match_studio_templates(slug, template):
+    """The downloadable example and the in-app starter must not drift apart."""
+    from app.routes.workbench import NewProject, template as build_template
+    assert (EXAMPLES / slug / 'sketch.ino').read_text() == build_template(NewProject(name='x', template=template)).files[0].content
+
+
+@pytest.mark.skipif(not avr_available(), reason='Install Arduino CLI and arduino:avr core')
+@pytest.mark.parametrize('board', ['arduino:avr:uno', 'arduino:avr:nano', 'arduino:avr:mega'])
+@pytest.mark.parametrize('slug', ['arduino-button-input', 'arduino-potentiometer-dimmer'])
+def test_actual_example_compilation(client, board, slug):
+    source = (EXAMPLES / slug / 'sketch.ino').read_text()
+    result = client.post('/api/compile', json={'board': board, 'files': [{'name': 'sketch.ino', 'content': source}]}).json()
+    assert result['engine'] == 'arduino-cli' and result['valid'], result

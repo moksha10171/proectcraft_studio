@@ -10,7 +10,7 @@ import type { editor } from 'monaco-editor'
 import { request, contentOf, type Board, type Project, type ProjectContent, type Patch, type Run, type TraceEvent, type WiringReport } from '../project/types'
 import { CircuitCanvas } from '../circuit/CircuitCanvas'
 import { WiringCheck } from '../circuit/WiringCheck'
-import { buttonInputs } from '../circuit/graph'
+import { analogInputs, buttonInputs } from '../circuit/graph'
 import { Signals } from '../execution/Signals'
 import { CompareRuns } from '../execution/CompareRuns'
 import { Assistant } from '../assistant/Assistant'
@@ -43,6 +43,7 @@ export default function Workbench() {
   const [running, setRunning] = useState(false), [events, setEvents] = useState<TraceEvent[]>([]), [timeUs, setTimeUs] = useState(0), [states, setStates] = useState<Record<string, number>>({}), [dropped, setDropped] = useState(0)
   const worker = useRef<Worker | null>(null), trace = useRef<TraceEvent[]>([]), clock = useRef(0), lost = useRef(0), executing = useRef<{ projectId: string; buildId: string } | null>(null)
   const pressed = useRef(new Set<string>())
+  const [pots, setPots] = useState<Record<string, number>>({}), potsRef = useRef<Record<string, number>>({})
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null), monacoRef = useRef<Parameters<OnMount>[1] | null>(null)
   const importInput = useRef<HTMLInputElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -77,7 +78,7 @@ export default function Workbench() {
   const activate = useCallback(async (next: Project) => {
     await stop()
     projectRef.current = next; draftRef.current = contentOf(next)
-    setProject(next); setDraft(contentOf(next)); setActiveFile(next.files[0].name); setRun(null); setEvents([]); setTimeUs(0); setStates({}); setSaveState('Saved'); setError(''); setDialog(false); setAssistant(false); setRailOpen(false)
+    setProject(next); setDraft(contentOf(next)); setActiveFile(next.files[0].name); setRun(null); setEvents([]); setTimeUs(0); setStates({}); potsRef.current = {}; setPots({}); setSaveState('Saved'); setError(''); setDialog(false); setAssistant(false); setRailOpen(false)
     const cached = cache.get(`projectcraft:draft:${next.id}`)
     if (cached) {
       try {
@@ -178,13 +179,19 @@ export default function Workbench() {
       }
     }
     instance.onerror = () => { setError('The emulator worker stopped unexpectedly'); void stop() }
-    instance.postMessage({ type: 'load', hex: run.artifact.content, inputs: buttonInputs(draft.circuit, pressed.current) })
+    instance.postMessage({ type: 'load', hex: run.artifact.content, inputs: buttonInputs(draft.circuit, pressed.current), analog: analogInputs(draft.circuit, potsRef.current) })
   }
 
   const button = (id: string, down: boolean) => {
     if (!draftRef.current) return
     if (down) pressed.current.add(id); else pressed.current.delete(id)
     for (const [pin, high] of Object.entries(buttonInputs(draftRef.current.circuit, pressed.current))) worker.current?.postMessage({ type: 'input', pin: Number(pin), high })
+  }
+
+  const pot = (id: string, position: number) => {
+    potsRef.current = { ...potsRef.current, [id]: position }; setPots(potsRef.current)
+    if (!draftRef.current) return
+    for (const [channel, volts] of Object.entries(analogInputs(draftRef.current.circuit, potsRef.current))) worker.current?.postMessage({ type: 'analog', channel: Number(channel), volts })
   }
 
   useEffect(() => {
@@ -290,7 +297,7 @@ export default function Workbench() {
               <div className="monaco-wrap"><Editor height="100%" path={`${project?.id}/${currentFile?.name}`} value={currentFile?.content || ''} language={currentFile?.name.endsWith('.py') ? 'python' : currentFile?.name.endsWith('.md') ? 'markdown' : 'cpp'} theme={resolvedTheme === 'light' ? 'vs' : 'vs-dark'} onChange={value => currentFile && change({ ...draft, files: draft.files.map(f => f.name === currentFile.name ? { ...f, content: value || '' } : f) })} onMount={(instance, monaco) => { editorRef.current = instance; monacoRef.current = monaco }} options={{ fontSize: 13, lineHeight: 23, minimap: { enabled: false }, padding: { top: 18 }, scrollBeyondLastLine: false, automaticLayout: true, wordWrap: 'on', fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace' }} /></div>
               <div className="editor-footer"><span>{currentFile?.content.split('\n').length || 0} lines</span><span>UTF-8</span><button onClick={() => void persist().catch(e => setError(e.message))}><Save size={12} />{saveState}</button></div>
             </section>
-            <section className="circuit-surface" aria-label="Circuit"><div className="surface-title"><span><CircuitBoard size={15} />Circuit</span><span className={running ? 'execution-label' : 'muted'}>{running ? '● EMULATED' : 'TERMINAL VIEW'}</span></div>{board && <CircuitCanvas circuit={draft.circuit} board={board} states={states} running={running} onButton={button} onChange={circuit => change({ ...draft, circuit })} />}</section>
+            <section className="circuit-surface" aria-label="Circuit"><div className="surface-title"><span><CircuitBoard size={15} />Circuit</span><span className={running ? 'execution-label' : 'muted'}>{running ? '● EMULATED' : 'TERMINAL VIEW'}</span></div>{board && <CircuitCanvas circuit={draft.circuit} board={board} states={states} running={running} onButton={button} positions={pots} onPot={pot} onChange={circuit => change({ ...draft, circuit })} />}</section>
           </div>
           <section className="results-panel" aria-label="Experiment results"><nav aria-label="Result views">{['problems', 'output', 'serial', 'signals', 'runs', 'compare', 'wiring', 'notes'].map(tab => <button aria-current={results === tab} onClick={() => setResults(tab)} key={tab}>{tab === 'output' ? 'Build output' : tab === 'runs' ? 'Run history' : tab === 'wiring' ? 'Wiring check' : tab}{tab === 'problems' && !!run?.diagnostics.length && <span className="count">{run.diagnostics.length}</span>}{tab === 'wiring' && !!wiring?.findings.filter(f => f.severity !== 'info').length && <span className="count">{wiring.findings.filter(f => f.severity !== 'info').length}</span>}</button>)}<span className={`run-status ${stale ? 'stale' : run?.valid ? 'passed' : ''}`}>{stale ? 'Source changed · rebuild required' : run ? `${run.status} · ${run.engine}` : 'No checks run yet'}</span></nav>
             <div className="result-content">
@@ -311,7 +318,7 @@ export default function Workbench() {
     </div>
     <input type="file" ref={importInput} className="sr-only" aria-label="Import experiment file" accept=".json,.ino,.py" onChange={e => { const file = e.target.files?.[0]; if (file) void importFile(file); e.target.value = '' }} />
     {dialog && <div className="workbench-overlay"><dialog ref={dialogRef} className="new-project-dialog" aria-labelledby="new-project-title" onCancel={e => { if (!project) e.preventDefault(); else setDialog(false) }}><header><span className="welcome-mark"><CircuitBoard size={25} /></span>{project && <button aria-label="Close new project" onClick={() => setDialog(false)}><X size={20} /></button>}</header><span className="eyebrow">YOUR NEXT EXPERIMENT</span><h1 id="new-project-title">Start with a little curiosity.</h1><p>A local workspace for code, connections and real results.<br />No account. No paid compiler. AI optional.</p>
-      <form onSubmit={create}><label>Project name<input autoFocus value={name} onChange={e => setName(e.target.value)} required maxLength={100} /></label><label>Target board<select value={target} onChange={e => setTarget(e.target.value as ProjectContent['boardId'])}>{boards.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select></label><div className="template-cards" role="group" aria-label="Starting point">{[{ id: 'blink', title: 'Blink & observe', text: 'Timing, GPIO and serial' }, { id: 'button', title: 'Button input', text: 'Read a digital input' }, { id: 'empty', title: 'Empty project', text: 'Make something yours' }].filter(t => target !== 'pi4' || t.id !== 'button').map(t => <button type="button" aria-pressed={newTemplate === t.id} key={t.id} onClick={() => setNewTemplate(t.id)}><Cpu size={18} /><strong>{t.title}</strong><span>{t.text}</span></button>)}</div><button className="primary create-project">Create experiment<ArrowRight size={16} /></button></form><button className="import-link" onClick={() => importInput.current?.click()}><FolderOpen size={15} />Already have a project? Import .ino, .py or a bundle</button>
+      <form onSubmit={create}><label>Project name<input autoFocus value={name} onChange={e => setName(e.target.value)} required maxLength={100} /></label><label>Target board<select value={target} onChange={e => setTarget(e.target.value as ProjectContent['boardId'])}>{boards.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select></label><div className="template-cards" role="group" aria-label="Starting point">{[{ id: 'blink', title: 'Blink & observe', text: 'Timing, GPIO and serial' }, { id: 'button', title: 'Button input', text: 'Read a digital input' }, { id: 'dimmer', title: 'Analog dimmer', text: 'Potentiometer → PWM LED' }, { id: 'empty', title: 'Empty project', text: 'Make something yours' }].filter(t => target !== 'pi4' || t.id === 'blink' || t.id === 'empty').map(t => <button type="button" aria-pressed={newTemplate === t.id} key={t.id} onClick={() => setNewTemplate(t.id)}><Cpu size={18} /><strong>{t.title}</strong><span>{t.text}</span></button>)}</div><button className="primary create-project">Create experiment<ArrowRight size={16} /></button></form><button className="import-link" onClick={() => importInput.current?.click()}><FolderOpen size={15} />Already have a project? Import .ino, .py or a bundle</button>
     </dialog></div>}
   </div>
 }

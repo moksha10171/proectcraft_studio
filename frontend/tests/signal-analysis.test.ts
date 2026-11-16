@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import fs from 'node:fs'
 import { UnoEngine } from '../features/execution/avr-engine'
-import { channelsOf, measure, niceTicks, toVcd, valueAt, windowEdges, formatTime, formatFrequency, comparePins } from '../features/execution/signal-analysis'
+import { analogChannels, channelsOf, measure, niceTicks, toVcd, valueAt, windowEdges, formatTime, formatFrequency, comparePins } from '../features/execution/signal-analysis'
 import type { TraceEvent } from '../features/project/types'
 
 const wave = (pin: string, rises: number[], highUs: number, firstLevel?: 0 | 1): TraceEvent[] => [
@@ -107,4 +107,16 @@ test('real compiled Blink measures as a 0.5 Hz, 50 % duty signal on D13', { skip
   assert.ok(Math.abs(m.periodUs! - 2_000_000) < 10_000, `period ${m.periodUs}`)
   assert.ok(Math.abs(m.frequencyHz! - 0.5) < 0.01)
   assert.ok(Math.abs(m.dutyPercent! - 50) < 1, `duty ${m.dutyPercent}`)
+})
+
+test('analog stimulus is separate from digital channels and exported as real VCD variables', () => {
+  const events: TraceEvent[] = [{ timeUs: 0, pin: 'A0', volts: 2.5 }, { timeUs: 1000, pin: 'D9', value: 1 }, { timeUs: 1500, pin: 'A0', volts: 2.5 }, { timeUs: 2000, pin: 'A0', volts: 5 }, { timeUs: 3000, pin: 'D9', value: 0 }]
+  assert.deepEqual(analogChannels(events).A0, [{ timeUs: 0, volts: 2.5 }, { timeUs: 2000, volts: 5 }], 'repeated values are dropped')
+  assert.deepEqual(Object.keys(channelsOf(events)), ['D9'], 'volts events are not digital edges')
+  const vcd = toVcd(events, 4000)
+  const lines = vcd.trim().split('\n')
+  assert.ok(lines.includes('$var wire 1 ! D9 $end') && lines.includes('$var real 64 " A0_volts $end'))
+  assert.ok(lines.includes('r2.5 "') && lines.includes('r5 "'))
+  assert.deepEqual(lines.filter(l => l.startsWith('#')), ['#0', '#1000000', '#2000000', '#3000000', '#4000000'])
+  assert.ok(!toVcd(events, 4000, ['D9']).includes('A0_volts'), 'unselected channels are not exported')
 })

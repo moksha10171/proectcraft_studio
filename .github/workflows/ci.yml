@@ -57,6 +57,7 @@ jobs:
         env:
           PROJECTCRAFT_HEX_FIXTURE: ${{ runner.temp }}/projectcraft-firmware/blink.hex
           PROJECTCRAFT_BUTTON_HEX_FIXTURE: ${{ runner.temp }}/projectcraft-firmware/button.hex
+          PROJECTCRAFT_DIMMER_HEX_FIXTURE: ${{ runner.temp }}/projectcraft-firmware/dimmer.hex
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1

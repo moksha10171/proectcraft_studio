@@ -19,8 +19,10 @@ self.onmessage = ({ data }) => {
     if (data.type === 'load') {
       stop(); engine = new UnoEngine(data.hex)
       for (const [pin, high] of Object.entries(data.inputs || {})) engine.input(Number(pin), Boolean(high))
+      for (const [channel, volts] of Object.entries(data.analog || {})) engine.analog(Number(channel), Number(volts))
       running = true; tick()
     } else if (data.type === 'input' && engine) engine.input(data.pin, data.high)
+    else if (data.type === 'analog' && engine) engine.analog(data.channel, data.volts)
     else if (data.type === 'pause') stop()
     else if (data.type === 'resume' && engine && !running) { running = true; tick() }
     else if (data.type === 'stop') { stop(); engine = null; postMessage({ type: 'stopped' }) }

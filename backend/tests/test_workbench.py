@@ -161,3 +161,36 @@ def test_import_validates_all_recordings_before_creating_project(client):
     assert recording['durationMs'] == 3 and recording['dropped'] == 4
     assert recording['engineVersion'] == '0.21.1'
     assert recording['origin'] == 'imported' and recording['valid'] is False
+
+
+def test_dimmer_template_potentiometer_and_analog_stimulus_round_trip(client):
+    project = create(client, template='dimmer')
+    assert [p['kind'] for p in project['circuit']['parts']] == ['potentiometer', 'resistor', 'led']
+    assert 'analogRead(POT_PIN)' in project['files'][0]['content'] and 'potentiometer' in project['notes']
+    base = '/api/workbench/projects/' + project['id']
+    # A potentiometer terminal that does not exist is rejected like any other.
+    bad = content(project)
+    bad['circuit'] = {'parts': project['circuit']['parts'], 'nets': [{'id': 'x', 'label': '', 'terminals': ['board:A0', 'pot1:X']}]}
+    assert client.put(base, json={'baseRevision': 1, 'content': bad}).status_code == 422
+    # Analog stimulus events are accepted in a bundle, validated, and survive export/import.
+    exported = client.get(base + '/export').json()
+    run = {'id': 'ref1', 'origin': 'emulator', 'engine': 'avr8js-atmega328p', 'sourceRevision': 1, 'sourceHash': 'abc', 'boardId': 'uno', 'status': 'recorded', 'durationMs': 1000,
+           'trace': [{'timeUs': 0, 'pin': 'A0', 'volts': 2.5}, {'timeUs': 10, 'pin': 'D9', 'value': 1}]}
+    imported = client.post('/api/workbench/import', json={**exported, 'runs': [run]})
+    assert imported.status_code == 200, imported.text
+    kept = client.get(f"/api/workbench/projects/{imported.json()['id']}/runs").json()[0]
+    assert kept['origin'] == 'imported' and {'timeUs': 0, 'pin': 'A0', 'volts': 2.5} in kept['trace']
+
+
+@pytest.mark.parametrize('event', [
+    {'timeUs': 0, 'pin': 'A0', 'volts': 5.1},
+    {'timeUs': 0, 'pin': 'D9', 'volts': 2.0},
+    {'timeUs': 0, 'pin': 'A0', 'volts': 2.0, 'value': 1},
+    {'timeUs': 0, 'pin': 'A0', 'volts': 2.0, 'serial': 'x'},
+    {'timeUs': 0, 'volts': 2.0},
+])
+def test_invalid_analog_events_are_rejected(client, event):
+    project = create(client)
+    run = {'id': 'bad', 'sourceRevision': 1, 'boardId': 'uno', 'durationMs': 10, 'trace': [event]}
+    response = client.post('/api/workbench/import', json={**client.get(f"/api/workbench/projects/{project['id']}/export").json(), 'runs': [run]})
+    assert response.status_code == 422

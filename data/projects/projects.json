@@ -62,5 +62,70 @@
     ],
     "topicSlug": "raspberry-pi",
     "downloadPath": "examples/raspberry-pi-led-blink/main.py"
+  },
+  {
+    "id": 3,
+    "title": "Arduino Button Input",
+    "slug": "arduino-button-input",
+    "description": "Connect a push button between D2 and GND. The sketch enables the internal pull-up, so D2 reads LOW while the button is pressed. Runs in the Studio Uno emulator and prints the state over serial.",
+    "shortDescription": "Read a push button with INPUT_PULLUP and light the built-in LED.",
+    "language": "C++",
+    "difficulty": "Beginner",
+    "estimated_time": "20 min",
+    "featured": 0,
+    "rating": null,
+    "ratingCount": 0,
+    "viewCount": 0,
+    "downloadCount": 0,
+    "category": {
+      "id": 3,
+      "name": "Arduino & IoT",
+      "slug": "arduino",
+      "icon": "fas fa-microchip"
+    },
+    "technologies": [
+      "Arduino",
+      "C++"
+    ],
+    "tags": [
+      "beginner",
+      "button",
+      "input"
+    ],
+    "topicSlug": "arduino",
+    "downloadPath": "examples/arduino-button-input/sketch.ino"
+  },
+  {
+    "id": 4,
+    "title": "Arduino Potentiometer Dimmer",
+    "slug": "arduino-potentiometer-dimmer",
+    "description": "A potentiometer between 5V and GND feeds analogRead on A0; the value is mapped to analogWrite on D9 to dim an LED through a 330 \u03a9 resistor. In Studio you can drag a slider while the sketch runs and measure the 490 Hz PWM duty cycle.",
+    "shortDescription": "Read a potentiometer on A0 and dim an LED with PWM on D9.",
+    "language": "C++",
+    "difficulty": "Beginner",
+    "estimated_time": "30 min",
+    "featured": 0,
+    "rating": null,
+    "ratingCount": 0,
+    "viewCount": 0,
+    "downloadCount": 0,
+    "category": {
+      "id": 3,
+      "name": "Arduino & IoT",
+      "slug": "arduino",
+      "icon": "fas fa-microchip"
+    },
+    "technologies": [
+      "Arduino",
+      "C++"
+    ],
+    "tags": [
+      "beginner",
+      "analog",
+      "pwm",
+      "potentiometer"
+    ],
+    "topicSlug": "arduino",
+    "downloadPath": "examples/arduino-potentiometer-dimmer/sketch.ino"
   }
 ]

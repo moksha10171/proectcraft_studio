@@ -141,6 +141,34 @@ try {
     await page.getByRole('button', { name: 'Stop', exact: true }).click()
     const captured = await (await buttonCapture).json()
     assert.ok(captured.trace.some(e => e.pin === 'D13' && e.value === 1))
+
+    // Analog input: a potentiometer slider drives the emulated ADC and the sketch's PWM output reacts.
+    await page.getByRole('button', { name: 'New project', exact: true }).click()
+    const dimmerDialog = page.getByRole('dialog')
+    await dimmerDialog.getByLabel('Project name', { exact: true }).fill('Browser dimmer experiment')
+    await dimmerDialog.getByRole('button', { name: /Analog dimmer/ }).click()
+    const dimmerCreated = page.waitForResponse(r => r.url().endsWith('/api/workbench/projects') && r.request().method() === 'POST')
+    await dimmerDialog.getByRole('button', { name: 'Create experiment' }).click()
+    const dimmerProject = await (await dimmerCreated).json()
+    assert.deepEqual(dimmerProject.circuit.parts.map(part => part.kind), ['potentiometer', 'resistor', 'led'])
+    const dimmerBuild = page.waitForResponse(r => r.url().endsWith(`/projects/${dimmerProject.id}/build`), { timeout: 150_000 })
+    await page.getByRole('button', { name: 'Build', exact: true }).click()
+    assert.equal((await (await dimmerBuild).json()).status, 'passed')
+    await page.getByRole('button', { name: 'Wiring check', exact: true }).click()
+    await page.getByText(/No wiring issues found/).first().waitFor()
+    await page.getByRole('button', { name: 'Run', exact: true }).click()
+    await page.getByRole('button', { name: 'serial', exact: true }).click()
+    await page.getByText(/raw=512 duty=127/).last().waitFor({ timeout: 20_000 })
+    await page.getByRole('slider', { name: /wiper position/ }).fill('100')
+    await page.getByText(/raw=1023 duty=255/).last().waitFor({ timeout: 20_000 })
+    await page.getByRole('button', { name: 'signals', exact: true }).click()
+    await page.waitForFunction(() => /490\.\d Hz/.test(document.querySelector('.signal-measurements')?.textContent || ''), { timeout: 20_000 })
+    const dimmerCapture = page.waitForResponse(r => r.url().endsWith(`/projects/${dimmerProject.id}/recordings`))
+    await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    const dimmerTrace = (await (await dimmerCapture).json()).trace
+    assert.ok(dimmerTrace.some(e => e.pin === 'A0' && e.volts === 2.5), 'initial stimulus recorded')
+    assert.ok(dimmerTrace.some(e => e.pin === 'A0' && e.volts === 5), 'slider change recorded')
+    assert.ok(dimmerTrace.some(e => e.pin === 'D9'), 'PWM edges recorded')
   }
 
   // Real Python parser path, without execution or an API key.
@@ -157,7 +185,8 @@ try {
     else await route.continue()
   }
   await page.route(recoveryUrl, failSave)
-  await replaceSource(recoveryProject.files[0].content + '\n// recovered browser draft\n')
+  // Prepended: Monaco renders only visible lines, so the marker must stay in view after reload.
+  await replaceSource('// recovered browser draft\n' + recoveryProject.files[0].content)
   await page.getByRole('alert').filter({ hasText: 'simulated save interruption' }).waitFor()
   await page.reload({ waitUntil: 'networkidle' })
   await page.locator('.monaco-editor').first().waitFor()
@@ -171,7 +200,7 @@ try {
   assert.match(recovered.files[0].content, /recovered browser draft/)
 
   // These deterministic proposals exercise review controls without calling an AI service.
-  const proposalBody = { baseRevision: recovered.revision, files: [{ ...recovered.files[0], content: recovered.files[0].content + '// reviewed proposal\n' }], explanation: 'Browser validation of explicit review' }
+  const proposalBody = { baseRevision: recovered.revision, files: [{ ...recovered.files[0], content: '// reviewed proposal\n' + recovered.files[0].content }], explanation: 'Browser validation of explicit review' }
   await page.request.post(recoveryUrl + '/patches', { data: proposalBody })
   await page.getByRole('button', { name: 'Assistant', exact: true }).click()
   await page.getByRole('button', { name: 'Reject', exact: true }).click()

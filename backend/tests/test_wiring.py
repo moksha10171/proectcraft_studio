@@ -122,3 +122,23 @@ def test_python_projects_are_not_analyzed_and_description_is_plain_text():
     assert check_wiring(pi)['supported'] is False
     text = describe(check_wiring(project(DRIVE_D8, [LED], [net('a', 'board:D8', 'led1:A'), net('k', 'led1:K', 'board:GND')])))
     assert 'WARNING led-no-resistor' in text and 'board:D8' in text and 'not a simulation' in text
+
+
+POT = {'id': 'pot1', 'kind': 'potentiometer', 'label': 'Potentiometer'}
+READ_A0 = 'void loop(){ int v = analogRead(A0); }'
+
+
+def test_potentiometer_needs_both_ends_on_different_rails():
+    good = check_wiring(project(READ_A0, [POT], [net('w', 'board:A0', 'pot1:W'), net('v', 'board:5V', 'pot1:2'), net('g', 'board:GND', 'pot1:1')]))
+    assert good['findings'] == []
+    one_end = check_wiring(project(READ_A0, [POT], [net('w', 'board:A0', 'pot1:W'), net('v', 'board:5V', 'pot1:2')]))
+    assert codes(one_end) == ['pot-unpowered'] and 'end 1: nothing' in one_end['findings'][0]['message']
+    same_rail = check_wiring(project(READ_A0, [POT], [net('w', 'board:A0', 'pot1:W'), net('v', 'board:5V', 'pot1:1', 'pot1:2')]))
+    assert codes(same_rail) == ['pot-unpowered']
+
+
+def test_dimmer_template_is_clean_and_uses_named_constants():
+    from app.routes.workbench import NewProject, template
+    result = check_wiring(template(NewProject(name='dimmer', template='dimmer')))
+    assert result['findings'] == []
+    assert {u['terminal']: u['roles'] for u in result['pinUsage']} == {'board:A0': ['analog_read'], 'board:D9': ['output', 'pwm']}

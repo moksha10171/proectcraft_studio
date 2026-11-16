@@ -41,6 +41,9 @@
 .signal-measurements caption{text-align:left;color:var(--wb-muted);padding-bottom:4px}
 .signal-measurements th,.signal-measurements td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--wb-border)}
 @media(max-width:800px){.signal-svg{min-width:560px}}
+.signal-line.analog{stroke:var(--wb-warn)}
+.pot-slider{display:inline-flex;align-items:center;gap:8px;font-size:11px}
+.pot-slider input{width:130px}
 /* Wiring check */
 .wiring-check{padding:13px 20px;font-size:12px;line-height:1.6}
 .wiring-summary{margin:0 0 8px}

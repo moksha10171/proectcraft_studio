@@ -1,5 +1,5 @@
 export interface SourceFile { name: string; content: string; type: 'code' | 'config' | 'doc' }
-export interface Part { id: string; kind: 'led' | 'resistor' | 'button'; label: string; x: number; y: number; value: string }
+export interface Part { id: string; kind: 'led' | 'resistor' | 'button' | 'potentiometer'; label: string; x: number; y: number; value: string }
 export interface Net { id: string; label: string; terminals: string[] }
 export interface Circuit { parts: Part[]; nets: Net[] }
 export interface Dependency { name: string; version: string; source: string }
@@ -7,7 +7,8 @@ export interface ProjectContent { name: string; boardId: 'uno' | 'nano' | 'mega'
 export interface Project extends ProjectContent { id: string; revision: number; schemaVersion: 1; updatedAt: string; sourceHash: string }
 export interface Board { id: ProjectContent['boardId']; name: string; mode: 'arduino' | 'raspberry-pi'; fqbn: string | null; clockHz: number | null; emulator: string | null; pins: string[] }
 export interface Diagnostic { severity: 'error' | 'warning' | 'info'; message: string; file?: string; line?: number; column?: number }
-export interface TraceEvent { timeUs: number; pin?: string; value?: number; serial?: string }
+/** A digital level (`value`), an analog input stimulus in volts (`volts`, A0–A5) or UART text (`serial`). */
+export interface TraceEvent { timeUs: number; pin?: string; value?: number; volts?: number; serial?: string }
 export interface Run { id: string; projectId: string; sourceRevision: number; sourceHash: string; boardId: string; origin: string; engine: string; status: string; valid: boolean; output: string; diagnostics: Diagnostic[]; durationMs: number; dropped?: number; artifact?: { format: string; content: string; sha256: string }; trace?: TraceEvent[] }
 export interface Patch { id: string; projectId: string; baseRevision: number; status: 'proposed' | 'applied' | 'rejected'; explanation: string; before: ProjectContent; after: ProjectContent }
 export function contentOf(project: Project): ProjectContent {

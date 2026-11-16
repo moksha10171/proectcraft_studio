@@ -43,3 +43,11 @@ def test_description_states_origin_staleness_and_limits():
     assert '0.500 Hz' in text and 'duty 50.0 %' in text and '3 dropped' in text
     assert 'not physical hardware evidence' in text
     assert 'matches the current revision' in describe(run, current_revision=2)
+
+
+def test_description_reports_applied_analog_stimulus_not_as_a_digital_channel():
+    trace = [{'timeUs': 0, 'pin': 'A0', 'volts': 2.5}, {'timeUs': 10, 'pin': 'D9', 'value': 1}, {'timeUs': 500_000, 'pin': 'A0', 'volts': 5.0}, {'timeUs': 600_000, 'pin': 'A0', 'volts': 5.0}]
+    run = {'id': 'b' * 32, 'origin': 'emulator', 'engine': 'avr8js-atmega328p', 'sourceRevision': 1, 'durationMs': 1000, 'trace': trace}
+    text = describe(run, 1)
+    assert 'Analog input A0 (applied stimulus): 2.5 V at 0.0 µs → 5 V at 500.000 ms' in text
+    assert list(summarize(trace)['pins']) == ['D9']
