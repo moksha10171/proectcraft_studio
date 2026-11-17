@@ -32,6 +32,10 @@ export class UnoEngine {
   readonly states: Record<string, number> = {}
   private pending: TraceEvent[] = []
   dropped = 0
+  // Per-pin time spent high since the last levels() call, in CPU cycles (independent of the trace cap).
+  private frameStart = 0
+  private highCycles: Record<string, number> = {}
+  private highSince: Record<string, number> = {}
 
   constructor(hex: string) {
     this.cpu = new CPU(decodeHex(hex), 2048) // ATmega328P SRAM; AVR8js defaults to a larger device.
@@ -50,12 +54,31 @@ export class UnoEngine {
           const state = port.pinState(bit)
           if (state !== PinState.High && state !== PinState.Low) continue
           const value = state === PinState.High ? 1 : 0
-          if (this.states[pin] !== value) { this.states[pin] = value; this.push({ timeUs: this.timeUs, pin, value }) }
+          if (this.states[pin] !== value) { this.track(pin, value); this.states[pin] = value; this.push({ timeUs: this.timeUs, pin, value }) }
         }
       })
     }
   }
   get timeUs() { return this.cpu.cycles / 16 }
+  private track(pin: string, value: number) {
+    const now = this.cpu.cycles
+    if (value) this.highSince[pin] = now
+    else if (this.states[pin] === 1) this.highCycles[pin] = (this.highCycles[pin] || 0) + now - Math.max(this.highSince[pin] ?? this.frameStart, this.frameStart)
+  }
+  /** Share of time (0–1) each pin was high since the previous call; PWM pins report their duty cycle. */
+  levels(): Record<string, number> {
+    const now = this.cpu.cycles, span = now - this.frameStart
+    const result: Record<string, number> = {}
+    if (span <= 0) return result
+    for (const [pin, value] of Object.entries(this.states)) {
+      let high = this.highCycles[pin] || 0
+      if (value === 1) high += now - Math.max(this.highSince[pin] ?? this.frameStart, this.frameStart)
+      result[pin] = Math.min(1, high / span)
+    }
+    this.highCycles = {}
+    this.frameStart = now
+    return result
+  }
   private push(event: TraceEvent) {
     if (this.pending.length < 4000) this.pending.push(event)
     else this.dropped++
@@ -64,6 +87,7 @@ export class UnoEngine {
     if (pin < 0 || pin > 13) throw new Error('Unsupported digital input')
     const port = pin >= 8 ? this.ports.B : this.ports.D
     port.setPin(pin >= 8 ? pin - 8 : pin, high)
+    if (this.states[`D${pin}`] !== (high ? 1 : 0)) this.track(`D${pin}`, high ? 1 : 0)
     this.states[`D${pin}`] = high ? 1 : 0
     this.push({ timeUs: this.timeUs, pin: `D${pin}`, value: high ? 1 : 0 })
   }

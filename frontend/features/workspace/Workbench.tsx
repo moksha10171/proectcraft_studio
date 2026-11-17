@@ -11,6 +11,7 @@ import { request, contentOf, type Board, type Project, type ProjectContent, type
 import { CircuitCanvas } from '../circuit/CircuitCanvas'
 import { WiringCheck } from '../circuit/WiringCheck'
 import { analogInputs, buttonInputs } from '../circuit/graph'
+import { Plotter } from '../execution/Plotter'
 import { Signals } from '../execution/Signals'
 import { CompareRuns } from '../execution/CompareRuns'
 import { Assistant } from '../assistant/Assistant'
@@ -40,7 +41,7 @@ export default function Workbench() {
   const [wiring, setWiring] = useState<WiringReport | null>(null), [wiringError, setWiringError] = useState('')
   const [dialog, setDialog] = useState(false), [name, setName] = useState('Untitled experiment'), [target, setTarget] = useState<ProjectContent['boardId']>('uno'), [newTemplate, setNewTemplate] = useState('blink')
   const [newFile, setNewFile] = useState(''), [fileActions, setFileActions] = useState(false)
-  const [running, setRunning] = useState(false), [events, setEvents] = useState<TraceEvent[]>([]), [timeUs, setTimeUs] = useState(0), [states, setStates] = useState<Record<string, number>>({}), [dropped, setDropped] = useState(0)
+  const [running, setRunning] = useState(false), [events, setEvents] = useState<TraceEvent[]>([]), [timeUs, setTimeUs] = useState(0), [states, setStates] = useState<Record<string, number>>({}), [levels, setLevels] = useState<Record<string, number>>({}), [dropped, setDropped] = useState(0)
   const worker = useRef<Worker | null>(null), trace = useRef<TraceEvent[]>([]), clock = useRef(0), lost = useRef(0), executing = useRef<{ projectId: string; buildId: string } | null>(null)
   const pressed = useRef(new Set<string>())
   const [pots, setPots] = useState<Record<string, number>>({}), potsRef = useRef<Record<string, number>>({})
@@ -60,7 +61,7 @@ export default function Workbench() {
 
   const stop = useCallback(async () => {
     if (stopTask.current) return stopTask.current
-    worker.current?.terminate(); worker.current = null; setRunning(false); setStates({})
+    worker.current?.terminate(); worker.current = null; setRunning(false); setStates({}); setLevels({})
     const execution = executing.current; executing.current = null
     const recording = { events: [...trace.current], durationUs: clock.current, dropped: lost.current }
     const task = (async () => {
@@ -78,7 +79,7 @@ export default function Workbench() {
   const activate = useCallback(async (next: Project) => {
     await stop()
     projectRef.current = next; draftRef.current = contentOf(next)
-    setProject(next); setDraft(contentOf(next)); setActiveFile(next.files[0].name); setRun(null); setEvents([]); setTimeUs(0); setStates({}); potsRef.current = {}; setPots({}); setSaveState('Saved'); setError(''); setDialog(false); setAssistant(false); setRailOpen(false)
+    setProject(next); setDraft(contentOf(next)); setActiveFile(next.files[0].name); setRun(null); setEvents([]); setTimeUs(0); setStates({}); setLevels({}); potsRef.current = {}; setPots({}); setSaveState('Saved'); setError(''); setDialog(false); setAssistant(false); setRailOpen(false)
     const cached = cache.get(`projectcraft:draft:${next.id}`)
     if (cached) {
       try {
@@ -167,7 +168,7 @@ export default function Workbench() {
     await stop()
     if (!activeBuild || !run?.artifact || !project || !draft || draft.boardId !== 'uno') return
     setError(''); trace.current = []; clock.current = 0; lost.current = 0; pressed.current.clear()
-    setEvents([]); setDropped(0); setTimeUs(0); setStates({}); setResults('signals')
+    setEvents([]); setDropped(0); setTimeUs(0); setStates({}); setLevels({}); setResults('signals')
     const instance = new Worker(new URL('../execution/avr.worker.ts', import.meta.url), { type: 'module' })
     worker.current = instance; executing.current = { projectId: project.id, buildId: run.id }; setRunning(true)
     instance.onmessage = ({ data }) => {
@@ -175,7 +176,7 @@ export default function Workbench() {
       if (data.type === 'frame') {
         const capacity = Math.max(0, 10_000 - trace.current.length)
         trace.current.push(...data.events.slice(0, capacity)); lost.current = Math.max(lost.current, data.dropped || 0) + Math.max(0, data.events.length - capacity)
-        clock.current = data.timeUs; setTimeUs(data.timeUs); setStates(data.states); setDropped(lost.current); setEvents([...trace.current])
+        clock.current = data.timeUs; setTimeUs(data.timeUs); setStates(data.states); setLevels(data.levels || {}); setDropped(lost.current); setEvents([...trace.current])
       }
     }
     instance.onerror = () => { setError('The emulator worker stopped unexpectedly'); void stop() }
@@ -297,12 +298,13 @@ export default function Workbench() {
               <div className="monaco-wrap"><Editor height="100%" path={`${project?.id}/${currentFile?.name}`} value={currentFile?.content || ''} language={currentFile?.name.endsWith('.py') ? 'python' : currentFile?.name.endsWith('.md') ? 'markdown' : 'cpp'} theme={resolvedTheme === 'light' ? 'vs' : 'vs-dark'} onChange={value => currentFile && change({ ...draft, files: draft.files.map(f => f.name === currentFile.name ? { ...f, content: value || '' } : f) })} onMount={(instance, monaco) => { editorRef.current = instance; monacoRef.current = monaco }} options={{ fontSize: 13, lineHeight: 23, minimap: { enabled: false }, padding: { top: 18 }, scrollBeyondLastLine: false, automaticLayout: true, wordWrap: 'on', fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace' }} /></div>
               <div className="editor-footer"><span>{currentFile?.content.split('\n').length || 0} lines</span><span>UTF-8</span><button onClick={() => void persist().catch(e => setError(e.message))}><Save size={12} />{saveState}</button></div>
             </section>
-            <section className="circuit-surface" aria-label="Circuit"><div className="surface-title"><span><CircuitBoard size={15} />Circuit</span><span className={running ? 'execution-label' : 'muted'}>{running ? '● EMULATED' : 'TERMINAL VIEW'}</span></div>{board && <CircuitCanvas circuit={draft.circuit} board={board} states={states} running={running} onButton={button} positions={pots} onPot={pot} onChange={circuit => change({ ...draft, circuit })} />}</section>
+            <section className="circuit-surface" aria-label="Circuit"><div className="surface-title"><span><CircuitBoard size={15} />Circuit</span><span className={running ? 'execution-label' : 'muted'}>{running ? '● EMULATED' : 'TERMINAL VIEW'}</span></div>{board && <CircuitCanvas circuit={draft.circuit} board={board} states={states} levels={levels} running={running} onButton={button} positions={pots} onPot={pot} onChange={circuit => change({ ...draft, circuit })} />}</section>
           </div>
-          <section className="results-panel" aria-label="Experiment results"><nav aria-label="Result views">{['problems', 'output', 'serial', 'signals', 'runs', 'compare', 'wiring', 'notes'].map(tab => <button aria-current={results === tab} onClick={() => setResults(tab)} key={tab}>{tab === 'output' ? 'Build output' : tab === 'runs' ? 'Run history' : tab === 'wiring' ? 'Wiring check' : tab}{tab === 'problems' && !!run?.diagnostics.length && <span className="count">{run.diagnostics.length}</span>}{tab === 'wiring' && !!wiring?.findings.filter(f => f.severity !== 'info').length && <span className="count">{wiring.findings.filter(f => f.severity !== 'info').length}</span>}</button>)}<span className={`run-status ${stale ? 'stale' : run?.valid ? 'passed' : ''}`}>{stale ? 'Source changed · rebuild required' : run ? `${run.status} · ${run.engine}` : 'No checks run yet'}</span></nav>
+          <section className="results-panel" aria-label="Experiment results"><nav aria-label="Result views">{['problems', 'output', 'serial', 'plotter', 'signals', 'runs', 'compare', 'wiring', 'notes'].map(tab => <button aria-current={results === tab} onClick={() => setResults(tab)} key={tab}>{tab === 'output' ? 'Build output' : tab === 'runs' ? 'Run history' : tab === 'wiring' ? 'Wiring check' : tab}{tab === 'problems' && !!run?.diagnostics.length && <span className="count">{run.diagnostics.length}</span>}{tab === 'wiring' && !!wiring?.findings.filter(f => f.severity !== 'info').length && <span className="count">{wiring.findings.filter(f => f.severity !== 'info').length}</span>}</button>)}<span className={`run-status ${stale ? 'stale' : run?.valid ? 'passed' : ''}`}>{stale ? 'Source changed · rebuild required' : run ? `${run.status} · ${run.engine}` : 'No checks run yet'}</span></nav>
             <div className="result-content">
               {results === 'problems' && (run?.diagnostics.length ? run.diagnostics.map((d, i) => <button className="diagnostic" key={i} onClick={() => jump(d.file, d.line, d.column)}><span className={`severity ${d.severity}`}>{d.severity}</span><span>{d.message}</span>{d.file && <code>{d.file}:{d.line}</code>}</button>) : <p className="empty-result">{run?.valid ? stale ? `Showing a saved result from revision ${run.sourceRevision}. Rebuild to check the current source.` : 'This revision passed its compiler check.' : 'Build your project to see compiler diagnostics. Click a problem to jump to its source.'}</p>)}
               {results === 'output' && <pre className="build-output">{run ? `Run ${run.id}\nRevision ${run.sourceRevision} · ${run.boardId} · ${run.durationMs} ms\n\n${run.output}` : 'No build output. Start with Build; AI is not required.'}</pre>}
+              {results === 'plotter' && <Plotter events={events} timeUs={timeUs} />}
               {results === 'serial' && <><div className="result-caption">{events.length ? 'AVR USART output · simulated time' : 'No serial capture yet. Build and run an Uno sketch using Serial.print().'}</div><pre className="serial-output">{events.filter(e => e.serial).map(e => e.serial).join('')}</pre></>}
               {results === 'signals' && <Signals events={events} timeUs={timeUs} dropped={dropped} />}
               {results === 'runs' && <div className="run-list">{!runs.length && <p className="empty-result">Every build and saved capture will appear here with its source revision.</p>}{runs.map(item => <button key={item.id} onClick={() => { setRun(item); if (item.trace) { setEvents(item.trace); setTimeUs(item.durationMs * 1000); setDropped(item.dropped || 0); setResults('signals') } else setResults('output') }}><span className={`run-dot ${item.valid ? 'passed' : ''}`} /><strong>{item.engine}</strong><span>{item.origin}</span><span>rev {item.sourceRevision}</span><span>{item.status}</span><code>{item.id.slice(0, 8)}</code></button>)}</div>}

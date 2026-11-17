@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { analogInputs, connect, buttonInputs } from '../features/circuit/graph'
+import { analogInputs, connect, buttonInputs, ledDrives } from '../features/circuit/graph'
 import type { Circuit } from '../features/project/types'
 
 test('joining existing nets merges terminal identities without duplicate membership', () => {
@@ -44,4 +44,25 @@ test('undriven analog inputs are left unset rather than guessed', () => {
 
 test('an analog pin wired straight to a rail reads that rail', () => {
   assert.deepEqual(analogInputs({ parts: [], nets: [{ id: 'a', label: '', terminals: ['board:A2', 'board:5V'] }, { id: 'b', label: '', terminals: ['board:A5', 'board:GND'] }] }), { 2: 5, 5: 0 })
+})
+
+test('LED drive is resolved through one resistor to a pin and the matching rail', () => {
+  const parts: Circuit['parts'] = [
+    { id: 'r1', kind: 'resistor', label: 'R', x: 0, y: 0, value: '330 Ω' },
+    { id: 'led1', kind: 'led', label: 'Series LED', x: 0, y: 0, value: '' },
+    { id: 'led2', kind: 'led', label: 'Sink LED', x: 0, y: 0, value: '' },
+    { id: 'led3', kind: 'led', label: 'Open LED', x: 0, y: 0, value: '' },
+  ]
+  const circuit: Circuit = { parts, nets: [
+    { id: 'pwm', label: '', terminals: ['board:D9', 'r1:1'] },
+    { id: 'led', label: '', terminals: ['r1:2', 'led1:A'] },
+    { id: 'gnd', label: '', terminals: ['led1:K', 'board:GND'] },
+    { id: 'supply', label: '', terminals: ['board:5V', 'led2:A'] },
+    { id: 'sink', label: '', terminals: ['led2:K', 'board:D4'] },
+    { id: 'open', label: '', terminals: ['led3:A', 'board:D7'] },
+  ] }
+  assert.deepEqual(ledDrives(circuit), {
+    led1: { pin: 'D9', activeLow: false, resistor: true },
+    led2: { pin: 'D4', activeLow: true, resistor: false },
+  })
 })

@@ -67,3 +67,14 @@
 .file-diff{margin-top:8px;border:1px solid var(--wb-border);border-radius:6px;overflow:hidden}.file-diff>summary{display:flex;align-items:center;gap:6px;padding:6px 8px;font-size:11px;cursor:pointer;background:var(--wb-panel)}.file-diff>summary code{font:11px ui-monospace,monospace}.file-diff>summary small{color:var(--wb-muted)}.diff-stat{margin-left:auto;font:10px ui-monospace,monospace}.diff-stat ins{color:var(--wb-accent);text-decoration:none}.diff-stat del{color:var(--wb-error);text-decoration:none}
 .unified-diff{font:10.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;max-height:340px;overflow:auto;background:var(--wb-bg)}.hunk-head{color:var(--wb-muted);background:var(--wb-raised);padding:2px 8px;font-size:10px}.diff-line{display:grid;grid-template-columns:30px 30px 14px 1fr;min-width:max-content}.diff-line .ln{color:var(--wb-muted);text-align:right;padding-right:6px;user-select:none;opacity:.7}.diff-line .mark{user-select:none;text-align:center}.diff-line code{white-space:pre;padding-right:10px}.diff-line.add{background:color-mix(in srgb,var(--wb-accent) 16%,transparent)}.diff-line.add .mark{color:var(--wb-accent)}.diff-line.del{background:color-mix(in srgb,var(--wb-error) 14%,transparent)}.diff-line.del .mark{color:var(--wb-error)}
 .proposal-why{font-size:11px;margin:6px 0}.proposal-why>summary{cursor:pointer;color:var(--wb-muted)}
+/* Serial plotter. Categorical slots validated for CVD separation on each theme's panel surface. */
+.workbench{--plot-1:#3987e5;--plot-2:#d95926;--plot-3:#199e70;--plot-4:#c98500;--plot-5:#d55181;--plot-6:#0ca30c;--plot-7:#9085e9;--plot-8:#e66767}
+.workbench[data-theme=light]{--plot-1:#2a78d6;--plot-2:#eb6834;--plot-3:#1baf7a;--plot-4:#eda100;--plot-5:#e87ba4;--plot-6:#008300;--plot-7:#6250d6;--plot-8:#e34948}
+.plot-chip .plot-latest{font:10px ui-monospace,monospace;color:var(--wb-muted);margin-left:2px}
+.signal-controls button[aria-pressed=true]{border-color:var(--wb-accent)}
+.plot-frame{position:relative;min-width:640px}
+.plot-name{font-size:11px}
+.plot-crosshair line{stroke:var(--wb-muted);stroke-width:1}.plot-dot{stroke:var(--wb-panel);stroke-width:2}
+.plot-tooltip{position:absolute;top:8px;pointer-events:none;background:var(--wb-raised);border:1px solid var(--wb-border);border-radius:6px;padding:6px 8px;font-size:11px;display:grid;gap:2px;box-shadow:0 6px 20px #0003;min-width:110px}
+.plot-tooltip>div{display:flex;align-items:center;gap:6px}.plot-tooltip strong{font:600 11px ui-monospace,monospace;color:var(--wb-text)}.plot-tooltip span{color:var(--wb-muted)}.plot-tooltip-time{color:var(--wb-muted);font-size:10px}
+.led-lens{fill:var(--wb-raised);stroke:var(--wb-border);stroke-width:1.5}.led-glow{fill:#ff5a4a}.workbench[data-theme=light] .led-glow{fill:#e2352a}

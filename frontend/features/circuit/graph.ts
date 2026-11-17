@@ -60,3 +60,38 @@ export function analogInputs(circuit: Circuit, positions: Record<string, number>
   }
   return volts
 }
+
+export interface LedDrive { pin: string; activeLow: boolean; resistor: boolean }
+
+/**
+ * Which board pin switches each LED, from connectivity alone. An LED is driven when one leg reaches a
+ * digital pin (directly or through one resistor) and the other leg reaches the matching rail: GND on the
+ * cathode for an active-high pin, or 5V/3V3 on the anode for an active-low pin. LEDs without a
+ * complete path are left out. Nothing here models current or forward voltage.
+ */
+export function ledDrives(circuit: Circuit): Record<string, LedDrive> {
+  const netOf = new Map<string, Net>()
+  for (const net of circuit.nets) for (const terminal of net.terminals) netOf.set(terminal, net)
+  const resistors = new Set(circuit.parts.filter(p => p.kind === 'resistor').map(p => p.id))
+  /** Terminals reachable from one terminal: its net, plus the far side of at most one resistor. */
+  const reach = (terminal: string): { terminal: string; resistor: boolean }[] => {
+    const near = (netOf.get(terminal)?.terminals || [terminal]).map(t => ({ terminal: t, resistor: false }))
+    const far = near.flatMap(({ terminal: t }) => {
+      const [id, port] = t.split(':')
+      if (!resistors.has(id)) return []
+      const other = `${id}:${port === '1' ? '2' : '1'}`
+      return (netOf.get(other)?.terminals || []).map(x => ({ terminal: x, resistor: true }))
+    })
+    return [...near, ...far]
+  }
+  const pinOn = (terminal: string) => reach(terminal).find(r => /^board:D\d+$/.test(r.terminal))
+  const railOn = (terminal: string, rails: string[]) => reach(terminal).find(r => rails.includes(r.terminal))
+  const drives: Record<string, LedDrive> = {}
+  for (const led of circuit.parts.filter(p => p.kind === 'led')) {
+    const anodePin = pinOn(`${led.id}:A`), cathodeGround = railOn(`${led.id}:K`, ['board:GND'])
+    if (anodePin && cathodeGround) { drives[led.id] = { pin: anodePin.terminal.slice(6), activeLow: false, resistor: anodePin.resistor || cathodeGround.resistor }; continue }
+    const cathodePin = pinOn(`${led.id}:K`), anodeSupply = railOn(`${led.id}:A`, ['board:5V', 'board:3V3'])
+    if (cathodePin && anodeSupply) drives[led.id] = { pin: cathodePin.terminal.slice(6), activeLow: true, resistor: cathodePin.resistor || anodeSupply.resistor }
+  }
+  return drives
+}

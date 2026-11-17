@@ -95,3 +95,16 @@ test('analogRead completes instead of hanging when no stimulus was applied', { s
   engine.advance(1_600_000)
   assert.match(engine.drain().map(e => e.serial || '').join(''), /raw=0 duty=0/)
 })
+
+test('per-frame pin levels report PWM duty without relying on the retained trace', { skip: !dimmerPath }, () => {
+  const engine = new UnoEngine(fs.readFileSync(dimmerPath!, 'utf8'))
+  engine.analog(0, 1.25)
+  const frames: number[] = []
+  for (let i = 0; i < 100; i++) { engine.advance(160_000); engine.drain(); frames.push(engine.levels().D9 ?? 0) }
+  const settled = frames.slice(-50) // after the first analogRead and analogWrite
+  for (const level of settled) assert.ok(Math.abs(level - 0.247) < 0.02, `frame level ${level}`)
+  engine.analog(0, 0)
+  for (let i = 0; i < 60; i++) { engine.advance(160_000); engine.levels() }
+  engine.advance(160_000)
+  assert.equal(engine.levels().D9, 0)
+})

@@ -10,7 +10,7 @@ function tick() {
   try {
     const started = performance.now()
     engine.advance(160_000) // Simulation advances by CPU cycles, never React frames.
-    postMessage({ type: 'frame', timeUs: engine.timeUs, states: engine.states, events: engine.drain(), dropped: engine.dropped })
+    postMessage({ type: 'frame', timeUs: engine.timeUs, states: engine.states, levels: engine.levels(), events: engine.drain(), dropped: engine.dropped })
     timer = setTimeout(tick, Math.max(0, 10 - (performance.now() - started)))
   } catch (error) { stop(); postMessage({ type: 'error', message: error instanceof Error ? error.message : 'Emulation failed' }) }
 }

@@ -23,6 +23,11 @@ before you review them. Designed for students, educators and makers.
 - **Signal analyzer:** multi-pin waveforms with zoom, pan and A/B cursors;
   per-pin frequency, period, duty cycle and pulse widths; analog input lanes;
   Value Change Dump export for GTKWave or PulseView.
+- **Serial plotter:** numbers printed over UART (`raw=512 duty=127`, `temp:23.5`,
+  or bare values, as in the Arduino Serial Plotter) become live series against
+  emulated time, with a crosshair readout, table view and CSV export.
+- **Live circuit:** while firmware runs, a connected LED lights by the measured
+  share of time its pin is on, so a PWM dimmer visibly dims.
 - **Circuit and wiring check:** parts (LED, resistor, button, potentiometer) joined
   by named nets, with a keyboard-accessible inspector. The wiring check compares
   the pins the sketch uses with the connections and flags unconnected pins, LEDs
@@ -41,7 +46,7 @@ devices beyond the button and potentiometer inputs). Nano and Mega compile only;
 Raspberry Pi gets a syntax check only. ESP32/Pico execution, flashing and physical
 serial capture are not implemented. The circuit is a logical connection view, not
 physical placement or an analog solver: a potentiometer supplies a voltage to the
-ADC, but LED current and brightness are not simulated. A successful build or
+ADC, and LED glow reflects pin duty cycle, but current and forward voltage are not simulated. A successful build or
 emulator run is not hardware validation. AI features need a configured provider.
 
 ## Quick start
@@ -88,10 +93,11 @@ toolchain. Install any declared libraries at their specified versions, for examp
 3. Build. Click a diagnostic to reach its file and line. Editing after a build
    marks that result stale and disables execution until you rebuild.
 4. On Uno, Run executes the compiled HEX in a worker. Press buttons and move
-   potentiometer sliders in the circuit view while it runs. Serial shows the
-   emulated UART output. Signals measures each pin; click the waveform to place
-   A/B cursors and time events, and export VCD. Stop saves a recording (at most 10,000 events; dropped
-   events are reported). Compare saved runs side by side.
+   potentiometer sliders in the circuit view while it runs; connected LEDs glow
+   with their pin's duty cycle. Serial shows the emulated UART output and
+   Plotter graphs the numbers in it. Signals measures each pin; click the
+   waveform to place A/B cursors, and export VCD. Stop saves a recording (at
+   most 10,000 events; dropped events are reported). Compare saved runs.
 5. Open Wiring check to compare the sketch's pin usage with the circuit.
 6. Export preserves the experiment and run metadata. Re-importing creates a new
    project; imported recordings stay labelled as imported, not freshly executed.
