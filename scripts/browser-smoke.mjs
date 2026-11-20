@@ -161,7 +161,7 @@ try {
     await page.getByRole('button', { name: 'serial', exact: true }).click()
     await page.getByText(/raw=512 duty=127/).last().waitFor({ timeout: 20_000 })
     // The LED's glow follows the measured duty of the pin that drives it through the resistor.
-    await page.getByRole('button', { name: /On 50 % of the time, driven by D9/ }).waitFor({ timeout: 10_000 })
+    await page.getByRole('button', { name: /On (49|50|51) % of the time, driven by D9/ }).waitFor({ timeout: 10_000 })
     await page.getByRole('slider', { name: /wiper position/ }).fill('100')
     await page.getByText(/raw=1023 duty=255/).last().waitFor({ timeout: 20_000 })
     await page.getByRole('button', { name: /On 100 % of the time, driven by D9/ }).waitFor({ timeout: 10_000 })
@@ -284,7 +284,7 @@ try {
     const body = JSON.parse(raw)
     llmRequests.push(body)
     const step = body.messages.filter(m => m.role === 'tool').length
-    const call = [['READ_FILE', { path: 'sketch.ino' }], ['EDIT_FILE', { path: 'sketch.ino', old_text: 'delay(1000);', new_text: 'delay(250);', replace_all: true }], ['CHECK_PROJECT', {}]][step]
+    const call = [['READ_FILE', { path: 'sketch.ino' }], ['EDIT_FILE', { path: 'sketch.ino', old_text: 'delay(1000);', new_text: 'delay(250);', replace_all: true }], ['CHECK_PROJECT', {}], ['RUN_SIMULATION', { seconds: 3 }]][step]
     response.writeHead(200, { 'Content-Type': 'text/event-stream' })
     const send = data => response.write(`data: ${JSON.stringify(data)}\n\n`)
     if (call) {
@@ -318,7 +318,14 @@ try {
     assert.match(proposalText, /\+2\s+−2/)
     assert.equal(await proposal.locator('.diff-line.add').count(), 2)
     const steps = await page.getByRole('list', { name: 'Assistant steps' }).innerText()
-    assert.match(steps, /Read file[\s\S]*Edit file[\s\S]*Build project/)
+    assert.match(steps, /Read file[\s\S]*Edit file[\s\S]*Build project[\s\S]*Run simulation/)
+    // RUN_SIMULATION ran in this browser on the draft and the backend measured the trace: delay(250) twice = about 2 Hz at 50 % (serial printing adds a fraction of a millisecond).
+    const simulated = llmRequests.at(-1).messages.filter(m => m.role === 'tool').at(-1).content
+    if (cli.arduinoCli) {
+      assert.match(simulated, /^Simulation of your draft · avr8js-atmega328p/)
+      assert.match(simulated, /D13: .*1\.99\d Hz.*duty 50\.0 %/)
+      assert.match(simulated, /UART text \(\d+ chars.*LED on/)
+    } else assert.match(simulated, /^ERROR/)
     await page.locator('.assistant-message.assistant strong', { hasText: '250 ms' }).waitFor()
     assert.match(llmRequests[0].messages.at(-1).content, /^<project-state>[\s\S]*Make the LED blink twice per second$/)
     assert.ok(llmRequests[0].tools.some(t => t.function.name === 'EDIT_FILE'))

@@ -90,10 +90,13 @@ export interface WiringUpdateChunk {
   manifest: Record<string, unknown>;
 }
 
+/** The assistant needs the browser to run something (a simulation) and will wait for the POSTed result. */
+export interface ClientRequestChunk { type: 'client_request'; id: string; tool: string; payload: Record<string, unknown> }
 export interface PatchReadyChunk { type: 'patch_ready'; patch: import('@/features/project/types').Patch }
 
 export type StreamChunk =
   | PatchReadyChunk
+  | ClientRequestChunk
   | TextDeltaChunk
   | ToolCallChunk
   | UsageChunk
@@ -147,6 +150,9 @@ function parseSseLine(line: string): StreamChunk | null {
     }
     if (json.type === 'patch_ready' && json.patch && typeof json.patch === 'object') {
       return { type: 'patch_ready', patch: json.patch as import('@/features/project/types').Patch };
+    }
+    if (json.type === 'client_request' && typeof json.id === 'string' && json.payload && typeof json.payload === 'object') {
+      return { type: 'client_request', id: json.id, tool: String(json.tool ?? ''), payload: json.payload as Record<string, unknown> };
     }
     if (json.type === 'message_start') {
       return { type: 'message_start', workspace_id: json.workspace_id ? String(json.workspace_id) : undefined };

@@ -134,7 +134,7 @@ async def test_explain_intent_cannot_edit_and_continues_with_an_explanation(clie
                     {'text': 'Swap HIGH and LOW in sketch.ino to invert it.'})
     events, _ = await run(project['id'], 'How would I invert it?', script, intent='explain')
     assert 'explain mode is read-only' in script.results(1)[0]
-    assert {t['name'] for t in script.requests[0]['tools']} == {'LIST_FILES', 'READ_FILE', 'CHECK_PROJECT', 'CHECK_WIRING', 'INSPECT_RECORDING', 'BOARD_INFO'}
+    assert {t['name'] for t in script.requests[0]['tools']} == {'LIST_FILES', 'READ_FILE', 'CHECK_PROJECT', 'CHECK_WIRING', 'INSPECT_RECORDING', 'RUN_SIMULATION', 'BOARD_INFO'}
     assert not any(e['type'] == 'patch_ready' for e in events)
     assert client.get(f'/api/workbench/projects/{project["id"]}/patches').json() == []
 
@@ -203,3 +203,115 @@ async def test_session_reads_long_files_in_pages(client):
         assert 'line-number prefixes' in hint
         listing = (await session.run('LIST_FILES', {})).text
         assert 'notes.h (1000 lines) (draft)' in listing
+
+
+WITH_ARTIFACT = {**PASSED, 'artifact': {'format': 'intel-hex', 'content': ':00000001FF', 'sha256': 'x'}}
+
+
+def blink_trace(period_us, cycles):
+    half = period_us // 2
+    events = [{'timeUs': 0, 'pin': 'D13', 'value': 0}]
+    for i in range(cycles):
+        events += [{'timeUs': i * period_us + half // 1000, 'pin': 'D13', 'value': 1}, {'timeUs': i * period_us + half, 'pin': 'D13', 'value': 0}]
+    return events
+
+
+async def run_with_browser(project_id, script, answer, config=NATIVE, intent='modify'):
+    """Drive the loop and play the browser: answer each client_request through the real bridge."""
+    from app.agent import bridge
+    requests = []
+    compile_mock = AsyncMock(return_value=dict(WITH_ARTIFACT))
+    with SessionLocal() as db, patch('app.agent.loop._call_provider_turn', script), patch('app.services.builds.compile_content', compile_mock):
+        events = []
+        async for chunk in run_agent_loop(project_id, 'Verify the blink rate', config, 'arduino', db, intent=intent):
+            event = json.loads(chunk.decode()[6:])
+            events.append(event)
+            if event['type'] == 'client_request':
+                requests.append(event)
+                if answer is not None:
+                    assert bridge.resolve(event['id'], answer(event['payload']))
+    return events, requests
+
+
+@pytest.mark.asyncio
+async def test_run_simulation_goes_to_the_browser_and_the_agent_reads_measurements(client):
+    project = create(client)
+    script = Script(
+        {'calls': [('EDIT_FILE', {'path': 'sketch.ino', 'old_text': 'delay(1000);', 'new_text': 'delay(250);', 'replace_all': True})]},
+        {'calls': [('CHECK_PROJECT', {}), ('RUN_SIMULATION', {'seconds': 4})]},
+        {'text': 'Measured 2.000 Hz on D13.'},
+    )
+    events, requests = await run_with_browser(project['id'], script, lambda payload: {'trace': blink_trace(500_000, 8), 'durationUs': 4_000_000})
+    assert len(requests) == 1
+    payload = requests[0]['payload']
+    assert payload['board'] == 'uno' and payload['seconds'] == 4 and payload['hex'] == ':00000001FF'
+    assert [p['kind'] for p in payload['circuit']['parts']] == [] and payload['pots'] == {} and payload['hold'] == []
+    result = script.results(2)[1]
+    assert result.startswith('Simulation of your draft · avr8js-atmega328p') and 'D13' in result and '2.000 Hz' in result and 'duty 50.0 %' in result
+    assert 'inputs: default inputs' in result
+    assert [e['status'] for e in events if e['type'] == 'tool_call_end'][-1] == 'success'
+    assert any(e['type'] == 'patch_ready' for e in events)
+
+
+@pytest.mark.asyncio
+async def test_run_simulation_validates_inputs_and_reports_failures_precisely(client):
+    project = create(client, 'dimmer')
+    script = Script({'calls': [('RUN_SIMULATION', {'seconds': 99}), ('RUN_SIMULATION', {'pots': {'nope': 0.5}}), ('RUN_SIMULATION', {'pots': {'pot1': 2}}),
+                               ('RUN_SIMULATION', {'hold': ['pot1']}), ('RUN_SIMULATION', {'seconds': 'x'})]}, {'text': 'ok'})
+    events, requests = await run_with_browser(project['id'], script, None)
+    assert not requests
+    results = script.results(1)
+    assert 'between 0.1 and 10' in results[0]
+    assert 'nope is not a potentiometer' in results[1] and 'pot1' in results[1]
+    assert 'from 0 to 1' in results[2]
+    assert 'pot1 is not a button' in results[3] and 'Buttons: none' in results[3]
+    assert 'must be a number' in results[4]
+
+
+@pytest.mark.asyncio
+async def test_run_simulation_passes_inputs_and_survives_a_silent_browser(client, monkeypatch):
+    project = create(client, 'dimmer')
+    script = Script({'calls': [('RUN_SIMULATION', {'seconds': 1, 'pots': {'pot1': 1}})]}, {'text': 'The tab was closed.'})
+    monkeypatch.setattr('app.agent.session.SIMULATION_TIMEOUT_S', 0.05)
+    events, requests = await run_with_browser(project['id'], script, None)
+    assert requests[0]['payload']['pots'] == {'pot1': 1} and len(requests[0]['payload']['circuit']['parts']) == 3
+    assert 'did not return simulation results in time' in script.results(1)[0]
+    assert events[-1]['type'] == 'done'
+
+
+@pytest.mark.asyncio
+async def test_run_simulation_reports_simulator_errors_and_failed_builds(client):
+    project = create(client)
+    failing = Script({'calls': [('RUN_SIMULATION', {})]}, {'text': 'x'})
+    events, requests = await run_with_browser(project['id'], failing, lambda payload: {'error': 'Invalid Intel HEX record'})
+    assert 'the simulator failed: Invalid Intel HEX record' in failing.results(1)[0]
+    broken = Script({'calls': [('RUN_SIMULATION', {})]}, {'text': 'x'})
+    with SessionLocal() as db, patch('app.agent.loop._call_provider_turn', broken), patch('app.services.builds.compile_content', AsyncMock(return_value=dict(FAILED))):
+        _ = [c async for c in run_agent_loop(project['id'], 'Run it', NATIVE, 'arduino', db)]
+    assert 'does not build' in broken.results(1)[0] and "'digitalWrit' was not declared" in broken.results(1)[0]
+
+
+@pytest.mark.asyncio
+async def test_raspberry_pi_projects_send_their_python_files(client):
+    project = create(client, 'blink')
+    pi = client.post('/api/workbench/projects', json={'name': 'Pi', 'boardId': 'pi4', 'template': 'blink'}).json()
+    script = Script({'calls': [('RUN_SIMULATION', {'seconds': 5})]}, {'text': 'ok'})
+    compile_mock = AsyncMock(return_value={'status': 'passed', 'engine': 'python-ast', 'valid': True, 'output': '', 'diagnostics': []})
+    from app.agent import bridge
+    with SessionLocal() as db, patch('app.agent.loop._call_provider_turn', script), patch('app.services.builds.compile_content', compile_mock):
+        async for chunk in run_agent_loop(pi['id'], 'Run it', NATIVE, 'raspberry-pi', db):
+            event = json.loads(chunk.decode()[6:])
+            if event['type'] == 'client_request':
+                assert event['payload']['board'] == 'pi4' and 'hex' not in event['payload']
+                assert event['payload']['files'][0]['name'] == 'main.py' and 'LED(17)' in event['payload']['files'][0]['content']
+                bridge.resolve(event['id'], {'trace': [{'timeUs': 0, 'pin': 'GPIO17', 'value': 1}], 'durationUs': 5_000_000, 'notice': 'The script finished.'})
+    assert 'pyodide-rpi-gpio-sim' in script.results(1)[0] and 'Simulator note: The script finished.' in script.results(1)[0]
+    assert 'RUN_SIMULATION' in available_tools('modify', 'pi4') and 'RUN_SIMULATION' in available_tools('explain', 'uno')
+    assert 'RUN_SIMULATION' not in available_tools('modify', 'nano') and 'RUN_SIMULATION' not in available_tools('modify', 'mega')
+
+
+def test_client_results_endpoint_validates_and_rejects_unknown_requests(client):
+    assert client.post('/api/agent/client-results/unknown', json={'trace': [], 'durationUs': 1}).status_code == 404
+    assert client.post('/api/agent/client-results/x', json={'trace': [{'timeUs': 5, 'pin': 'D13', 'value': 1}, {'timeUs': 1, 'pin': 'D13', 'value': 0}]}).status_code == 422
+    assert client.post('/api/agent/client-results/x', json={'trace': [{'timeUs': 1, 'pin': '../etc', 'value': 1}]}).status_code == 422
+    assert client.post('/api/agent/client-results/x', json={'surprise': True}).status_code == 422

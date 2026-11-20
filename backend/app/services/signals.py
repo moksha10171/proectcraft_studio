@@ -73,12 +73,12 @@ def _time(us: float) -> str:
     return f'{us:.1f} µs'
 
 
-def describe(run: dict, current_revision: int) -> str:
+def describe(run: dict, current_revision: int, title: str | None = None) -> str:
     """Facts about one recording, labelled with its origin and whether it matches the current source."""
     summary = summarize(run.get('trace') or [])
     state = 'matches the current revision' if run.get('sourceRevision') == current_revision else f'STALE: current source is revision {current_revision}'
-    lines = [f'Recording {run["id"][:8]} · {run.get("origin")} · {run.get("engine")} · source revision {run.get("sourceRevision")} ({state}) · '
-             f'{run.get("durationMs", 0) / 1000:.3f} s simulated · {len(run.get("trace") or [])} retained events · {run.get("dropped", 0)} dropped.']
+    head = title or f'Recording {run["id"][:8]} · {run.get("origin")} · {run.get("engine")} · source revision {run.get("sourceRevision")} ({state})'
+    lines = [f'{head} · {run.get("durationMs", 0) / 1000:.3f} s simulated · {len(run.get("trace") or [])} retained events · {run.get("dropped", 0)} dropped.']
     for pin, m in summary['pins'].items():
         parts = [f'{m["transitions"]} edges']
         if m['periodUs'] is not None:

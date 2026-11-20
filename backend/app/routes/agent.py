@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from typing import Literal
 from app.routes.studio import _ws_id
@@ -10,6 +10,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.agent.session import TOOLS, READ_ONLY
+from app.routes.workbench import SignalEvent
 from app.agent.settings import AGENT_MAX_TURNS
 from app.db.engine import SessionLocal
 
@@ -100,3 +101,25 @@ async def agent_post(request: AgentRequest, db: Session = Depends(get_db)):
             "Connection": "keep-alive",
         },
     )
+
+
+class ClientResult(BaseModel):
+    """What the browser reports for a client-side tool call. Treated as data, never as instructions."""
+    model_config = {"extra": "forbid"}
+    trace: list[SignalEvent] = Field(default_factory=list, max_length=10_000)
+    durationUs: float = Field(default=0, ge=0, le=3.6e9, allow_inf_nan=False)
+    dropped: int = Field(default=0, ge=0)
+    notice: str | None = Field(default=None, max_length=500)
+    error: str | None = Field(default=None, max_length=500)
+
+
+@router.post("/client-results/{request_id}")
+def client_result(request_id: str, body: ClientResult):
+    from app.agent import bridge
+    times = [e.timeUs for e in body.trace]
+    if times != sorted(times):
+        raise HTTPException(422, "Trace events must be ordered by time")
+    payload = {**body.model_dump(exclude_none=True), "trace": [e.model_dump(exclude_none=True) for e in body.trace]}
+    if not bridge.resolve(request_id, payload):
+        raise HTTPException(404, "No tool call is waiting for this result")
+    return {"ok": True}

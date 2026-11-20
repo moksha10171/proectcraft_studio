@@ -56,6 +56,9 @@ available in explain mode automatically. Tools must never change the saved
 project: write tools edit the session draft, which is verified and staged for
 review. Return specific `ERROR:` text the model can act on, and add a test in
 `backend/tests/test_agent_loop.py` driven by the scripted provider there.
+Tools that need the browser (the simulators run there) send a `client_request`
+event through `session.outbox` and wait on `app/agent/bridge.py`; see
+`RUN_SIMULATION` and its tests, which play the browser's part.
 Provider calls belong in backend adapters, not UI components.
 
 ## Reporting issues

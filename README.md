@@ -146,8 +146,12 @@ The assistant runs on your backend as a tool-using loop over the open project:
    of this revision, wiring-check findings and the latest recording's measurements.
 2. It inspects with read-only tools: `LIST_FILES`, `READ_FILE` (line-numbered),
    `CHECK_WIRING`, `INSPECT_RECORDING`, `BOARD_INFO` (pin capabilities and
-   electrical limits) and `WEB_SEARCH` when `SERPER_API_KEY` or
-   `BRAVE_SEARCH_API_KEY` is set.
+   electrical limits), `RUN_SIMULATION` and `WEB_SEARCH` when `SERPER_API_KEY` or
+   `BRAVE_SEARCH_API_KEY` is set. `RUN_SIMULATION` runs your open project (or the
+   assistant's draft) in the simulator for a few simulated seconds, optionally with
+   potentiometer positions or held buttons, and returns measured frequency, duty
+   cycle and printed text, so it can check behaviour and not only that code
+   compiles. The simulation runs in your open Studio tab, which must stay open.
 3. In debug and modify modes it edits a **draft** with `EDIT_FILE` (exact text
    replacement) or `WRITE_FILE`. `CHECK_PROJECT` compiles the draft with the
    real toolchain without saving it, so the assistant can fix its own errors.

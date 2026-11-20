@@ -9,6 +9,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage'
 import type { Project, Patch, Verification } from '../project/types'
 import { Markdown } from './Markdown'
 import { diffLines, diffStats, hunks } from './diff'
+import { simulateHeadless, type SimulationRequest } from '../execution/headless'
 
 const STARTERS = {
   explain: ['Check my wiring against the sketch', 'What does my latest recording show?', 'Which pins on this board support PWM?'],
@@ -102,7 +103,18 @@ export function Assistant({ project, patches, beforeSend, onPatch, onDecision, o
   const config: ModelConfig | undefined = active ? { ...active, model: active.model, provider: active.provider } : undefined
   const agent = useAgentEngine(undefined, { workspaceId: project.id, skipLegacySync: true, intent,
     getContext: () => ({ files: project.files, deviceMode: project.boardId === 'pi4' ? 'raspberry-pi' : 'arduino' }),
-    modelConfig: config, onPatch, initialMessages: history, welcomeMessage: WELCOME })
+    modelConfig: config, onPatch, initialMessages: history, welcomeMessage: WELCOME,
+    // RUN_SIMULATION runs here, in the browser, with the same engines as the Run button; the backend waits for this POST.
+    onClientRequest: request => {
+      void (async () => {
+        let body: Record<string, unknown>
+        try {
+          const result = await simulateHeadless(request.payload as unknown as SimulationRequest)
+          body = { trace: result.events, durationUs: result.durationUs, dropped: result.dropped, notice: result.notice }
+        } catch (e) { body = { error: (e instanceof Error ? e.message : 'Simulation failed').slice(0, 500) } }
+        await fetch(`/api/agent/client-results/${request.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => {})
+      })()
+    } })
   const busy = ['thinking', 'streaming', 'calling_tool'].includes(agent.status)
   const scroll = useRef<HTMLDivElement>(null)
   const pending = patches.filter(p => p.status === 'proposed')

@@ -2,6 +2,7 @@
 import type { Engine } from './engine'
 import { UnoEngine } from './avr-engine'
 import { PythonEngine, type PyodideLike } from './python-engine'
+import { runBatch } from './batch'
 
 let engine: Engine | null = null
 let timer: ReturnType<typeof setTimeout> | undefined
@@ -47,6 +48,9 @@ self.onmessage = async ({ data }) => {
       for (const [channel, volts] of Object.entries(data.analog || {})) engine.analog?.(Number(channel), Number(volts))
       for (const [channel, volts] of waitingAnalog) engine.analog?.(channel, volts)
       waitingAnalog.clear()
+      if (typeof data.batchSeconds === 'number') { // Headless run for the assistant: no pacing, one result message.
+        postMessage({ type: 'batch', ...runBatch(engine, data.batchSeconds) }); engine = null; return
+      }
       running = true; postMessage({ type: 'started' }); tick()
     } else if (data.type === 'input') { if (engine) engine.input(data.pin, data.high); else waitingInputs.set(data.pin, data.high) }
     else if (data.type === 'analog') { if (engine) engine.analog?.(data.channel, data.volts); else waitingAnalog.set(data.channel, data.volts) }

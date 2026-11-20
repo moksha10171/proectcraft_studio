@@ -24,6 +24,7 @@ const nextConfig = {
       { source: '/api/studio/:path*', destination: `${backendUrl}/api/studio/:path*` },
       { source: '/api/projects/:path*', destination: `${backendUrl}/api/projects/:path*` },
       { source: '/api/agent/info', destination: `${backendUrl}/api/agent/info` },
+      { source: '/api/agent/client-results/:id', destination: `${backendUrl}/api/agent/client-results/:id` },
       { source: '/api/agent', destination: `${backendUrl}/api/agent` },
       { source: '/api/compile/:path*', destination: `${backendUrl}/api/compile/:path*` },
       { source: '/api/health', destination: `${backendUrl}/api/health` },

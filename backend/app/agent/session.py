@@ -6,6 +6,7 @@ single proposal, with its verification attached, that the user applies or reject
 """
 from __future__ import annotations
 
+import asyncio
 import dataclasses
 import difflib
 import json
@@ -23,6 +24,7 @@ from app.services.experiments import get_project, propose_files
 from app.agent.settings import AGENT_TOOL_RESULT_MAX_CHARS
 
 RESULT_LIMIT = AGENT_TOOL_RESULT_MAX_CHARS
+SIMULATION_TIMEOUT_S = 90  # Browser start-up plus a simulation of up to 30 s.
 READ_LIMIT = 400
 
 
@@ -69,6 +71,16 @@ TOOLS = [
     _tool('INSPECT_RECORDING', 'Inspect recording',
           'Read measurements from the latest emulator recording: per-pin frequency, period, duty cycle and pulse widths, analog '
           'input stimulus and UART text, and whether the recording is stale relative to the source.'),
+    _tool('RUN_SIMULATION', 'Run simulation',
+          'Run the project in the simulator (your draft if you made edits, otherwise the saved revision) for a number of simulated seconds '
+          'and read back measurements: per-pin frequency, period and duty cycle, analog stimulus and printed/serial text. Use it to verify '
+          'behaviour, not just that the code compiles, for example that an LED blinks at 2 Hz or that PWM duty follows a potentiometer. '
+          'Uno runs the compiled firmware in AVR8js; Raspberry Pi runs the Python script against a simulated RPi.GPIO/gpiozero. '
+          'Optionally set potentiometer positions (part id -> 0..1) and hold buttons (part ids) from the start. '
+          'It runs in the user\'s open Studio tab and takes a few seconds; it is a simulation, not hardware.',
+          {'seconds': {'type': 'number', 'description': 'Simulated seconds to run (default 3, at most 10 for Uno and 30 for Raspberry Pi)'},
+           'pots': {'type': 'object', 'description': 'Potentiometer positions by part id, 0 = terminal 1, 1 = terminal 2', 'additionalProperties': {'type': 'number'}},
+           'hold': {'type': 'array', 'items': {'type': 'string'}, 'description': 'Button part ids held pressed from the start'}}),
     _tool('BOARD_INFO', 'Board facts',
           'Pin capabilities and electrical limits of the target board (PWM, analog, interrupt, I2C/SPI pins; logic level; current '
           'limits) and what the emulator models. Use it instead of recalling pinouts from memory.'),
@@ -81,6 +93,8 @@ READ_ONLY = [t['name'] for t in TOOLS if not t['writes']]
 
 def available_tools(intent: str, board_id: str) -> list[str]:
     names = READ_ONLY if intent == 'explain' else [t['name'] for t in TOOLS]
+    if board_id not in ('uno', 'pi4'):
+        names = [n for n in names if n != 'RUN_SIMULATION']  # Only these boards have a simulator.
     if board_id == 'pi4':
         names = [n for n in names if n != 'CHECK_WIRING']  # The static pin analysis understands Arduino sketches only.
     if not (os.environ.get('SERPER_API_KEY') or os.environ.get('BRAVE_SEARCH_API_KEY')):
@@ -148,6 +162,7 @@ class ProjectSession:
         self.changed: list[str] = []
         self.version = 0  # Bumped on every edit, so a check can be matched to the draft it saw.
         self.verified: dict[str, tuple[int, dict]] = {}
+        self.outbox: asyncio.Queue = asyncio.Queue()  # Events the loop forwards to the browser mid-tool (client-side tool requests).
 
     # ── Draft ────────────────────────────────────────────────────────────────
     def content(self) -> ProjectContent:
@@ -279,6 +294,56 @@ class ProjectSession:
             note = f' {imported} imported reference recording(s) exist but were not produced here.' if imported else ''
             return ToolResult('No emulator recording exists for this project. Ask the user to Build (or Check syntax), Run, then Stop to save a capture.' + note)
         return ToolResult(describe(run, self.base_revision))
+
+    async def _run_simulation(self, args) -> ToolResult:
+        from app.agent import bridge
+        from app.services.signals import describe
+        board_id = self.project.boardId
+        if board_id not in ('uno', 'pi4'):
+            return ToolResult(f'ERROR: {BOARDS[board_id]["name"]} has no simulator; only the Arduino Uno and Raspberry Pi Python can run. CHECK_PROJECT still compiles it.', error=True)
+        limit = 10.0 if board_id == 'uno' else 30.0
+        try:
+            seconds = float(args.get('seconds', 3))
+        except (TypeError, ValueError):
+            return ToolResult('ERROR: seconds must be a number.', error=True)
+        if not 0.1 <= seconds <= limit:
+            return ToolResult(f'ERROR: seconds must be between 0.1 and {limit:g} for this board.', error=True)
+        parts = {p.id: p.kind for p in self.project.circuit.parts}
+        pots, hold = args.get('pots') or {}, args.get('hold') or []
+        if not isinstance(pots, dict) or not isinstance(hold, list):
+            return ToolResult('ERROR: pots must be an object of part id -> position and hold a list of button ids.', error=True)
+        for part_id, position in pots.items():
+            if parts.get(part_id) != 'potentiometer':
+                return ToolResult(f'ERROR: {part_id} is not a potentiometer in this circuit. Potentiometers: {", ".join(i for i, k in parts.items() if k == "potentiometer") or "none"}.', error=True)
+            if not isinstance(position, (int, float)) or isinstance(position, bool) or not 0 <= position <= 1:
+                return ToolResult(f'ERROR: the position of {part_id} must be a number from 0 to 1.', error=True)
+        for part_id in hold:
+            if parts.get(part_id) != 'button':
+                return ToolResult(f'ERROR: {part_id} is not a button in this circuit. Buttons: {", ".join(i for i, k in parts.items() if k == "button") or "none"}.', error=True)
+        cached = self.verified.get('build')
+        run = cached[1] if cached and cached[0] == self.version and cached[1].get('status') == 'passed' else await self.check()
+        if run['status'] != 'passed':
+            return ToolResult('ERROR: the project does not build, so it cannot be simulated. Fix the build first.\n' + build_summary(run), error=True)
+        payload: dict = {'board': board_id, 'seconds': seconds, 'circuit': self.project.circuit.model_dump(), 'pots': pots, 'hold': hold}
+        if board_id == 'uno':
+            payload['hex'] = run['artifact']['content']
+        else:
+            payload['files'] = [{'name': f.name, 'content': f.content} for f in self.files.values() if f.name.endswith('.py')]
+        request_id, future = bridge.open_request()
+        self.outbox.put_nowait({'type': 'client_request', 'id': request_id, 'tool': 'RUN_SIMULATION', 'payload': payload})
+        result = await bridge.wait(request_id, future, SIMULATION_TIMEOUT_S)
+        if result is None:
+            return ToolResult('ERROR: the browser did not return simulation results in time. The Studio tab must stay open while the assistant runs a simulation. Try a shorter run.', error=True)
+        if result.get('error'):
+            return ToolResult(f'ERROR: the simulator failed: {result["error"]}', error=True)
+        engine = 'avr8js-atmega328p' if board_id == 'uno' else 'pyodide-rpi-gpio-sim'
+        scope = 'your draft' if self.changed else f'saved revision {self.base_revision}'
+        inputs = ', '.join(filter(None, [f'potentiometers {pots}' if pots else '', f'buttons held: {", ".join(hold)}' if hold else ''])) or 'default inputs (potentiometers at 50 %, buttons released)'
+        record = {'trace': result.get('trace', []), 'durationMs': result.get('durationUs', 0) / 1000, 'dropped': result.get('dropped', 0)}
+        text = describe(record, self.base_revision, title=f'Simulation of {scope} · {engine} · inputs: {inputs}')
+        if result.get('notice'):
+            text += f'\nSimulator note: {result["notice"]}'
+        return ToolResult(text)
 
     async def _board_info(self, args) -> ToolResult:
         from app.services.wiring import AVR_LAYOUT

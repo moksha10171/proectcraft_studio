@@ -26,6 +26,13 @@ const cache = {
 }
 const Editor = dynamic(() => import('@monaco-editor/react').then(m => m.default), { ssr: false, loading: () => <div className="editor-loading"><Loader2 className="spin" size={20} />Loading local editor…</div> })
 
+/** Per-frame duty ripples when a PWM period does not divide the 10 ms frame; an exponential average steadies the LED glow. */
+function smoothLevels(previous: Record<string, number>, next: Record<string, number>, alpha = 0.3): Record<string, number> {
+  const result: Record<string, number> = {}
+  for (const [pin, level] of Object.entries(next)) result[pin] = pin in previous ? previous[pin] + (level - previous[pin]) * alpha : level
+  return result
+}
+
 export default function Workbench() {
   const { resolvedTheme, setTheme } = useTheme()
   const [projects, setProjects] = useState<Project[]>([]), [boards, setBoards] = useState<Board[]>([])
@@ -180,7 +187,7 @@ export default function Workbench() {
         if (data.notice) setNotice(data.notice)
         const capacity = Math.max(0, 10_000 - trace.current.length)
         trace.current.push(...data.events.slice(0, capacity)); lost.current = Math.max(lost.current, data.dropped || 0) + Math.max(0, data.events.length - capacity)
-        clock.current = data.timeUs; setTimeUs(data.timeUs); setStates(data.states); setLevels(data.levels || {}); setDropped(lost.current); setEvents([...trace.current])
+        clock.current = data.timeUs; setTimeUs(data.timeUs); setStates(data.states); setLevels(previous => smoothLevels(previous, data.levels || {})); setDropped(lost.current); setEvents([...trace.current])
       }
     }
     instance.onerror = () => { setError('The emulator worker stopped unexpectedly'); void stop() }

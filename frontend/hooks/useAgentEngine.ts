@@ -78,6 +78,8 @@ export interface AgentEngineOptions {
   modelConfig?: ModelConfig;
   onToolResult?: (payload: ToolResultPayload) => void;
   onPatch?: (patch: import('@/features/project/types').Patch) => void;
+  /** Called when the assistant asks the browser to run a tool (it keeps waiting until a result is POSTed). */
+  onClientRequest?: (request: import('@/lib/arduino-studio/stream-parser').ClientRequestChunk) => void;
   skipLegacySync?: boolean;
   intent?: 'explain' | 'debug' | 'modify';
   welcomeMessage?: string;
@@ -223,7 +225,9 @@ export function useAgentEngine(_systemPrompt?: string, options?: AgentEngineOpti
       for await (const chunk of parseStream(resp.body)) {
         if (abortRef.current?.signal.aborted) break;
 
-        if (chunk.type === 'patch_ready') {
+        if (chunk.type === 'client_request') {
+          options?.onClientRequest?.(chunk);
+        } else if (chunk.type === 'patch_ready') {
           options?.onPatch?.(chunk.patch);
         } else if (chunk.type === 'text_delta') {
           streamingContent += chunk.text;

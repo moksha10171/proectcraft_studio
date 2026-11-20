@@ -9,6 +9,7 @@ SSE events: message_start, text_delta, thinking, tool_call_start, tool_call_end,
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import re
@@ -205,7 +206,22 @@ async def _run_tool(session: ProjectSession, call: dict, allowed: list[str], int
         result_text, error, files = f"ERROR: {name} cannot be used here: {reason}.", True, []
     else:
         try:
-            result = await session.run(name, args)
+            task = asyncio.ensure_future(session.run(name, args))
+            try:
+                # A tool may need the browser (RUN_SIMULATION): forward its requests while it waits for the answer.
+                while not task.done():
+                    getter = asyncio.ensure_future(session.outbox.get())
+                    done, _ = await asyncio.wait({task, getter}, return_when=asyncio.FIRST_COMPLETED)
+                    if getter in done:
+                        yield _sse(getter.result())
+                    else:
+                        getter.cancel()
+                while not session.outbox.empty():
+                    yield _sse(session.outbox.get_nowait())
+            finally:
+                if not task.done():
+                    task.cancel()
+            result = task.result()
             result_text, error, files = result.text, result.error, result.files_modified
         except HTTPException as exc:
             result_text, error, files = f"ERROR: {exc.detail}", True, []
