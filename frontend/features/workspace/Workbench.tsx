@@ -41,7 +41,7 @@ export default function Workbench() {
   const [wiring, setWiring] = useState<WiringReport | null>(null), [wiringError, setWiringError] = useState('')
   const [dialog, setDialog] = useState(false), [name, setName] = useState('Untitled experiment'), [target, setTarget] = useState<ProjectContent['boardId']>('uno'), [newTemplate, setNewTemplate] = useState('blink')
   const [newFile, setNewFile] = useState(''), [fileActions, setFileActions] = useState(false)
-  const [running, setRunning] = useState(false), [events, setEvents] = useState<TraceEvent[]>([]), [timeUs, setTimeUs] = useState(0), [states, setStates] = useState<Record<string, number>>({}), [levels, setLevels] = useState<Record<string, number>>({}), [dropped, setDropped] = useState(0)
+  const [running, setRunning] = useState(false), [events, setEvents] = useState<TraceEvent[]>([]), [timeUs, setTimeUs] = useState(0), [states, setStates] = useState<Record<string, number>>({}), [levels, setLevels] = useState<Record<string, number>>({}), [dropped, setDropped] = useState(0), [notice, setNotice] = useState('')
   const worker = useRef<Worker | null>(null), trace = useRef<TraceEvent[]>([]), clock = useRef(0), lost = useRef(0), executing = useRef<{ projectId: string; buildId: string } | null>(null)
   const pressed = useRef(new Set<string>())
   const [pots, setPots] = useState<Record<string, number>>({}), potsRef = useRef<Record<string, number>>({})
@@ -52,7 +52,8 @@ export default function Workbench() {
   const board = boards.find(b => b.id === draft?.boardId)
   const dirty = !!project && !!draft && JSON.stringify(contentOf(project)) !== JSON.stringify(draft)
   const stale = !!run && (dirty || run.sourceRevision !== project?.revision || run.origin === 'imported')
-  const activeBuild = run?.origin === 'compiler' && run.valid && !stale && !!run.artifact
+  const simulated = draft?.boardId === 'uno' || draft?.boardId === 'pi4'
+  const activeBuild = run?.origin === 'compiler' && run.valid && !stale && (draft?.boardId === 'pi4' || !!run.artifact)
 
   const refreshRecords = useCallback(async (id: string) => {
     const [nextRuns, nextPatches] = await Promise.all([request<Run[]>(`/projects/${id}/runs`), request<Patch[]>(`/projects/${id}/patches`)])
@@ -61,7 +62,7 @@ export default function Workbench() {
 
   const stop = useCallback(async () => {
     if (stopTask.current) return stopTask.current
-    worker.current?.terminate(); worker.current = null; setRunning(false); setStates({}); setLevels({})
+    worker.current?.terminate(); worker.current = null; setRunning(false); setStates({}); setLevels({}); setNotice('')
     const execution = executing.current; executing.current = null
     const recording = { events: [...trace.current], durationUs: clock.current, dropped: lost.current }
     const task = (async () => {
@@ -166,21 +167,24 @@ export default function Workbench() {
   const start = async () => {
     if (running) { await stop(); return }
     await stop()
-    if (!activeBuild || !run?.artifact || !project || !draft || draft.boardId !== 'uno') return
+    if (!activeBuild || !run || !project || !draft || !simulated || (draft.boardId === 'uno' && !run.artifact)) return
     setError(''); trace.current = []; clock.current = 0; lost.current = 0; pressed.current.clear()
     setEvents([]); setDropped(0); setTimeUs(0); setStates({}); setLevels({}); setResults('signals')
-    const instance = new Worker(new URL('../execution/avr.worker.ts', import.meta.url), { type: 'module' })
+    const instance = new Worker(new URL('../execution/sim.worker.ts', import.meta.url), { type: 'module' })
     worker.current = instance; executing.current = { projectId: project.id, buildId: run.id }; setRunning(true)
     instance.onmessage = ({ data }) => {
       if (data.type === 'error') { setError(data.message); void stop(); return }
+      if (data.type === 'status') setNotice(data.message)
+      if (data.type === 'started') setNotice('')
       if (data.type === 'frame') {
+        if (data.notice) setNotice(data.notice)
         const capacity = Math.max(0, 10_000 - trace.current.length)
         trace.current.push(...data.events.slice(0, capacity)); lost.current = Math.max(lost.current, data.dropped || 0) + Math.max(0, data.events.length - capacity)
         clock.current = data.timeUs; setTimeUs(data.timeUs); setStates(data.states); setLevels(data.levels || {}); setDropped(lost.current); setEvents([...trace.current])
       }
     }
     instance.onerror = () => { setError('The emulator worker stopped unexpectedly'); void stop() }
-    instance.postMessage({ type: 'load', hex: run.artifact.content, inputs: buttonInputs(draft.circuit, pressed.current), analog: analogInputs(draft.circuit, potsRef.current) })
+    instance.postMessage({ type: 'load', board: draft.boardId, hex: run.artifact?.content, files: draft.files.filter(f => f.name.endsWith('.py')), inputs: buttonInputs(draft.circuit, pressed.current), analog: analogInputs(draft.circuit, potsRef.current) })
   }
 
   const button = (id: string, down: boolean) => {
@@ -268,6 +272,7 @@ export default function Workbench() {
       <span className={`save-status ${dirty ? 'dirty' : ''}`}><span />{saveState}</span>
       <div className="header-actions"><button className="icon-button" aria-label="Toggle color theme" onClick={() => setTheme(resolvedTheme === 'light' ? 'dark' : 'light')}>{resolvedTheme === 'light' ? <Moon size={17} /> : <Sun size={17} />}</button><button onClick={exportProject} disabled={!project} title="Export project and run records"><Download size={16} /><span>Export</span></button><button aria-pressed={assistant} onClick={() => { if (!assistant && project) void refreshRecords(project.id); setAssistant(!assistant) }} disabled={!project}><Bot size={16} /><span>Assistant</span></button></div>
     </header>
+    {notice && <div role="status" className="workbench-notice">{notice}</div>}
     {error && <div role="alert" className="workbench-error"><span>{error}</span><button onClick={() => project ? void persist().then(() => setError('')).catch(e => setError(e.message)) : void load()}>{project ? 'Retry save' : 'Retry connection'}</button><button onClick={downloadDraft} disabled={!project}>Export local draft</button><button aria-label="Dismiss message" onClick={() => setError('')}><X size={14} /></button></div>}
     <div className="workbench-body">
       <aside id="project-navigation" className={`project-rail ${railOpen ? 'is-open' : ''}`}><button className="mobile-close-rail" aria-label="Close workspace navigation" onClick={() => setRailOpen(false)}><X size={17} /></button><div className="rail-section"><div className="rail-heading"><span>WORKSPACE</span><button aria-label="New project" onClick={() => setDialog(true)}><Plus size={16} /></button></div>
@@ -290,7 +295,7 @@ export default function Workbench() {
         const unknown = draft.circuit.nets.flatMap(n => n.terminals).filter(t => t.startsWith('board:') && !nextBoard.pins.includes(t.slice(6)))
         if (unknown.length) { setError(`Remove incompatible connections first: ${unknown.join(', ')}`); return }
         change({ ...draft, boardId: nextBoard.id, coreVersion: nextBoard.id === 'pi4' ? null : draft.coreVersion || '1.8.8' })
-      }}>{boards.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select><ChevronDown size={13} /></div><span className="target-capability">{board?.fqbn || 'Python syntax check'}</span><div className="build-controls"><button className="quiet-button" onClick={undo} disabled={!project || project.revision < 2 || running} title="Restore the previous revision"><RotateCcw size={15} /><span>Undo</span></button><button className="build-button" onClick={build} disabled={!project || building}>{building ? <Loader2 className="spin" size={15} /> : <Check size={16} />}{building ? 'Building…' : draft?.boardId === 'pi4' ? 'Check syntax' : 'Build'}</button><button className="primary" disabled={!running && (!activeBuild || draft?.boardId !== 'uno')} onClick={() => void start()} title={draft?.boardId !== 'uno' ? 'Execution adapter currently supports Uno; other targets support compilation or syntax checking' : !activeBuild ? 'Build the current revision before running' : 'Execute compiled firmware in AVR8js'}>{running ? <Square size={14} /> : <Play size={14} />}{running ? 'Stop' : 'Run'}</button></div></div>
+      }}>{boards.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select><ChevronDown size={13} /></div><span className="target-capability">{board?.fqbn || 'Python syntax check'}</span><div className="build-controls"><button className="quiet-button" onClick={undo} disabled={!project || project.revision < 2 || running} title="Restore the previous revision"><RotateCcw size={15} /><span>Undo</span></button><button className="build-button" onClick={build} disabled={!project || building}>{building ? <Loader2 className="spin" size={15} /> : <Check size={16} />}{building ? 'Building…' : draft?.boardId === 'pi4' ? 'Check syntax' : 'Build'}</button><button className="primary" disabled={!running && (!activeBuild || !simulated)} onClick={() => void start()} title={!simulated ? 'Only the Arduino Uno and Raspberry Pi Python are simulated; other targets compile only' : !activeBuild ? (draft?.boardId === 'pi4' ? 'Check the syntax of the current revision before running' : 'Build the current revision before running') : draft?.boardId === 'pi4' ? 'Run the script in the Python GPIO simulation' : 'Execute compiled firmware in AVR8js'}>{running ? <Square size={14} /> : <Play size={14} />}{running ? 'Stop' : 'Run'}</button></div></div>
         <nav className="mobile-surfaces" aria-label="Work surface"><button aria-current={surface === 'code'} onClick={() => setSurface('code')}><Code2 size={15} />Code</button><button aria-current={surface === 'circuit'} onClick={() => setSurface('circuit')}><CircuitBoard size={15} />Circuit</button><button onClick={() => setResults('signals')}>Results</button></nav>
         {loading ? <div className="workbench-empty"><Loader2 className="spin" />Opening your local workspace…</div> : !draft ? <div className="workbench-empty"><div className="welcome-mark"><CircuitBoard size={40} /></div><span className="eyebrow">A WORKBENCH FOR CURIOUS MINDS</span><h1>Build something.<br />Understand how it works.</h1><p>Code, connect and inspect real firmware.<br />Start with an example. No AI key required.</p><button className="primary" onClick={() => setDialog(true)}>Create an experiment<ArrowRight size={16} /></button></div> : <>
           <div className={`work-surfaces surface-${surface}`}>
@@ -314,13 +319,13 @@ export default function Workbench() {
             </div>
           </section>
         </>}
-        <footer className="workbench-status"><span><span className="status-dot" />Local backend · {project ? `Project ${project.id.slice(0, 8)}` : 'Ready to begin'}</span><span>{running ? `${(timeUs / 1e6).toFixed(2)} s simulated` : 'Build checks code · Run executes Uno firmware'}</span><span>Ctrl/⌘ + Enter to build</span></footer>
+        <footer className="workbench-status"><span><span className="status-dot" />Local backend · {project ? `Project ${project.id.slice(0, 8)}` : 'Ready to begin'}</span><span>{running ? `${(timeUs / 1e6).toFixed(2)} s simulated` : 'Build checks code · Run simulates Uno firmware or Pi Python'}</span><span>Ctrl/⌘ + Enter to build</span></footer>
       </main>
       {assistant && project && <Assistant key={project.id} project={project} patches={patches} beforeSend={persist} onPatch={patch => setPatches(list => [...list, patch])} onDecision={decide} onClose={() => setAssistant(false)} />}
     </div>
     <input type="file" ref={importInput} className="sr-only" aria-label="Import experiment file" accept=".json,.ino,.py" onChange={e => { const file = e.target.files?.[0]; if (file) void importFile(file); e.target.value = '' }} />
     {dialog && <div className="workbench-overlay"><dialog ref={dialogRef} className="new-project-dialog" aria-labelledby="new-project-title" onCancel={e => { if (!project) e.preventDefault(); else setDialog(false) }}><header><span className="welcome-mark"><CircuitBoard size={25} /></span>{project && <button aria-label="Close new project" onClick={() => setDialog(false)}><X size={20} /></button>}</header><span className="eyebrow">YOUR NEXT EXPERIMENT</span><h1 id="new-project-title">Start with a little curiosity.</h1><p>A local workspace for code, connections and real results.<br />No account. No paid compiler. AI optional.</p>
-      <form onSubmit={create}><label>Project name<input autoFocus value={name} onChange={e => setName(e.target.value)} required maxLength={100} /></label><label>Target board<select value={target} onChange={e => setTarget(e.target.value as ProjectContent['boardId'])}>{boards.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select></label><div className="template-cards" role="group" aria-label="Starting point">{[{ id: 'blink', title: 'Blink & observe', text: 'Timing, GPIO and serial' }, { id: 'button', title: 'Button input', text: 'Read a digital input' }, { id: 'dimmer', title: 'Analog dimmer', text: 'Potentiometer → PWM LED' }, { id: 'empty', title: 'Empty project', text: 'Make something yours' }].filter(t => target !== 'pi4' || t.id === 'blink' || t.id === 'empty').map(t => <button type="button" aria-pressed={newTemplate === t.id} key={t.id} onClick={() => setNewTemplate(t.id)}><Cpu size={18} /><strong>{t.title}</strong><span>{t.text}</span></button>)}</div><button className="primary create-project">Create experiment<ArrowRight size={16} /></button></form><button className="import-link" onClick={() => importInput.current?.click()}><FolderOpen size={15} />Already have a project? Import .ino, .py or a bundle</button>
+      <form onSubmit={create}><label>Project name<input autoFocus value={name} onChange={e => setName(e.target.value)} required maxLength={100} /></label><label>Target board<select value={target} onChange={e => setTarget(e.target.value as ProjectContent['boardId'])}>{boards.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select></label><div className="template-cards" role="group" aria-label="Starting point">{[{ id: 'blink', title: 'Blink & observe', text: 'Timing, GPIO and serial' }, { id: 'button', title: 'Button input', text: 'Read a digital input' }, { id: 'dimmer', title: 'Analog dimmer', text: 'Potentiometer → PWM LED' }, { id: 'empty', title: 'Empty project', text: 'Make something yours' }].filter(t => target !== 'pi4' || t.id !== 'dimmer').map(t => <button type="button" aria-pressed={newTemplate === t.id} key={t.id} onClick={() => setNewTemplate(t.id)}><Cpu size={18} /><strong>{t.title}</strong><span>{t.text}</span></button>)}</div><button className="primary create-project">Create experiment<ArrowRight size={16} /></button></form><button className="import-link" onClick={() => importInput.current?.click()}><FolderOpen size={15} />Already have a project? Import .ino, .py or a bundle</button>
     </dialog></div>}
   </div>
 }

@@ -1,6 +1,7 @@
 /** ATmega328P execution adapter. CPU/peripheral emulation is provided by AVR8js (MIT). */
 import { avrInstruction, CPU, AVRADC, adcConfig, AVRIOPort, AVRTimer, AVRUSART, portBConfig, portCConfig, portDConfig, timer0Config, timer1Config, timer2Config, usart0Config, PinState } from 'avr8js'
 import type { TraceEvent } from '../project/types'
+import type { Engine } from './engine'
 
 export function decodeHex(hex: string): Uint16Array {
   const bytes = new Uint8Array(32768)
@@ -23,7 +24,7 @@ export function decodeHex(hex: string): Uint16Array {
   return new Uint16Array(bytes.buffer)
 }
 
-export class UnoEngine {
+export class UnoEngine implements Engine {
   readonly cpu: CPU
   readonly ports: { B: AVRIOPort; C: AVRIOPort; D: AVRIOPort }
   readonly usart: AVRUSART
@@ -100,6 +101,7 @@ export class UnoEngine {
     this.adc.channelValues[channel] = rounded
     this.push({ timeUs: this.timeUs, pin: `A${channel}`, volts: rounded })
   }
+  run(us: number) { this.advance(us * 16) }
   advance(cycles: number) {
     const end = this.cpu.cycles + cycles
     while (this.cpu.cycles < end) { avrInstruction(this.cpu); this.cpu.tick() }

@@ -12,7 +12,7 @@ BOARDS = {
     'uno': {'name': 'Arduino Uno', 'mode': 'arduino', 'fqbn': 'arduino:avr:uno', 'clockHz': 16000000, 'emulator': 'avr8js-atmega328p', 'pins': [*[f'D{i}' for i in range(14)], *[f'A{i}' for i in range(6)], '5V', '3V3', 'GND']},
     'nano': {'name': 'Arduino Nano (classic)', 'mode': 'arduino', 'fqbn': 'arduino:avr:nano', 'clockHz': 16000000, 'emulator': None, 'pins': [*[f'D{i}' for i in range(14)], *[f'A{i}' for i in range(8)], '5V', '3V3', 'GND']},
     'mega': {'name': 'Arduino Mega 2560', 'mode': 'arduino', 'fqbn': 'arduino:avr:mega', 'clockHz': 16000000, 'emulator': None, 'pins': [*[f'D{i}' for i in range(54)], *[f'A{i}' for i in range(16)], '5V', '3V3', 'GND']},
-    'pi4': {'name': 'Raspberry Pi • Linux Python', 'mode': 'raspberry-pi', 'fqbn': None, 'clockHz': None, 'emulator': None, 'pins': [*[f'GPIO{i}' for i in range(28)], '3V3', '5V', 'GND']},
+    'pi4': {'name': 'Raspberry Pi • Linux Python', 'mode': 'raspberry-pi', 'fqbn': None, 'clockHz': None, 'emulator': 'pyodide-rpi-gpio-sim', 'pins': [*[f'GPIO{i}' for i in range(28)], '3V3', '5V', 'GND']},
 }
 PORTS = {'led': ['A', 'K'], 'resistor': ['1', '2'], 'button': ['1', '2'], 'potentiometer': ['1', 'W', '2']}
 

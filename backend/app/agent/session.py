@@ -82,7 +82,7 @@ READ_ONLY = [t['name'] for t in TOOLS if not t['writes']]
 def available_tools(intent: str, board_id: str) -> list[str]:
     names = READ_ONLY if intent == 'explain' else [t['name'] for t in TOOLS]
     if board_id == 'pi4':
-        names = [n for n in names if n not in ('CHECK_WIRING', 'INSPECT_RECORDING')]
+        names = [n for n in names if n != 'CHECK_WIRING']  # The static pin analysis understands Arduino sketches only.
     if not (os.environ.get('SERPER_API_KEY') or os.environ.get('BRAVE_SEARCH_API_KEY')):
         names = [n for n in names if n != 'WEB_SEARCH']
     return names
@@ -103,7 +103,7 @@ EMULATION = {
     'uno': 'Runs in the AVR8js emulator: GPIO, timers (millis, delay, PWM), the ADC (analogRead) and UART output. No I2C or SPI devices, no external parts beyond injected button and potentiometer inputs.',
     'nano': 'Compiles only; not emulated.',
     'mega': 'Compiles only; not emulated.',
-    'pi4': 'Python syntax check only; code is never executed.',
+    'pi4': 'Python runs in the browser against a simulated RPi.GPIO and gpiozero (LED, PWMLED, Buzzer, Button) on a virtual clock: GPIO, software PWM, button inputs and print() output. No Linux, threads, I2C, SPI or other libraries\' hardware access; scripts stop at 30 simulated seconds.',
 }
 
 
@@ -277,7 +277,7 @@ class ProjectSession:
         if not run:
             imported = sum(1 for r in self._runs() if r.get('origin') == 'imported' and r.get('trace'))
             note = f' {imported} imported reference recording(s) exist but were not produced here.' if imported else ''
-            return ToolResult('No emulator recording exists for this project. Ask the user to Build and Run an Uno sketch, then Stop to save a capture.' + note)
+            return ToolResult('No emulator recording exists for this project. Ask the user to Build (or Check syntax), Run, then Stop to save a capture.' + note)
         return ToolResult(describe(run, self.base_revision))
 
     async def _board_info(self, args) -> ToolResult:
@@ -324,11 +324,11 @@ class ProjectSession:
             wiring = check_wiring(p)
             codes = ', '.join(f'{f["severity"]} {f["code"]}' for f in wiring['findings'][:8])
             lines.append(f'Wiring check: {wiring["summary"].split(".")[0]}.' + (f' Findings: {codes}.' if codes else ''))
-            recording = self.latest_recording()
-            if recording:
-                lines.append('Latest recording: ' + ' | '.join(describe_recording(recording, p.revision).split('\n')[:5])[:1200])
-            else:
-                lines.append('No emulator recording yet.')
+        recording = self.latest_recording()
+        if recording:
+            lines.append('Latest recording: ' + ' | '.join(describe_recording(recording, p.revision).split('\n')[:5])[:1200])
+        else:
+            lines.append('No simulation recording yet.')
         pending = sum(1 for r in self.db.scalars(select(ExperimentPatch).where(ExperimentPatch.project_id == p.id)).all() if json.loads(r.document).get('status') == 'proposed')
         if pending:
             lines.append(f'{pending} earlier proposal(s) are still awaiting the user\'s decision.')

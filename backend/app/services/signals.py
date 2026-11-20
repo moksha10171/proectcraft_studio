@@ -105,5 +105,8 @@ def describe(run: dict, current_revision: int) -> str:
     lines.append(f'UART text ({len(serial)} chars{", first 400 shown" if len(serial) > 400 else ""}): {serial[:400]!r}' if serial else 'UART text: none.')
     if run.get('dropped'):
         lines.append('Events were dropped at the buffer limit; measurements describe retained events only.')
-    lines.append('Origin is the AVR8js emulator (digital model, no analog solver); it is not physical hardware evidence.')
+    if 'pyodide' in str(run.get('engine')):
+        lines.append('Origin is a Python simulation of RPi.GPIO/gpiozero on a virtual clock (no Linux, threads or I2C/SPI); it is not physical hardware evidence.')
+    else:
+        lines.append('Origin is the AVR8js emulator (digital model, no analog solver); it is not physical hardware evidence.')
     return '\n'.join(lines)

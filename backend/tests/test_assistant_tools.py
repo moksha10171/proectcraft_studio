@@ -61,7 +61,7 @@ def test_wiring_endpoint_reports_findings_with_revision(client):
 
 def test_tools_are_available_for_arduino_and_hidden_from_pi_mode():
     assert {'CHECK_WIRING', 'INSPECT_RECORDING'} <= set(available_tools('explain', 'uno'))
-    assert not {'CHECK_WIRING', 'INSPECT_RECORDING'} & set(available_tools('modify', 'pi4'))
+    assert 'CHECK_WIRING' not in available_tools('modify', 'pi4') and 'INSPECT_RECORDING' in available_tools('modify', 'pi4')
 
 
 @pytest.mark.asyncio

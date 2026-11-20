@@ -180,6 +180,55 @@ try {
     assert.ok(dimmerTrace.some(e => e.pin === 'D9'), 'PWM edges recorded')
   }
 
+  // Raspberry Pi Python: simulated RPi.GPIO/gpiozero on a virtual clock, with the same analyzer and circuit view.
+  {
+    const piDialog = async (template, name) => {
+      await page.getByRole('button', { name: 'New project', exact: true }).click()
+      const dialog = page.getByRole('dialog')
+      await dialog.getByLabel('Project name', { exact: true }).fill(name)
+      await dialog.getByLabel('Target board').selectOption('pi4')
+      await dialog.getByRole('button', { name: template }).click()
+      const created = page.waitForResponse(r => r.url().endsWith('/api/workbench/projects') && r.request().method() === 'POST')
+      await dialog.getByRole('button', { name: 'Create experiment' }).click()
+      return (await created).json()
+    }
+    const piBlink = await piDialog(/Blink & observe/, 'Browser Pi blink')
+    assert.deepEqual(piBlink.circuit.parts.map(part => part.kind), ['resistor', 'led'])
+    const piCheck = page.waitForResponse(r => r.url().endsWith(`/projects/${piBlink.id}/build`))
+    await page.getByRole('button', { name: 'Check syntax', exact: true }).click()
+    assert.equal((await (await piCheck).json()).status, 'passed')
+    await page.getByRole('button', { name: 'Run', exact: true }).click()
+    await page.getByRole('button', { name: 'serial', exact: true }).click()
+    await page.getByText(/LED blinking on GPIO17/).last().waitFor({ timeout: 90_000 })
+    await page.getByRole('button', { name: 'signals', exact: true }).click()
+    await page.waitForFunction(() => /0\.500 Hz/.test(document.querySelector('.signal-measurements')?.textContent || ''), { timeout: 30_000 })
+    assert.match(await page.locator('.signal-measurements').innerText(), /GPIO17[\s\S]*50\.0 %/)
+    const piBlinkCapture = page.waitForResponse(r => r.url().endsWith(`/projects/${piBlink.id}/recordings`))
+    await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    const piBlinkRun = await (await piBlinkCapture).json()
+    assert.equal(piBlinkRun.engine, 'pyodide-rpi-gpio-sim')
+    assert.ok(piBlinkRun.trace.some(e => e.pin === 'GPIO17' && e.value === 1))
+
+    const piButton = await piDialog(/Button input/, 'Browser Pi button')
+    const piButtonCheck = page.waitForResponse(r => r.url().endsWith(`/projects/${piButton.id}/build`))
+    await page.getByRole('button', { name: 'Check syntax', exact: true }).click()
+    assert.equal((await (await piButtonCheck).json()).status, 'passed')
+    await page.getByRole('button', { name: 'Run', exact: true }).click()
+    const hold = page.getByRole('button', { name: 'Hold button', exact: true })
+    // Wait for the interpreter to start: simulated time only advances once the script is running.
+    await page.waitForFunction(() => /(0\.[1-9]\d|[1-9]\.\d\d) s simulated/.test(document.querySelector('.workbench-status')?.textContent || ''), { timeout: 90_000 })
+    await hold.focus()
+    await page.keyboard.down('Space')
+    await page.getByRole('button', { name: /On 100 % of the time, driven by GPIO17/ }).waitFor({ timeout: 10_000 })
+    await page.keyboard.up('Space')
+    await page.getByRole('button', { name: /On 0 % of the time, driven by GPIO17/ }).waitFor({ timeout: 10_000 })
+    const piButtonCapture = page.waitForResponse(r => r.url().endsWith(`/projects/${piButton.id}/recordings`))
+    await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    const piTrace = (await (await piButtonCapture).json()).trace
+    assert.ok(piTrace.some(e => e.pin === 'GPIO2' && e.value === 0), 'pressing pulls the pull-up input low')
+    assert.ok(piTrace.some(e => e.pin === 'GPIO17' && e.value === 1), 'the gpiozero callback lit the LED')
+  }
+
   // Real Python parser path, without execution or an API key.
   const syntax = await page.request.post(origin + '/api/compile', { data: {
     deviceMode: 'raspberry-pi', files: [{ name: 'main.py', content: 'raise RuntimeError("never executed")' }],
@@ -293,7 +342,7 @@ try {
   await page.getByRole('dialog').waitFor()
   assert.equal(await page.locator('body').evaluate(el => el.scrollWidth <= window.innerWidth), true)
   assert.deepEqual(errors, [])
-  console.log('Project creation, local editor, build/availability, firmware capture, stale status, export/import, assistant draft-verify-review loop, serial plotter, LED glow and mobile circuit checks passed.')
+  console.log('Project creation, local editor, build/availability, firmware capture, stale status, export/import, assistant draft-verify-review loop, serial plotter, LED glow, Raspberry Pi simulation and mobile circuit checks passed.')
 } finally {
   await browser.close()
 }

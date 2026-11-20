@@ -33,7 +33,7 @@ class UndoBody(Contract):
 
 class SignalEvent(Contract):
     timeUs: float = Field(ge=0, allow_inf_nan=False)
-    pin: str | None = Field(default=None, pattern=r'^(D(?:[0-9]|1[0-3])|A[0-5])$')
+    pin: str | None = Field(default=None, pattern=r'^(D(?:[0-9]|1[0-3])|A[0-5]|GPIO(?:[0-9]|1[0-9]|2[0-7]))$')
     value: Literal[0, 1] | None = None
     # Analog input stimulus applied to A0-A5, in volts. Digital levels use `value`; UART text uses `serial`.
     volts: float | None = Field(default=None, ge=0, le=5, allow_inf_nan=False)
@@ -113,11 +113,52 @@ void loop() {
 '''
 
 
+PI_BLINK = """from signal import pause
+from gpiozero import LED
+
+# GPIO17 -> 330 ohm resistor -> LED -> GND
+with LED(17) as led:
+    led.blink(on_time=1, off_time=1)
+    print("LED blinking on GPIO17")
+    pause()
+"""
+PI_BUTTON = """from signal import pause
+from gpiozero import LED, Button
+
+led = LED(17)       # GPIO17 -> 330 ohm resistor -> LED -> GND
+button = Button(2)  # Pull-up input: pressing the button connects GPIO2 to GND
+
+button.when_pressed = led.on
+button.when_released = led.off
+print("Hold the button to light the LED")
+pause()
+"""
+
+
+def pi_template(body: NewProject):
+    led_parts = [{'id': 'r1', 'kind': 'resistor', 'label': 'Resistor', 'value': '330 Ω', 'x': 470, 'y': 230},
+                 {'id': 'led1', 'kind': 'led', 'label': 'LED', 'x': 470, 'y': 350}]
+    led_nets = [{'id': 'led_pin', 'label': 'GPIO17 / LED drive', 'terminals': ['board:GPIO17', 'r1:1']},
+                {'id': 'led', 'label': 'LED anode', 'terminals': ['r1:2', 'led1:A']}]
+    code, parts, nets = PI_BLINK, led_parts, [*led_nets, {'id': 'ground', 'label': 'Ground', 'terminals': ['board:GND', 'led1:K']}]
+    notes = ('Run the script: it executes in a Python simulation of RPi.GPIO and gpiozero on a virtual clock, so a one-second sleep takes no real time. '
+             'Predict the blink frequency, then measure GPIO17 in Signals. This is not a Raspberry Pi: there is no Linux, threading, I2C or SPI.')
+    if body.template == 'button':
+        code = PI_BUTTON
+        parts = [{'id': 'button1', 'kind': 'button', 'label': 'Push button', 'x': 470, 'y': 110}, *led_parts]
+        nets = [*led_nets, {'id': 'button_pin', 'label': 'GPIO2 / input pull-up', 'terminals': ['board:GPIO2', 'button1:1']},
+                {'id': 'ground', 'label': 'Ground', 'terminals': ['board:GND', 'button1:2', 'led1:K']}]
+        notes = ('Hold the button in the circuit view while the script runs: GPIO2 is pulled to ground and the gpiozero callback lights the LED on GPIO17. '
+                 'Compare the two pins in Signals. The simulation models the pull-up and callbacks, not contact bounce.')
+    if body.template == 'empty':
+        return ProjectContent(name=body.name, boardId=body.boardId, files=[{'name': 'main.py', 'content': ''}], notes=notes)
+    return ProjectContent(name=body.name, boardId=body.boardId, files=[{'name': 'main.py', 'content': code}],
+                          circuit={'parts': parts, 'nets': nets}, notes=notes)
+
+
 def template(body: NewProject):
     if body.boardId == 'pi4':
-        code = 'from signal import pause\nfrom gpiozero import LED\n\nwith LED(17) as led:\n    led.blink(on_time=1, off_time=1)\n    pause()\n'
-        return ProjectContent(name=body.name, boardId=body.boardId, files=[{'name': 'main.py', 'content': '' if body.template == 'empty' else code}],
-                              notes='Linux Raspberry Pi GPIO. Syntax checking does not execute GPIO or emulate a Pi.')
+        return pi_template(body)
     code = 'void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  Serial.println("LED on");\n  delay(1000);\n  digitalWrite(LED_BUILTIN, LOW);\n  Serial.println("LED off");\n  delay(1000);\n}\n'
     circuit = {'parts': [], 'nets': []}
     if body.template == 'button':
@@ -253,6 +294,12 @@ class Recording(Contract):
     dropped: int = Field(default=0, ge=0)
 
 
+SIMULATORS = {
+    'uno': {'engine': 'avr8js-atmega328p', 'version': '0.21.1', 'output': 'CPU/peripheral execution; digital model only. No analog electrical solver.'},
+    'pi4': {'engine': 'pyodide-rpi-gpio-sim', 'version': '314.0.8', 'output': 'Python run in Pyodide against a simulated RPi.GPIO/gpiozero on a virtual clock. Not Linux or Raspberry Pi hardware.'},
+}
+
+
 @router.post('/projects/{project_id}/recordings')
 def record(project_id: str, body: Recording, db: Session = Depends(get_db)):
     import uuid
@@ -262,17 +309,18 @@ def record(project_id: str, body: Recording, db: Session = Depends(get_db)):
     if not build or build.project_id != project_id:
         raise HTTPException(404, 'Build not found')
     compiled = json.loads(build.document)
-    if compiled.get('origin') != 'compiler' or not compiled.get('valid') or compiled.get('boardId') != 'uno':
-        raise HTTPException(400, 'A successful local Uno build is required')
+    simulator = SIMULATORS.get(compiled.get('boardId'))
+    if compiled.get('origin') != 'compiler' or not compiled.get('valid') or not simulator:
+        raise HTTPException(400, 'A successful local Uno build or Raspberry Pi syntax check is required')
     times = [e.timeUs for e in body.events]
     if times != sorted(times) or any(t > body.durationUs for t in times):
         raise HTTPException(400, 'Trace events must be ordered within the recording duration')
     run = {'id': uuid.uuid4().hex, 'projectId': project_id, 'sourceRevision': compiled['sourceRevision'],
            'sourceHash': compiled['sourceHash'], 'boardId': compiled['boardId'], 'origin': 'emulator',
-           'engine': 'avr8js-atmega328p', 'engineVersion': '0.21.1', 'status': 'recorded', 'valid': True,
+           'engine': simulator['engine'], 'engineVersion': simulator['version'], 'status': 'recorded', 'valid': True,
            'buildId': body.buildId, 'toolchain': compiled.get('toolchain', {}), 'dependencies': compiled.get('dependencies', []), 'artifactHash': compiled.get('artifact', {}).get('sha256'),
            'startedAt': timestamp(), 'durationMs': body.durationUs / 1000, 'trace': [e.model_dump(exclude_none=True) for e in body.events],
-           'dropped': body.dropped, 'output': 'CPU/peripheral execution; digital model only. No analog electrical solver.', 'diagnostics': []}
+           'dropped': body.dropped, 'output': simulator['output'], 'diagnostics': []}
     db.add(ExperimentRun(id=run['id'], project_id=project_id, document=json.dumps(run)))
     db.commit()
     return run

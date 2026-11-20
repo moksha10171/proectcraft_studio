@@ -201,3 +201,24 @@ def test_invalid_analog_events_are_rejected(client, event):
     run = {'id': 'bad', 'sourceRevision': 1, 'boardId': 'uno', 'durationMs': 10, 'trace': [event]}
     response = client.post('/api/workbench/import', json={**client.get(f"/api/workbench/projects/{project['id']}/export").json(), 'runs': [run]})
     assert response.status_code == 422
+
+
+def test_raspberry_pi_templates_have_circuits_and_record_simulated_runs(client):
+    blink = create(client, boardId='pi4', template='blink')
+    assert blink['boardId'] == 'pi4' and 'LED(17)' in blink['files'][0]['content']
+    assert [p['kind'] for p in blink['circuit']['parts']] == ['resistor', 'led']
+    button = create(client, boardId='pi4', template='button')
+    assert 'Button(2)' in button['files'][0]['content'] and [p['kind'] for p in button['circuit']['parts']] == ['button', 'resistor', 'led']
+    assert create(client, boardId='pi4', template='empty')['files'][0]['content'] == ''
+    build = client.post(f'/api/workbench/projects/{button["id"]}/build', json={'revision': 1}).json()
+    assert build['status'] == 'passed' and build['engine'] == 'python-ast'
+    events = [{'timeUs': 0, 'pin': 'GPIO2', 'value': 1}, {'timeUs': 5, 'pin': 'GPIO17', 'value': 0}, {'timeUs': 9, 'pin': 'GPIO2', 'value': 0}, {'timeUs': 9, 'serial': 'hi\n'}]
+    recording = client.post(f'/api/workbench/projects/{button["id"]}/recordings', json={'buildId': build['id'], 'events': events, 'durationUs': 20})
+    assert recording.status_code == 200, recording.text
+    run = recording.json()
+    assert run['engine'] == 'pyodide-rpi-gpio-sim' and run['boardId'] == 'pi4' and 'Not Linux' in run['output']
+    bad = client.post(f'/api/workbench/projects/{button["id"]}/recordings', json={'buildId': build['id'], 'events': [{'timeUs': 1, 'pin': 'GPIO28', 'value': 1}], 'durationUs': 5})
+    assert bad.status_code == 422
+    nano = create(client, boardId='nano')
+    nano_build = {'id': 'x'}
+    assert client.post(f'/api/workbench/projects/{nano["id"]}/recordings', json={'buildId': nano_build['id'], 'events': [], 'durationUs': 1}).status_code == 404

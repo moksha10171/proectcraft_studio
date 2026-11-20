@@ -47,7 +47,7 @@ INTENTS = {
 MODES = {
     'arduino': 'Language: Arduino C++ (setup/loop). Prefer millis() over long delay() when the sketch must stay responsive.',
     'raspberry-pi': 'Language: Python 3 with gpiozero or RPi.GPIO and BCM pin numbering. GPIO is 3.3 V logic. '
-                    'Only a syntax check is available; nothing is executed.',
+                    'The simulator runs the script on a virtual clock (no threads, I2C or SPI) and records pin activity; it is not a Raspberry Pi.',
 }
 
 TEXT_TOOLS = """

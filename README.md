@@ -15,11 +15,18 @@ before you review them. Designed for students, educators and makers.
   revision history, undo and browser draft recovery. No account required.
 - **Real builds:** Arduino CLI with a pinned `arduino:avr` core compiles Uno, classic
   Nano and Mega sketches; diagnostics link to the file and line. Raspberry Pi
-  Python gets a syntax check (scripts are never executed).
+  Python gets a syntax check.
 - **Uno execution:** [AVR8js](https://github.com/wokwi/avr8js) runs the compiled HEX
   in a browser worker: GPIO, timers (`millis`, `delay`, PWM), the ADC
   (`analogRead`) and UART output. Press a wired push button or turn a
   potentiometer while the firmware runs.
+- **Raspberry Pi Python simulation:** scripts run in the browser ([Pyodide](https://pyodide.org))
+  against a simulated `RPi.GPIO` and `gpiozero` (LED, PWMLED, Buzzer, Button) on a
+  virtual clock, so `time.sleep(1)` costs no real time and runs are deterministic.
+  Pin activity feeds the same analyzer, plotter and circuit view; hold a button in
+  the circuit and callbacks fire. Errors show a Python traceback. This is not a
+  Raspberry Pi: no Linux, threads, I2C/SPI or other libraries' hardware access, and
+  scripts are cut off at 30 simulated seconds.
 - **Signal analyzer:** multi-pin waveforms with zoom, pan and A/B cursors;
   per-pin frequency, period, duty cycle and pulse widths; analog input lanes;
   Value Change Dump export for GTKWave or PulseView.
@@ -41,10 +48,10 @@ before you review them. Designed for students, educators and makers.
 - **Starter experiments:** Blink, button input and potentiometer dimmer templates,
   plus downloadable [Arduino and Raspberry Pi sources](examples/README.md).
 
-**Current limits:** only the Uno is emulated (no I2C/SPI peripherals or external
-devices beyond the button and potentiometer inputs). Nano and Mega compile only;
-Raspberry Pi gets a syntax check only. ESP32/Pico execution, flashing and physical
-serial capture are not implemented. The circuit is a logical connection view, not
+**Current limits:** the Uno (AVR8js) and Raspberry Pi Python (GPIO simulation) are
+the only executed targets, and neither models I2C/SPI peripherals or external
+devices beyond the button and potentiometer inputs. Nano and Mega compile only.
+ESP32/Pico execution, flashing and physical serial capture are not implemented. The circuit is a logical connection view, not
 physical placement or an analog solver: a potentiometer supplies a voltage to the
 ADC, and LED glow reflects pin duty cycle, but current and forward voltage are not simulated. A successful build or
 emulator run is not hardware validation. AI features need a configured provider.
@@ -90,9 +97,11 @@ toolchain. Install any declared libraries at their specified versions, for examp
    import an `.ino`, `.py` or ProjectCraft JSON bundle. No AI setup is needed.
 2. Edit and select the board. Changes save as revisions; a conflicting session is
    reported instead of overwriting its work. Unsaved drafts can be exported.
-3. Build. Click a diagnostic to reach its file and line. Editing after a build
+3. Build (or Check syntax for Python). Click a diagnostic to reach its file and line. Editing after a build
    marks that result stale and disables execution until you rebuild.
-4. On Uno, Run executes the compiled HEX in a worker. Press buttons and move
+4. On Uno, Run executes the compiled HEX in a worker; on Raspberry Pi, Run
+   simulates the Python script (the first run downloads the interpreter, about
+   13 MB). Press buttons and move
    potentiometer sliders in the circuit view while it runs; connected LEDs glow
    with their pin's duty cycle. Serial shows the emulated UART output and
    Plotter graphs the numbers in it. Signals measures each pin; click the
@@ -219,7 +228,7 @@ data/          Hardware references and project catalog (runtime data ignored)
 ## Third-party components
 
 The Uno engine uses [AVR8js](https://github.com/wokwi/avr8js) 0.21.1, licensed MIT,
-by Uri Shaked and contributors. Monaco and other dependencies retain their own
+by Uri Shaked and contributors. Raspberry Pi Python runs on [Pyodide](https://pyodide.org) (MPL-2.0). Monaco and other dependencies retain their own
 licenses. The bundled [Arduino CLI](https://github.com/arduino/arduino-cli/tree/v1.5.1)
 and AVR toolchain/core have their own terms; the compiler image retains CLI license
 text and source references under `/usr/share/licenses/arduino-cli` and upstream

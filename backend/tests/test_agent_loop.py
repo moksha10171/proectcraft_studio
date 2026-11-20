@@ -146,7 +146,7 @@ async def test_snapshot_reaches_the_model_but_not_stored_history(client):
     await run(project['id'], 'What does this do?', script)
     latest = script.requests[0]['messages'][-1]['content']
     assert latest.startswith('<project-state>') and latest.endswith('What does this do?')
-    assert 'Arduino Uno' in latest and 'Never built.' in latest and 'No wiring issues found' in latest and 'No emulator recording yet' in latest
+    assert 'Arduino Uno' in latest and 'Never built.' in latest and 'No wiring issues found' in latest and 'No simulation recording yet' in latest
     assert 'board:D2' in latest, 'the circuit is described compactly for the model'
     with SessionLocal() as db:
         stored = [t.content for t in repo.list_agent_turns(db, project['id']) if t.role == 'user']
@@ -184,7 +184,7 @@ def test_tool_catalog_is_described_and_scoped_by_board(client, monkeypatch):
     assert 'WEB_SEARCH' not in available_tools('modify', 'uno')
     monkeypatch.setenv('SERPER_API_KEY', 'configured')
     assert 'WEB_SEARCH' in available_tools('modify', 'uno')
-    assert not {'CHECK_WIRING', 'INSPECT_RECORDING'} & set(available_tools('modify', 'pi4'))
+    assert 'CHECK_WIRING' not in available_tools('modify', 'pi4') and 'INSPECT_RECORDING' in available_tools('modify', 'pi4')
     assert 'Python 3' in system_prompt('debug', 'raspberry-pi', [], True) and 'Intent: debug' in system_prompt('debug', 'raspberry-pi', [], True)
 
 

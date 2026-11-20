@@ -10,6 +10,9 @@ export function connect(circuit: Circuit, from: string, to: string): Circuit {
   return { ...circuit, nets: [...rest, net] }
 }
 
+/** Pin number of a digital board terminal: D13 on Arduino boards, GPIO17 (BCM) on a Raspberry Pi. */
+const digitalPin = (terminal: string): number | null => { const m = /^board:(?:D|GPIO)(\d+)$/.exec(terminal); return m ? Number(m[1]) : null }
+
 /** Digital push-button model: closing the switch joins its two terminal nets. */
 export function buttonInputs(circuit: Circuit, pressed: Set<string>): Record<number, boolean> {
   const links = new Map<string, Set<string>>()
@@ -18,13 +21,13 @@ export function buttonInputs(circuit: Circuit, pressed: Set<string>): Record<num
   const inputs: Record<number, boolean> = {}
   for (const part of circuit.parts.filter(p => p.kind === 'button')) {
     for (const net of circuit.nets.filter(n => n.terminals.some(t => t.startsWith(`${part.id}:`)))) {
-      for (const t of net.terminals) if (/^board:D\d+$/.test(t)) inputs[Number(t.slice(7))] = true
+      for (const t of net.terminals) { const n = digitalPin(t); if (n !== null) inputs[n] = true }
     }
     if (pressed.has(part.id)) join(`${part.id}:1`, `${part.id}:2`)
   }
   const seen = new Set<string>(), queue = ['board:GND']
   while (queue.length) { const t = queue.pop()!; if (seen.has(t)) continue; seen.add(t); queue.push(...(links.get(t) || [])) }
-  for (const pin of Object.keys(inputs)) if (seen.has(`board:D${pin}`)) inputs[Number(pin)] = false
+  for (const pin of Object.keys(inputs)) if ([...seen].some(t => digitalPin(t) === Number(pin))) inputs[Number(pin)] = false
   return inputs
 }
 
@@ -84,7 +87,7 @@ export function ledDrives(circuit: Circuit): Record<string, LedDrive> {
     })
     return [...near, ...far]
   }
-  const pinOn = (terminal: string) => reach(terminal).find(r => /^board:D\d+$/.test(r.terminal))
+  const pinOn = (terminal: string) => reach(terminal).find(r => /^board:(?:D|GPIO)\d+$/.test(r.terminal))
   const railOn = (terminal: string, rails: string[]) => reach(terminal).find(r => rails.includes(r.terminal))
   const drives: Record<string, LedDrive> = {}
   for (const led of circuit.parts.filter(p => p.kind === 'led')) {

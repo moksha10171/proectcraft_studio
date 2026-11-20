@@ -16,5 +16,5 @@ export default defineConfig([
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
-  globalIgnores(['.next/**', 'public/monaco/**', 'next-env.d.ts']),
+  globalIgnores(['.next/**', 'public/monaco/**', 'public/pyodide/**', 'next-env.d.ts']),
 ])
